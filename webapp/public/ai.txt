@@ -1,0 +1,9 @@
+# AIPUSH — AI indexing policy
+# Host: aipush.app
+
+Allow: /
+Sitemap: https://aipush.app/sitemap.xml
+
+# Notes:
+# - Public marketing site.
+# - Content is updated periodically.

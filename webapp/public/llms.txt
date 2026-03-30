@@ -1,0 +1,11 @@
+# AIPUSH
+
+> AI-Optimized Page Distribution for Traffic & Sales
+
+## About
+
+AIPUSH generates AI-optimized landing pages that help businesses get cited by AI agents (ChatGPT, Claude, Perplexity, Google AI). Each page follows AEO (AI Engine Optimization) best practices with structured semantic HTML, evidence-backed content, and full indexability.
+
+## Links
+
+- [AIPUSH App](https://aipush.app)

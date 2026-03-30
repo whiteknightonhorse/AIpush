@@ -1,0 +1,89 @@
+# ============================================================
+# AIPUSH .gitignore — PUBLIC FRONTEND ONLY
+# Strategy: ignore everything, then whitelist public files.
+# The entire backend (MIP, generation, audit, billing, auth,
+# agent API, semantic, visibility, DNS, SSL, compliance,
+# sweep, shortvideo) is proprietary and stays local.
+# ============================================================
+
+# ── Ignore everything by default ──
+/*
+
+# ── Allow: top-level config files ──
+!.gitignore
+!README.md
+!LICENSE
+!package.json
+!tsconfig.json
+!playwright.config.ts
+
+# ── Allow: webapp frontend (public marketing pages) ──
+!webapp/
+
+# Ignore build artifacts and deps inside webapp
+webapp/dist/
+webapp/dist*/
+webapp/node_modules/
+
+# Ignore proprietary webapp files (dashboard, billing, admin, API clients)
+webapp/src/app/Dashboard.tsx
+webapp/src/app/RequireAuth.tsx
+webapp/src/app/pages/ClientDashboard.tsx
+webapp/src/app/pages/DashBro.tsx
+webapp/src/app/pages/CryptoPaymentPaywall.tsx
+webapp/src/app/pages/CryptoPaymentDashboardTopUp.tsx
+webapp/src/app/pages/MipReport.tsx
+webapp/src/app/pages/AgentApi.tsx
+webapp/src/app/pages/useCryptoPaymentIntent.ts
+webapp/src/api/
+webapp/src/app/components/audit/
+webapp/src/app/pages/dashbro.css
+
+# ── NEVER commit — secrets ──
+.env
+.env.*
+*.env
+
+# ── NEVER commit — backend source (proprietary core) ──
+/src/
+/schema/
+/migrations/
+/scripts/
+/ops/
+/deploy/
+/sweep/
+/shortvideo/
+/runtime/
+/tests/
+/test-scripts/
+/tools/
+/sql/
+
+# ── NEVER commit — internal docs and reports ──
+/docs/
+/reports/
+/audit_reports/
+
+# ── NEVER commit — internal config files ──
+CLAUDE.md
+CLOUD_CODE_AGENT.md
+CODEX.md
+BUILD_PRODUCTION_CANONICAL.sh
+migrate-repair.sh
+aipush-eth-indexer.service
+
+# ── NEVER commit — build/runtime artifacts ──
+node_modules/
+dist/
+data/
+var/
+logs/
+temp/
+tmp-*
+*.log
+
+# ── NEVER commit — OS/editor/AI ──
+.DS_Store
+._*
+.vscode/
+.claude/

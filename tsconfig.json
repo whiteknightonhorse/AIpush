@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "lib": ["ES2022", "DOM"],
+
+    "rootDir": "src",
+    "outDir": "dist",
+
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "types": ["node", "@fastify/static"],
+
+    "skipLibCheck": true,
+    "strict": true,
+
+    "sourceMap": false,
+    "declaration": false,
+    "removeComments": true,
+
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "dist.backup.*",
+    "webapp",
+    "tests",
+    "tools",
+    "**/*.test.*",
+    "**/*.spec.*",
+    "**/*.stories.*"
+  ]
+}

@@ -1,0 +1,290 @@
+/* InlineSignup — shared inline email/OTP form for ad landing pages */
+
+.isf-wrap {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  border-radius: 12px;
+  padding: 20px 24px;
+}
+
+/* Dark variant (hero sections with dark backgrounds) */
+.isf-dark {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Light variant (pricing/final sections with light backgrounds) */
+.isf-light {
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.isf-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.isf-row {
+  display: flex;
+  gap: 8px;
+}
+
+.isf-input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 16px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.isf-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.isf-input:focus {
+  border-color: rgba(223, 142, 29, 0.6);
+  box-shadow: 0 0 0 3px rgba(223, 142, 29, 0.25);
+}
+
+.isf-dark .isf-input:focus {
+  border-color: rgba(223, 142, 29, 0.5);
+  box-shadow: 0 0 0 3px rgba(223, 142, 29, 0.25);
+}
+
+/* Light variant inputs */
+.isf-light .isf-input {
+  border-color: rgba(0, 0, 0, 0.15);
+  background: #fff;
+  color: #111;
+}
+
+.isf-light .isf-input::placeholder {
+  color: rgba(0, 0, 0, 0.35);
+}
+
+.isf-light .isf-input:focus {
+  border-color: rgba(223, 142, 29, 0.6);
+  box-shadow: 0 0 0 3px rgba(223, 142, 29, 0.3);
+}
+
+.isf-btn {
+  flex-shrink: 0;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s;
+}
+
+.isf-btn:hover:not(:disabled) {
+  transform: scale(1.03);
+  box-shadow: 0 4px 20px rgba(223, 142, 29, 0.3);
+}
+
+.isf-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.isf-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.isf-btn--active:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.isf-trust {
+  font-size: 12px;
+  text-align: center;
+  margin: 0;
+}
+
+.isf-dark .isf-trust {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.isf-light .isf-trust {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.isf-code-msg {
+  font-size: 14px;
+  text-align: center;
+  margin: 0 0 4px;
+}
+
+.isf-dark .isf-code-msg {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.isf-light .isf-code-msg {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.isf-code-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.isf-link {
+  background: none;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.isf-dark .isf-link {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.isf-light .isf-link {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.isf-link:hover {
+  opacity: 0.8;
+}
+
+.isf-link:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.isf-error {
+  font-size: 13px;
+  text-align: center;
+  margin: 0 0 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.isf-dark .isf-error {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+}
+
+.isf-light .isf-error {
+  color: #d32f2f;
+  background: rgba(211, 47, 47, 0.08);
+}
+
+/* Input error state */
+.isf-input.isf-error {
+  border-color: #f38ba8 !important;
+  box-shadow: 0 0 0 3px rgba(243, 139, 168, 0.2) !important;
+  animation: isf-shake 0.4s ease;
+}
+
+@keyframes isf-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+.isf-light .isf-input.isf-error {
+  border-color: #d20f39 !important;
+  box-shadow: 0 0 0 3px rgba(210, 15, 57, 0.15) !important;
+}
+
+/* Success state */
+.isf-success {
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+  padding: 14px 20px;
+  border-radius: 10px;
+  animation: isf-pulse 2s ease-in-out infinite;
+}
+
+.isf-dark .isf-success {
+  color: #a6e3a1;
+  background: rgba(166, 227, 161, 0.1);
+}
+
+.isf-light .isf-success {
+  color: #40a02b;
+  background: rgba(64, 160, 43, 0.08);
+}
+
+@keyframes isf-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Theme-aware variant — uses Catppuccin CSS variables, works in both Latte and Mocha */
+.isf-theme {
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
+}
+
+.isf-theme .isf-input {
+  border: 1px solid var(--surface-border-strong);
+  background: var(--surface-card-strong);
+  color: var(--text-primary);
+}
+
+.isf-theme .isf-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.isf-theme .isf-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus);
+}
+
+.isf-theme .isf-input.isf-error {
+  border-color: var(--status-danger) !important;
+  box-shadow: 0 0 0 3px var(--status-danger-dim) !important;
+}
+
+.isf-theme .isf-trust {
+  color: var(--text-secondary);
+}
+
+.isf-theme .isf-code-msg {
+  color: var(--text-primary);
+}
+
+.isf-theme .isf-link {
+  color: var(--text-secondary);
+}
+
+.isf-theme .isf-error {
+  color: var(--status-danger);
+  background: var(--status-danger-dim);
+}
+
+.isf-theme .isf-success {
+  color: var(--status-success);
+  background: var(--status-success-dim);
+}
+
+/* Responsive: stack on narrow screens */
+@media (max-width: 480px) {
+  .isf-wrap {
+    padding: 16px;
+  }
+
+  .isf-row {
+    flex-direction: column;
+  }
+
+  .isf-btn {
+    width: 100%;
+  }
+}

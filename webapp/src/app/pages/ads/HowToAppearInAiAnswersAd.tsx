@@ -61,17 +61,15 @@ export function HowToAppearInAiAnswersAd() {
       document.head.appendChild(robotsMeta);
     }
     robotsMeta.setAttribute("content", "noindex, nofollow");
+    const prevTheme = document.documentElement.getAttribute("data-theme");
+    document.documentElement.setAttribute("data-theme", "light");
     const fadeSections = document.querySelectorAll(".adlp-features, .adlp-audience, .adlp-steps, .adlp-day1, .adlp-pricing, .adlp-final");
-    const fadeObs = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) { e.target.classList.add("visible"); fadeObs.unobserve(e.target); }
-      });
-    }, { threshold: 0.15 });
+    const fadeObs = new IntersectionObserver((entries) => { entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("visible"); fadeObs.unobserve(e.target); } }); }, { threshold: 0.15 });
     fadeSections.forEach((s) => fadeObs.observe(s));
     return () => {
-      fadeObs.disconnect();
       if (mDesc) mDesc.setAttribute("content", prev);
       if (robotsMeta) robotsMeta.setAttribute("content", "index, follow");
+      fadeObs.disconnect(); if (prevTheme) document.documentElement.setAttribute("data-theme", prevTheme); else document.documentElement.removeAttribute("data-theme");
     };
   }, [keyword]);
 

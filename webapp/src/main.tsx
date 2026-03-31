@@ -35,6 +35,7 @@ import { AiCitationOptimizationGuide } from "./app/pages/seo/AiCitationOptimizat
 import { AnswerEngineOptimizationGuide } from "./app/pages/seo/AnswerEngineOptimizationGuide";
 import { AiSeoVsTraditionalSeo } from "./app/pages/seo/AiSeoVsTraditionalSeo";
 import { AiSeoVsTraditionalSeoGuide } from "./app/pages/seo/AiSeoVsTraditionalSeoGuide";
+import { CompetitorAnalysisReport } from "./app/pages/seo/CompetitorAnalysisReport";
 import { AgentApi } from "./app/pages/AgentApi";
 import { Privacy } from "./app/pages/Privacy";
 import { DashBro } from "./app/pages/DashBro";
@@ -1659,7 +1660,7 @@ function Landing() {
                     }
                   }}
                 />
-                <span className="aipush-seo-links-count" aria-live="polite">16 guides available</span>
+                <span className="aipush-seo-links-count" aria-live="polite">17 guides available</span>
               </div>
               <div className="aipush-seo-links-featured">
                 <Link to="/how-to-rank-in-chatgpt" className="aipush-seo-card aipush-seo-card--featured">
@@ -1746,6 +1747,11 @@ function Landing() {
                   <div className="aipush-seo-card-desc" title="How to get cited by ChatGPT, Perplexity, and AI Overviews — signals, structure, and strategy.">How to get cited by ChatGPT, Perplexity, and AI Overviews — signals, structure, and strategy.</div>
                   <span className="aipush-seo-card-arrow">Read &rarr;</span>
                 </Link>
+                <Link to="/competitor-analysis-report" className="aipush-seo-card">
+                  <h3 className="aipush-seo-card-title">Competitor Analysis Report</h3>
+                  <div className="aipush-seo-card-desc" title="How to create an AI-powered competitor analysis report — competitors scored, keyword gaps mapped, PDF in 5 minutes.">How to create an AI-powered competitor analysis report — competitors scored, keyword gaps mapped, PDF in 5 minutes.</div>
+                  <span className="aipush-seo-card-arrow">Read &rarr;</span>
+                </Link>
                 <p className="aipush-seo-links-empty">No guides match your search. Try a different keyword.</p>
               </div>
               </div>
@@ -1755,7 +1761,7 @@ function Landing() {
               "@type": "ItemList",
               "name": "AI Search & ChatGPT Visibility Guides",
               "description": "Practical resources for business owners navigating AI-powered search and discoverability.",
-              "numberOfItems": 16,
+              "numberOfItems": 17,
               "itemListElement": [
                 { "@type": "ListItem", "position": 1, "name": "How to Rank in ChatGPT", "url": "https://aipush.app/how-to-rank-in-chatgpt", "description": "Why AI ranking differs from Google and what structure actually matters." },
                 { "@type": "ListItem", "position": 2, "name": "How to Get Mentioned in ChatGPT", "url": "https://aipush.app/how-to-get-mentioned-in-chatgpt", "description": "Brand citation mechanics and the authority signals AI assistants rely on." },
@@ -1772,7 +1778,8 @@ function Landing() {
                 { "@type": "ListItem", "position": 13, "name": "AI SEO Services", "url": "https://aipush.app/ai-seo-services", "description": "What AI SEO services include, how they differ from traditional SEO, and how to choose a provider." },
                 { "@type": "ListItem", "position": 14, "name": "AI SEO vs Traditional SEO", "url": "https://aipush.app/ai-seo-vs-traditional-seo-guide", "description": "How search optimization changed in 2026 — compare ranking signals, content strategies, and tooling for both channels." },
                 { "@type": "ListItem", "position": 15, "name": "Answer Engine Optimization", "url": "https://aipush.app/answer-engine-optimization-guide", "description": "How to get your business cited in AI-generated answers — the complete AEO strategy for 2026." },
-                { "@type": "ListItem", "position": 16, "name": "AI Citation Optimization", "url": "https://aipush.app/ai-citation-optimization-guide", "description": "How to get cited by ChatGPT, Perplexity, and AI Overviews — signals, structure, and strategy." }
+                { "@type": "ListItem", "position": 16, "name": "AI Citation Optimization", "url": "https://aipush.app/ai-citation-optimization-guide", "description": "How to get cited by ChatGPT, Perplexity, and AI Overviews — signals, structure, and strategy." },
+                { "@type": "ListItem", "position": 17, "name": "Competitor Analysis Report", "url": "https://aipush.app/competitor-analysis-report", "description": "How to create an AI-powered competitor analysis report — competitors scored, keyword gaps mapped, PDF in 5 minutes." }
               ]
             }) }} />
           </section>
@@ -2906,6 +2913,7 @@ function ShellRoutes() {
           <Route path="/answer-engine-optimization-guide" element={<AnswerEngineOptimizationGuide />} />
           <Route path="/ai-seo-vs-traditional-seo" element={<AiSeoVsTraditionalSeo />} />
           <Route path="/ai-seo-vs-traditional-seo-guide" element={<AiSeoVsTraditionalSeoGuide />} />
+          <Route path="/competitor-analysis-report" element={<CompetitorAnalysisReport />} />
           <Route path="/how-chatgpt-recommends-businesses" element={<HowChatgptRecommendsBusiness />} />
           <Route path="/get-indexed-by-ai" element={<GetIndexedByAi />} />
           <Route path="/agent-api" element={<AgentApi />} />

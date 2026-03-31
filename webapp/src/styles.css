@@ -220,6 +220,13 @@ html, body{
 }
 
 /* Animated ambient glow overlay — localized, not global wash */
+/* Hidden on ad landing pages via JS class .adlp-active on <html> (no :has() dependency) */
+html.adlp-active,
+html.adlp-active body {
+  background: #FFFFFF !important;
+  background-image: none !important;
+}
+html.adlp-active .app-root::before { display: none !important; }
 .app-root::before{
   content:"";
   position: fixed;
@@ -13989,6 +13996,31 @@ body.has-sticky-bar { scroll-padding-top: 108px; /* 48 bar + 60 header */ }
   font-family: var(--font-sans);
   background: #FFFFFF;
   color: #0F172A;
+
+  /* Force Catppuccin LIGHT (Latte) variables on ad pages regardless of user theme.
+     Ad pages have white background — dark theme variables create a "veil" effect
+     because --surface-card in dark theme is semi-transparent rgba(49,50,68,.78). */
+  --color-gold: #df8e1d;
+  --color-red: #d20f39;
+  --color-purple: #8839ef;
+  --color-indigo: #1e66f5;
+  --color-green: #40a02b;
+  --accent: #df8e1d;
+  --accent-secondary: #8839ef;
+  --bg: #eff1f5;
+  --surface-background: #eff1f5;
+  --surface-card: rgba(255,255,255,.92);
+  --surface-card-strong: #ffffff;
+  --surface-border: rgba(76,79,105,.18);
+  --surface-border-strong: rgba(76,79,105,.28);
+  --surface-inset: rgba(172,176,190,.22);
+  --text-primary: #4c4f69;
+  --text-secondary: #5c5f77;
+  --on-status: #ffffff;
+  --shadow-sm: 0 2px 8px rgba(76,79,105,.08), 0 8px 24px rgba(76,79,105,.06);
+  --shadow-md: 0 4px 14px rgba(76,79,105,.10), 0 18px 50px rgba(76,79,105,.08);
+  --shadow-lg: 0 8px 24px rgba(76,79,105,.10), 0 30px 80px rgba(76,79,105,.14);
+  --gradient-heading: linear-gradient(90deg, #1e66f5 0%, #8839ef 35%, #d20f39 70%, #df8e1d 100%);
 }
 
 /* Landing page nav bar */
@@ -15189,7 +15221,7 @@ body.has-sticky-bar { scroll-padding-top: 108px; /* 48 bar + 60 header */ }
   animation: adlp-pulse 2s infinite;
 }
 
-/* ── Section fade-in on scroll ── */
+/* ── Section fade-in on scroll (restored — "veil" was caused by dark theme, not animation) ── */
 .adlp-features, .adlp-audience, .adlp-steps,
 .adlp-day1, .adlp-pricing, .adlp-final {
   opacity: 0.15;

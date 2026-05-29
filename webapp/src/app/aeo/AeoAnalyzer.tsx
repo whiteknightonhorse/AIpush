@@ -672,9 +672,13 @@ export function AeoAnalyzer() {
     }
   }, []);
 
-  // restore from a confirm-link deep-link: /?scan=<id>&unlocked=1
+  // deep-link handling:
+  //  - /?url=<site> auto-starts a scan (the Share-modal links use this format)
+  //  - /?scan=<id>&unlocked=1 restores a confirmed report after the email click
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    const urlParam = params.get("url");
+    if (urlParam && urlParam.trim()) { startScan(urlParam.trim()); return; }
     const sid = params.get("scan");
     if (!sid) return;
     const wantUnlock = params.get("unlocked") === "1";

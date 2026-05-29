@@ -80,10 +80,9 @@ export function HowToAppearInAiAnswersAd() {
       <nav className="adlp-nav">
         <a href="/" className="adlp-nav-logo">AIPUSH</a>
         <div className="adlp-nav-links">
-          <a href="/guide" className="adlp-nav-link">How it works</a>
-          <a href="/#pricing" className="adlp-nav-link">Pricing</a>
-          <a href="/audit" className="adlp-nav-link">Free Audit</a>
-          <a href="/login" className="adlp-nav-cta">Get Started</a>
+
+          <a href="/" className="adlp-nav-link">Free analyzer</a>
+          <a href="/" className="adlp-nav-cta">Analyze your site</a>
         </div>
       </nav>
       <section className="adlp-hero">

@@ -195,7 +195,7 @@ function ScoreGauge({ score }: { score: number }) {
   const path = "M 24 150 A 126 126 0 0 1 276 150";
   const ARC = Math.PI * 126;
   return (
-    <div style={{ position: "relative", width: 300, height: 172 }} role="meter" aria-valuenow={score} aria-valuemin={0} aria-valuemax={100} aria-label="AEO score">
+    <div style={{ position: "relative", width: 300, height: 190 }} role="meter" aria-valuenow={score} aria-valuemin={0} aria-valuemax={100} aria-label="AEO score">
       <svg viewBox="0 0 300 172" width="300" height="172">
         <path d={path} fill="none" stroke="var(--surface-inset)" strokeWidth="18" strokeLinecap="round" />
         <path d={path} fill="none" stroke={col} strokeWidth="18" strokeLinecap="round" strokeDasharray={`${(shown / 100) * ARC} ${ARC}`} />
@@ -206,8 +206,8 @@ function ScoreGauge({ score }: { score: number }) {
           <div style={{ fontSize: 13, color: "var(--text-tertiary)", marginTop: 6, fontWeight: 600 }}>/ 100</div>
         </div>
       </div>
-      <div style={{ position: "absolute", left: 18, bottom: 2, fontSize: 12, color: "var(--text-tertiary)", fontWeight: 600 }}>0</div>
-      <div style={{ position: "absolute", right: 14, bottom: 2, fontSize: 12, color: "var(--text-tertiary)", fontWeight: 600 }}>100</div>
+      <div style={{ position: "absolute", left: 10, bottom: 0, fontSize: 12, color: "var(--text-tertiary)", fontWeight: 600 }}>0</div>
+      <div style={{ position: "absolute", right: 6, bottom: 0, fontSize: 12, color: "var(--text-tertiary)", fontWeight: 600 }}>100</div>
     </div>
   );
 }
@@ -493,6 +493,59 @@ function Scanning({ url, ready, onDone }: { url: string; ready: boolean; onDone:
   );
 }
 
+function ShareModal({ url, score, level, onClose }: { url: string; score: number; level: Level; onClose: () => void }) {
+  useEffect(() => {
+    const k = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    document.addEventListener("keydown", k);
+    document.body.style.overflow = "hidden";
+    return () => { document.removeEventListener("keydown", k); document.body.style.overflow = ""; };
+  }, [onClose]);
+  const pageUrl = `${location.origin}/?url=${encodeURIComponent(url)}`;
+  const text = `My site scored ${score}/100 (AEO Level ${level.n}${level.name ? " · " + level.name : ""}) on the AIPUSH AI-readiness analyzer. Check yours:`;
+  const eu = encodeURIComponent(pageUrl);
+  const et = encodeURIComponent(text);
+  const targets: { label: string; href: string }[] = [
+    { label: "X / Twitter", href: `https://twitter.com/intent/tweet?text=${et}&url=${eu}` },
+    { label: "LinkedIn", href: `https://www.linkedin.com/sharing/share-offsite/?url=${eu}` },
+    { label: "Facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${eu}` },
+    { label: "WhatsApp", href: `https://wa.me/?text=${encodeURIComponent(text + " " + pageUrl)}` },
+    { label: "Email", href: `mailto:?subject=${encodeURIComponent("AIPUSH AEO score")}&body=${encodeURIComponent(text + "\n\n" + pageUrl)}` },
+  ];
+  const [copied, setCopied] = useState(false);
+  const copyLink = async () => {
+    try { await navigator.clipboard.writeText(pageUrl); }
+    catch { const ta = document.createElement("textarea"); ta.value = pageUrl; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); }
+    setCopied(true); setTimeout(() => setCopied(false), 1600);
+  };
+  return (
+    <div onClick={onClose} role="dialog" aria-modal="true" aria-label="Share results" style={{ position: "fixed", inset: 0, zIndex: 60, background: "color-mix(in oklab, var(--ctp-crust) 62%, transparent)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 18 }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ width: "min(440px,100%)", display: "grid", gap: 16, padding: "22px 22px 24px", background: "var(--surface-card)", border: "1px solid var(--surface-border)", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-lg)" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
+          <div>
+            <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800 }}>Share your result</h3>
+            <p style={{ margin: "4px 0 0", fontSize: 13.5, color: "var(--text-tertiary)" }}>Score {score}/100 · AEO Level {level.n}{level.name ? " · " + level.name : ""}</p>
+          </div>
+          <button onClick={onClose} aria-label="Close" style={{ flex: "none", width: 34, height: 34, borderRadius: 999, display: "grid", placeItems: "center", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", color: "var(--text-secondary)", cursor: "pointer", fontSize: 16 }}><I.x /></button>
+        </div>
+        <div style={{ display: "grid", gap: 8 }}>
+          {targets.map((t) => (
+            <a key={t.label} href={t.href} target="_blank" rel="noopener noreferrer" onClick={onClose} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "12px 15px", fontSize: 14.5, fontWeight: 600, textDecoration: "none", color: "var(--text-primary)", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", borderRadius: "var(--radius-sm)" }}>
+              <span>{t.label}</span>
+              <span style={{ fontSize: 14, color: "var(--text-tertiary)", display: "inline-flex" }}><I.ext /></span>
+            </a>
+          ))}
+        </div>
+        <div style={{ display: "flex", gap: 8, alignItems: "center", padding: "10px 12px", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", borderRadius: "var(--radius-sm)" }}>
+          <span style={{ flex: 1, minWidth: 0, fontSize: 13, color: "var(--text-secondary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{pageUrl}</span>
+          <button onClick={copyLink} style={{ flex: "none", display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 13px", fontSize: 13, fontWeight: 700, cursor: "pointer", borderRadius: "var(--radius-sm)", color: copied ? "var(--status-success)" : "var(--on-accent)", background: copied ? "var(--surface-card)" : "var(--accent)", border: copied ? "1px solid var(--status-success-border)" : "none" }}>
+            <span style={{ fontSize: 14, display: "inline-flex" }}>{copied ? <I.check /> : <I.copy />}</span>{copied ? "Copied" : "Copy link"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const primaryBtn: CSS = { display: "inline-flex", alignItems: "center", gap: 8, padding: "12px 20px", fontSize: 14.5, fontWeight: 700, cursor: "pointer", borderRadius: "var(--radius-md)", color: "var(--on-accent)", background: "var(--accent)", border: "none", boxShadow: "var(--shadow-accent)" };
 const secondaryBtn: CSS = { display: "inline-flex", alignItems: "center", gap: 7, padding: "12px 18px", fontSize: 14.5, fontWeight: 700, cursor: "pointer", borderRadius: "var(--radius-md)", color: "var(--text-primary)", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)" };
 
@@ -502,7 +555,16 @@ function Results({ data, unlocked, lockedCount, sent, gate, onScanAnother }: {
   onScanAnother: () => void;
 }) {
   const [modal, setModal] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const [activeCat, setActiveCat] = useState<string | null>(null);
+  const onShare = async () => {
+    const pageUrl = `${location.origin}/?url=${encodeURIComponent(data.url)}`;
+    const shareData = { title: "AIPUSH AEO score", text: `My site scored ${data.score}/100 on the AIPUSH AI-readiness analyzer.`, url: pageUrl };
+    if (typeof navigator !== "undefined" && (navigator as Navigator & { share?: (d: ShareData) => Promise<void> }).share) {
+      try { await (navigator as Navigator & { share: (d: ShareData) => Promise<void> }).share(shareData); return; } catch { /* user cancelled or unsupported → fall back to modal */ }
+    }
+    setShareOpen(true);
+  };
   const findingsRef = useRef<HTMLDivElement>(null);
   const bundle = useMemo(() => buildBundle(data), [data]);
   const freeFixes = useMemo(() => {
@@ -522,7 +584,7 @@ function Results({ data, unlocked, lockedCount, sent, gate, onScanAnother }: {
             <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{data.url}</span>
           </span>
           <div style={{ display: "flex", gap: 8, flex: "none" }}>
-            <GhostBtn icon={<I.share />} label="Share" onClick={() => { const u = `${location.origin}/?url=${encodeURIComponent(data.url)}`; navigator.clipboard?.writeText(u).catch(() => {}); }} />
+            <GhostBtn icon={<I.share />} label="Share" onClick={onShare} />
             <GhostBtn icon={<I.refresh />} label="Scan another" onClick={onScanAnother} />
           </div>
         </div>
@@ -570,6 +632,7 @@ function Results({ data, unlocked, lockedCount, sent, gate, onScanAnother }: {
         </div>
       </div>
       {modal && <CopyAllModal bundle={bundle} onClose={() => setModal(false)} />}
+      {shareOpen && <ShareModal url={data.url} score={data.score} level={data.level} onClose={() => setShareOpen(false)} />}
     </div>
   );
 }

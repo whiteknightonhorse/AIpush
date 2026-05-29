@@ -310,52 +310,16 @@ function Shell({ children }: { children: React.ReactNode }) {
             </Link>
           )}
 
+          {/* AEO pivot: old crypto-product nav (Audit/MIP/Login/Get-Started/Dashboard)
+              retired. Content pages keep only the brand + a single CTA to the
+              analyzer + theme toggle, so no stale product info remains. */}
           {!isMinimalShell && (
             <nav className="header-actions header-actions--uxfix" aria-label="Main navigation">
-              {isDashboardPage || isClientPage ? (
-                <div className="header-nav--uxfix">
-                  <button
-                    className="btn btn-ghost header-link--uxfix"
-                    style={{ fontSize: 13, opacity: 0.7 }}
-                    onClick={() => {
-                      fetch("/api/auth/logout", { method: "POST", credentials: "include" })
-                        .finally(() => { window.location.href = "/"; });
-                    }}
-                  >
-                    Log out
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <div className="header-nav--uxfix header-nav-desktop">
-                    <Link className="btn btn-ghost header-link--uxfix" to="/audit" data-testid="shell-nav-audit">
-                      Audit
-                    </Link>
-                    <Link className="btn btn-ghost header-link--uxfix header-link-mip" to="/mip">
-                      MIP <span className="header-new-badge">New</span>
-                    </Link>
-
-                    {shellAuth !== "authed" && (
-                      <Link className="btn btn-ghost header-link--uxfix" to="/login" data-testid="shell-nav-login">
-                        Login
-                      </Link>
-                    )}
-                    {shellAuth !== "authed" && (
-                      <Link className="btn header-cta--uxfix" to="/login" data-testid="shell-nav-getstarted">
-                        Get Started
-                      </Link>
-                    )}
-                    {shellAuth === "authed" && (
-                      <Link className="btn btn-ghost header-link--uxfix" to="/client" data-testid="shell-nav-dashboard">
-                        Dashboard
-                      </Link>
-                    )}
-                  </div>
-
-                  {/* Mobile hamburger */}
-                  <MobileMenu shellAuth={shellAuth} />
-                </>
-              )}
+              <div className="header-nav--uxfix header-nav-desktop">
+                <Link className="btn header-cta--uxfix" to="/" data-testid="shell-nav-analyzer">
+                  Free analyzer
+                </Link>
+              </div>
 
               {/* THEME TOGGLE */}
               <button
@@ -391,46 +355,13 @@ function Shell({ children }: { children: React.ReactNode }) {
       ) : !isMinimalShell ? (
         <footer className="footer footer--uxfix" data-testid="shell-footer">
           <div className="container">
-            <div className="footer-grid--uxfix">
-              <div className="footer-col--uxfix">
-                <div className="footer-brand--uxfix">
-                  <img src="/logo.png" alt="AIPUSH" width={20} height={20} />
-                  AIPUSH
-                </div>
-                <div className="footer-brand-desc--uxfix">
-                  AI-optimized page distribution for traffic &amp; sales
-                </div>
-                <div className="footer-social--uxfix">
-                  <a href="https://x.com/aipush_app" target="_blank" rel="noopener noreferrer" className="footer-x-link--uxfix" aria-label="X (Twitter)">
-                    <svg className="footer-x-icon--uxfix" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                  </a>
-                  <a href="https://github.com/whiteknightonhorse/AIpush" target="_blank" rel="noopener noreferrer" className="footer-x-link--uxfix" aria-label="GitHub">
-                    <svg className="footer-x-icon--uxfix" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-                  </a>
-                </div>
-              </div>
-              <div className="footer-col--uxfix">
-                <h4>Product</h4>
-                <ul>
-                  <li><Link to="/guide">How it works</Link></li>
-                  <li><a href="/#pricing">Pricing</a></li>
-                  <li><Link to="/mip">MIP Report</Link></li>
-                  <li><Link to="/audit">Free Audit</Link></li>
-                  <li><a href="/#guides">Guides</a></li>
-                </ul>
-              </div>
-              <div className="footer-col--uxfix">
-                <h4>Company</h4>
-                <ul>
-                  <li><Link to="/privacy">Privacy</Link></li>
-                  <li><Link to="/privacy#terms">Terms of Service</Link></li>
-                  <li><a href="mailto:support@aipush.app">Contact</a></li>
-                  <li><Link to="/agent-api">MCP Integration</Link></li>
-                </ul>
-              </div>
-            </div>
-            <div className="footer-bottom--uxfix">
-              &copy; {new Date().getFullYear()} AIPUSH
+            <div className="footer-bottom--uxfix" style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 16, flexWrap: "wrap", fontSize: 13 }}>
+              <Link to="/" style={{ opacity: 0.7 }}>Free analyzer</Link>
+              <Link to="/privacy" style={{ opacity: 0.7 }}>Privacy</Link>
+              <Link to="/privacy#terms" style={{ opacity: 0.7 }}>Terms</Link>
+              <a href="mailto:support@aipush.app" style={{ opacity: 0.7 }}>Contact</a>
+              <a href="https://github.com/whiteknightonhorse/AIpush" target="_blank" rel="noopener noreferrer" style={{ opacity: 0.7 }}>GitHub</a>
+              <span>&copy; {new Date().getFullYear()} AIPUSH</span>
             </div>
           </div>
         </footer>

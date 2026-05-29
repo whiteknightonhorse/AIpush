@@ -48,7 +48,7 @@
 .aeo-root .topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;max-width:var(--maxw);margin:0 auto;width:100%}
 .aeo-root .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px;letter-spacing:-.01em}
 .aeo-root .brand-dot{width:22px;height:22px;border-radius:7px;background:linear-gradient(135deg,var(--gold),var(--peach));display:grid;place-items:center;color:#fff;font-size:13px}
-.aeo-root .theme-btn{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;border:1px solid var(--card-border);background:var(--card);transition:.2s}
+.aeo-root .theme-btn{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;border:1px solid var(--card-border);background:var(--card);transition:.2s}
 .aeo-root .theme-btn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
 
 /* ===== Landing ===== */

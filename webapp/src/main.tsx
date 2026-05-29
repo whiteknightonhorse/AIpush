@@ -3016,12 +3016,15 @@ function ShellRoutes() {
       <ScrollToHash />
       <CanonicalUpdater />
       <Routes>
-          <Route path="/home" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/audit" element={<Audit />} />
-          <Route path="/guide" element={<Guide />} />
-          <Route path="/guide/*" element={<Navigate to="/guide" replace />} />
-          <Route path="/mip" element={<MipReport />} />
+          {/* ARCHIVED old-product surfaces — redirect to the analyzer.
+              (Old crypto/MIP landing, audit, login, dashboard, market report,
+              how-it-works guide. SEO article pages + /ads/* stay live below.) */}
+          <Route path="/home" element={<Navigate to="/" replace />} />
+          <Route path="/login" element={<Navigate to="/" replace />} />
+          <Route path="/audit" element={<Navigate to="/" replace />} />
+          <Route path="/guide" element={<Navigate to="/" replace />} />
+          <Route path="/guide/*" element={<Navigate to="/" replace />} />
+          <Route path="/mip" element={<Navigate to="/" replace />} />
           <Route path="/how-to-rank-in-chatgpt" element={<HowToRankInChatgpt />} />
           <Route path="/how-to-get-mentioned-in-chatgpt" element={<HowToGetMentionedInChatgpt />} />
           <Route path="/llm-seo" element={<LlmSeo />} />
@@ -3088,22 +3091,9 @@ function ShellRoutes() {
           <Route path="/ads/ai-seo-tools" element={<AiSeoToolsPage />} />
           <Route path="/ads/ai-seo-software" element={<AiSeoSoftware />} />
           <Route path="/ads/ai-seo-platform" element={<AiSeoPlatform />} />
-          <Route
-            path="/dashboard"
-            element={
-              <RequireAuth>
-                <Dashboard />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/client"
-            element={
-              <RequireAuth>
-                <ClientDashboard />
-              </RequireAuth>
-            }
-          />
+          {/* ARCHIVED authed dashboards — redirect to the analyzer. */}
+          <Route path="/dashboard" element={<Navigate to="/" replace />} />
+          <Route path="/client" element={<Navigate to="/" replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Shell>

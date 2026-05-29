@@ -139,7 +139,7 @@ export function AiSeoConsultant() {
               <div className="aipush-seo-stat-label">Higher AI citation rate</div>
             </div>
             <div>
-              <div className="aipush-seo-stat-number" style={{color: "var(--color-green)"}}>$0.66</div>
+              <div className="aipush-seo-stat-number" style={{color: "var(--color-green)"}}>$2.67</div>
               <div className="aipush-seo-stat-label">Per day, all-inclusive</div>
             </div>
             <div>
@@ -320,7 +320,7 @@ export function AiSeoConsultant() {
             Ready to automate the execution side of AI SEO? <Link to="/login">Start with AIPUSH</Link> and let our system generate optimized, AI-ready pages for your business at scale. Explore our guides on <Link to="/how-to-rank-in-chatgpt">ranking in ChatGPT</Link>, <Link to="/optimize-website-for-ai">website optimization for AI</Link>, and <Link to="/how-to-appear-in-ai-answers">appearing in AI answers</Link> for the strategic foundation any AI SEO consultant would recommend.
           </p>
 
-          <InlineSignup pageSlug="ai-seo-consultant" ctaText="Start Free — $19.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
+          <InlineSignup pageSlug="ai-seo-consultant" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
 
           <nav className="aipush-seo-related">
             <Link to="/ai-seo-services">AI SEO Services</Link>

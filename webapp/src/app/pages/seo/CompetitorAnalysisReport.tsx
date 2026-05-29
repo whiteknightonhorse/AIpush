@@ -180,7 +180,7 @@ export function CompetitorAnalysisReport() {
 
           <h2>How Do Traditional Competitor Analysis Reports Compare to AI-Powered Reports?</h2>
           <p>
-            Traditional competitor analysis reports require 2-4 weeks of manual research by an analyst or agency, costing $2,000-8,000 per report. AI-powered competitor analysis reports achieve comparable accuracy in minutes at a fraction of the cost because they automate the three most time-consuming phases: competitor discovery, data extraction, and relationship mapping. The trade-off is customization depth — manual reports can explore niche angles, while AI reports excel at breadth and speed.
+            Traditional competitor analysis reports require 2-4 weeks of manual research by an analyst or agency, costing $2,000-8,000 per report. AI-powered competitor analysis reports achieve comparable accuracy in minutes at a fraction of the cost because they automate the three most time-consuming phases: competitor discovery, data extraction, and relationship mapping. The trade-off is customization depth — manual reports can explore niche angles, while AI reports excel at breadth and speed. For a broader view of how to build ongoing intelligence beyond a single report, see our guide to <Link to="/competitive-intelligence-report">competitive intelligence reports</Link>.
           </p>
 
           <div className="aipush-seo-table-wrap">
@@ -306,7 +306,7 @@ export function CompetitorAnalysisReport() {
             <p>Yes — a competitor analysis report directly informs your AI visibility strategy by revealing which competitors are already being cited by AI assistants and why. The keyword gap analysis shows specific content topics where competitors have structured, AI-readable pages that you lack. Filling these gaps with optimized content is the fastest path to earning AI citations.</p>
 
             <h3>How is AIPUSH's MIP report different from Semrush or Ahrefs competitor tools?</h3>
-            <p>AIPUSH's MIP report is a one-time $29.99 purchase with no subscription, no account creation, and instant PDF delivery. Semrush starts at $99/month and Ahrefs at $99/month, both requiring ongoing subscriptions. MIP focuses specifically on competitive positioning and keyword gaps rather than general SEO tooling, making it ideal for businesses that need competitive intelligence without a monthly commitment.</p>
+            <p>AIPUSH's MIP report is a one-time $29.99 purchase with no subscription, no account creation, and instant PDF delivery. Semrush starts at $99/month and Ahrefs at $99/month, both requiring ongoing subscriptions. MIP focuses specifically on competitive positioning and keyword gaps rather than general SEO tooling, making it ideal for businesses that need competitive intelligence without a monthly commitment. For a detailed comparison of platforms, see our guide to the best <Link to="/ai-competitor-analysis-tool">AI competitor analysis tool</Link> options.</p>
 
             <h3>What types of businesses benefit most from competitor analysis reports?</h3>
             <p>Businesses in competitive markets with multiple direct competitors benefit most — particularly SaaS companies, e-commerce stores, professional service firms, and local businesses in crowded verticals. Startups use competitive reports for initial market positioning, while established businesses use them to monitor competitive shifts and identify expansion opportunities quarterly.</p>
@@ -320,7 +320,7 @@ export function CompetitorAnalysisReport() {
             With AI-powered tools reducing the cost from thousands of dollars to under $30, the question is no longer whether competitive analysis is affordable — it is whether you can afford to operate without it. Enter your URL below to generate your first <Link to="/mip">Market Intelligence Report</Link> and see exactly where you stand relative to your competitors.
           </p>
 
-          <InlineSignup pageSlug="competitor-analysis-report" ctaText="Start Free — $19.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
+          <InlineSignup pageSlug="competitor-analysis-report" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
 
           <nav className="aipush-seo-related">
             <Link to="/ai-seo-services">AI SEO Services</Link>

@@ -135,7 +135,7 @@ export function AiSeoServices() {
 
           <div className="aipush-seo-stats">
             <div>
-              <div className="aipush-seo-stat-number" style={{color: "var(--color-indigo)"}}>$0.66</div>
+              <div className="aipush-seo-stat-number" style={{color: "var(--color-indigo)"}}>$2.67</div>
               <div className="aipush-seo-stat-label">Per day, all-inclusive</div>
             </div>
             <div>
@@ -143,7 +143,7 @@ export function AiSeoServices() {
               <div className="aipush-seo-stat-label">Time to first citations</div>
             </div>
             <div>
-              <div className="aipush-seo-stat-number" style={{color: "var(--color-gold)"}}>$19.99</div>
+              <div className="aipush-seo-stat-number" style={{color: "var(--color-gold)"}}>$79.99</div>
               <div className="aipush-seo-stat-label">AIPUSH monthly cost</div>
             </div>
             <div>
@@ -187,13 +187,13 @@ export function AiSeoServices() {
                 <tr><td>Key technical signal</td><td>Backlinks, domain authority</td><td>Schema markup, server-rendered HTML, factual density</td></tr>
                 <tr><td>Measurement</td><td>Keyword rankings, organic traffic</td><td>AI citation frequency, retrieval hit rate</td></tr>
                 <tr><td>Content volume</td><td>10-20 pages per quarter</td><td>50-200+ pages per month for competitive coverage</td></tr>
-                <tr><td>Typical monthly cost</td><td>$1,500-$10,000</td><td>$500-$5,000 (or $19.99 automated)</td></tr>
+                <tr><td>Typical monthly cost</td><td>$1,500-$10,000</td><td>$500-$5,000 (or $79.99 automated)</td></tr>
               </tbody>
             </table>
           </div>
 
           <div className="aipush-seo-callout">
-            <p>The cost-to-content ratio is the defining advantage of automated AI SEO. A traditional agency producing 20 pages per month costs $3,000-$8,000. AIPUSH generates 600 AI-optimized pages monthly per client for $19.99 — a 150x cost efficiency gain with built-in quality gates.</p>
+            <p>The cost-to-content ratio is the defining advantage of automated AI SEO. A traditional agency producing 20 pages per month costs $3,000-$8,000. AIPUSH generates 600 AI-optimized pages monthly per client for $79.99 — a 150x cost efficiency gain with built-in quality gates.</p>
           </div>
 
           <h2>What Are the Different AI SEO Service Models?</h2>
@@ -210,7 +210,7 @@ export function AiSeoServices() {
           </p>
           <h3>Automated Platforms</h3>
           <p>
-            Platforms like AIPUSH automate the entire pipeline: they analyze your business, generate structured content, run quality audits, and publish directly to your domain. Typical cost: $19.99/month. Best for businesses that need high content volume (20+ pages/day) with consistent quality. The trade-off is less customization per page, offset by volume and consistency that manual approaches cannot match. Evaluating an <Link to="/ai-seo-company">AI SEO company</Link> against these criteria helps you decide which model fits.
+            Platforms like AIPUSH automate the entire pipeline: they analyze your business, generate structured content, run quality audits, and publish directly to your domain. Typical cost: $79.99/month. Best for businesses that need high content volume (20+ pages/day) with consistent quality. The trade-off is less customization per page, offset by volume and consistency that manual approaches cannot match. Evaluating an <Link to="/ai-seo-company">AI SEO company</Link> against these criteria helps you decide which model fits.
           </p>
 
           <h2>How Do You Evaluate an AI SEO Service Provider?</h2>
@@ -263,13 +263,13 @@ export function AiSeoServices() {
 
           <h2>How Much Do AI SEO Services Cost?</h2>
           <p>
-            AI SEO services range from $19.99/month for automated platforms to $10,000+/month for full-service agency engagements. The right investment depends on your content volume needs, internal capabilities, and how much customization each page requires. For most businesses, automated platforms offer the best cost-to-impact ratio because AI visibility is fundamentally a volume game.
+            AI SEO services range from $79.99/month for automated platforms to $10,000+/month for full-service agency engagements. The right investment depends on your content volume needs, internal capabilities, and how much customization each page requires. For most businesses, automated platforms offer the best cost-to-impact ratio because AI visibility is fundamentally a volume game.
           </p>
 
           <div className="aipush-seo-bars">
             <div className="aipush-seo-bar-row">
               <div className="aipush-seo-bar-label">
-                <span>Automated platform (e.g. AIPUSH)</span><span>$19.99/mo</span>
+                <span>Automated platform (e.g. AIPUSH)</span><span>$79.99/mo</span>
               </div>
               <div className="aipush-seo-bar-track">
                 <div className="aipush-seo-bar-fill" style={{width: "5%"}} />
@@ -301,7 +301,7 @@ export function AiSeoServices() {
             </div>
           </div>
           <p>
-            The content volume comparison makes the cost difference stark. A $5,000/month consultant might produce 15-20 optimized pages. A $7,000/month agency delivers 30-40 pages. AIPUSH produces 600 pages monthly per client — at $19.99. The quality floor is enforced by automated audit gates that check every page for structural compliance, factual density, and uniqueness before publishing. Understanding <Link to="/ai-search-optimization">how AI search engines select sources</Link> makes it clear why volume at consistent quality is the winning formula.
+            The content volume comparison makes the cost difference stark. A $5,000/month consultant might produce 15-20 optimized pages. A $7,000/month agency delivers 30-40 pages. AIPUSH produces 600 pages monthly per client — at $79.99. The quality floor is enforced by automated audit gates that check every page for structural compliance, factual density, and uniqueness before publishing. Understanding <Link to="/ai-search-optimization">how AI search engines select sources</Link> makes it clear why volume at consistent quality is the winning formula.
           </p>
 
           <h2>Frequently Asked Questions</h2>
@@ -315,7 +315,7 @@ export function AiSeoServices() {
             <h3>How many pages do I need for AI SEO to work?</h3>
             <p>Our data across clients shows a clear threshold: businesses with 15+ topically clustered pages see 4x the citation rate of those with fewer than 5. Beyond 50 pages, citation rates continue to climb but with diminishing marginal returns per page. The minimum viable footprint is 15-20 well-structured pages covering your core service queries.</p>
 
-            <h3>Is $19.99/month too cheap for real AI SEO?</h3>
+            <h3>Is $79.99/month too cheap for real AI SEO?</h3>
             <p>No — it reflects automation economics. Manual labor is expensive; compute is cheap. AIPUSH automates research, writing, auditing, and publishing through a fully automated pipeline. There is no human bottleneck, so the per-client cost is a fraction of manual services. The quality standard is enforced by automated audit gates, not human reviewers, which is both more consistent and more scalable.</p>
 
             <h3>What results should I expect in the first 90 days?</h3>
@@ -330,7 +330,7 @@ export function AiSeoServices() {
             Ready to automate your AI visibility? <Link to="/login">Start with AIPUSH</Link> and let our pipeline generate 20 Per day, all-inclusive on your domain — with built-in audit gates for quality, uniqueness, and structural compliance. Explore our guides on <Link to="/generative-engine-optimization">generative engine optimization</Link> and <Link to="/how-to-rank-in-chatgpt">ranking in ChatGPT</Link> for deeper strategic context.
           </p>
 
-          <InlineSignup pageSlug="ai-seo-services" ctaText="Start Free — $19.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
+          <InlineSignup pageSlug="ai-seo-services" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
 
           <nav className="aipush-seo-related">
             <Link to="/ai-seo-vs-traditional-seo-guide">AI SEO vs Traditional SEO</Link>

@@ -85,7 +85,7 @@ export function Guide() {
           <li><strong>Create an account</strong> with just your email — no password needed.</li>
           <li><strong>Set up your company</strong> by entering your domain, target URL, and verifying DNS.</li>
           <li><strong>Accept the Terms of Service</strong> and launch your campaign.</li>
-          <li><strong>Pay $19.99/month</strong> with USDT or USDC on Ethereum — subscription activates automatically after 3 block confirmations.</li>
+          <li><strong>Pay $79.99/month</strong> with USDT or USDC on Ethereum — subscription activates automatically after 3 block confirmations.</li>
           <li><strong>AIPUSH builds your Marketing Intelligence Profile</strong> — analyzes your business, competitors, and market gaps automatically.</li>
           <li><strong>20 AI-optimized pages are generated daily</strong> on your verified subdomain with automatic SSL and global CDN delivery.</li>
           <li><strong>Monitor everything from your dashboard</strong> — pipeline status, published pages, AI coverage, semantic coverage, and activity log.</li>
@@ -212,7 +212,7 @@ export function Guide() {
         <article className="aipush-guide-step" id="payment">
           <div className="aipush-guide-stepBadge">5</div>
           <div className="aipush-guide-stepBody">
-            <h2 className="aipush-guide-stepTitle">Pay $19.99/Month with Crypto</h2>
+            <h2 className="aipush-guide-stepTitle">Pay $79.99/Month with Crypto</h2>
             <p className="aipush-guide-stepText">
               AIPUSH accepts payments in <strong>USDT</strong> or <strong>USDC</strong> on the
               Ethereum mainnet. No credit card required. After launching your campaign, open the
@@ -222,9 +222,9 @@ export function Guide() {
             <div className="aipush-guide-substep">
               <h3 className="aipush-guide-substepTitle">Payment Options</h3>
               <ul className="aipush-guide-list">
-                <li><strong>Monthly:</strong> $19.99 — 30 days of service</li>
-                <li><strong>Yearly:</strong> $232.68 — 365 days (3% discount)</li>
-                <li><strong>Custom top-up:</strong> Any amount from $19.99 to $2,000 — days are calculated proportionally</li>
+                <li><strong>Monthly:</strong> $79.99 — 30 days of service</li>
+                <li><strong>Yearly:</strong> $931.08 — 365 days (3% discount)</li>
+                <li><strong>Custom top-up:</strong> Any amount from $79.99 to $2,000 — days are calculated proportionally</li>
               </ul>
             </div>
 

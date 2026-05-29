@@ -135,7 +135,7 @@ export function OptimizeWebsiteForAi() {
 
           <div className="aipush-seo-stats">
             <div>
-              <div className="aipush-seo-stat-number" style={{color: "var(--color-indigo)"}}>$0.66</div>
+              <div className="aipush-seo-stat-number" style={{color: "var(--color-indigo)"}}>$2.67</div>
               <div className="aipush-seo-stat-label">Per day, all-inclusive</div>
             </div>
             <div>
@@ -282,7 +282,7 @@ export function OptimizeWebsiteForAi() {
             Ready to automate your AI optimization? <Link to="/login">Start with AIPUSH</Link> and let our system generate AI-ready pages for your business at scale. Explore our guides on <Link to="/how-to-appear-in-ai-answers">appearing in AI answers</Link> and <Link to="/chatgpt-indexing">how ChatGPT discovers content</Link> for additional strategies.
           </p>
 
-          <InlineSignup pageSlug="optimize-website-for-ai" ctaText="Start Free — $19.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
+          <InlineSignup pageSlug="optimize-website-for-ai" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
 
           <nav className="aipush-seo-related">
             <Link to="/ai-citation-optimization-guide">AI Citation Optimization</Link>

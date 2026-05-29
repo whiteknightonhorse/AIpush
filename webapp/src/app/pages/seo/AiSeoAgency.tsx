@@ -144,7 +144,7 @@ export function AiSeoAgency() {
               <div className="aipush-seo-stat-label">businesses use AIPUSH for automated AI visibility</div>
             </div>
             <div>
-              <div className="aipush-seo-stat-number" style={{color: "var(--color-gold)"}}>$0.66</div>
+              <div className="aipush-seo-stat-number" style={{color: "var(--color-gold)"}}>$2.67</div>
               <div className="aipush-seo-stat-label">AI-optimized pages published daily across our platform</div>
             </div>
             <div>
@@ -209,7 +209,7 @@ export function AiSeoAgency() {
             <li><strong>Verify publishing location.</strong> Content must be deployed to a domain you control. If the agency publishes on their own infrastructure, the citation authority benefits them, not you.</li>
             <li><strong>Inspect content quality.</strong> Ask for sample pages. Check for semantic HTML structure, question-form headings with direct answer paragraphs, and factual density rather than marketing filler. Review the <Link to="/how-to-appear-in-ai-answers">AI discoverability checklist</Link> for specific criteria.</li>
             <li><strong>Confirm publishing volume and cadence.</strong> AI models refresh retrieval indexes continuously. A one-time batch of 20 articles will not sustain authority against competitors publishing daily. Ask for the exact number of pages per week or month.</li>
-            <li><strong>Understand the pricing model.</strong> Retainer-based agencies charge $2,000-$15,000/month. Automated platforms like AIPUSH deliver 600 pages/month for $19.99. The 100x cost difference reflects the structural advantage of software over billable hours.</li>
+            <li><strong>Understand the pricing model.</strong> Retainer-based agencies charge $2,000-$15,000/month. Automated platforms like AIPUSH deliver 600 pages/month for $79.99. The 100x cost difference reflects the structural advantage of software over billable hours.</li>
           </ol>
 
           <h2>What Does a Typical AI SEO Agency Engagement Look Like?</h2>
@@ -252,7 +252,7 @@ export function AiSeoAgency() {
 
           <h2>How Much Does an AI SEO Agency Cost?</h2>
           <p>
-            AI SEO agency pricing ranges from $1,500 to $15,000 per month depending on team size, content volume, and service scope. Boutique agencies with dedicated strategists sit at the high end. Mid-tier agencies offering templated AI SEO packages fall in the $2,000-$5,000 range. Automated platforms like AIPUSH deliver equivalent or greater output for $19.99 per month because the pipeline is software, not headcount.
+            AI SEO agency pricing ranges from $1,500 to $15,000 per month depending on team size, content volume, and service scope. Boutique agencies with dedicated strategists sit at the high end. Mid-tier agencies offering templated AI SEO packages fall in the $2,000-$5,000 range. Automated platforms like AIPUSH deliver equivalent or greater output for $79.99 per month because the pipeline is software, not headcount.
           </p>
           <p>
             The cost disparity is not about quality &mdash; it is about delivery model. Agencies bill for human hours: writers researching topics, editors reviewing drafts, account managers scheduling calls. Automated systems replace those hours with deterministic pipelines that generate, audit, and publish without human intervention. Our platform processes AI-optimized pages daily across clients on a single infrastructure &mdash; marginal cost per additional client approaches zero.
@@ -302,13 +302,13 @@ export function AiSeoAgency() {
                 <tr><td>Boutique AI SEO agency</td><td>$5,000 &ndash; $15,000</td><td>15 &ndash; 30</td><td>$170 &ndash; $500</td></tr>
                 <tr><td>Mid-tier AI SEO agency</td><td>$2,000 &ndash; $5,000</td><td>8 &ndash; 20</td><td>$100 &ndash; $250</td></tr>
                 <tr><td>Freelance AI SEO specialist</td><td>$500 &ndash; $2,000</td><td>4 &ndash; 10</td><td>$50 &ndash; $200</td></tr>
-                <tr><td>AIPUSH (automated platform)</td><td>$19.99</td><td>600</td><td>$0.03</td></tr>
+                <tr><td>AIPUSH (automated platform)</td><td>$79.99</td><td>600</td><td>$0.03</td></tr>
               </tbody>
             </table>
           </div>
 
           <div className="aipush-seo-callout">
-            <p>At $19.99/month, AIPUSH produces more AI-optimized, audit-verified pages in a single week than most agencies deliver in an entire quarter. The 30x volume advantage compounds: more pages mean broader semantic coverage, which means higher probability of AI citation across a wider range of user queries.</p>
+            <p>At $79.99/month, AIPUSH produces more AI-optimized, audit-verified pages in a single week than most agencies deliver in an entire quarter. The 30x volume advantage compounds: more pages mean broader semantic coverage, which means higher probability of AI citation across a wider range of user queries.</p>
           </div>
 
           <h2>When Should You Hire an AI SEO Agency vs. Automate?</h2>
@@ -341,7 +341,7 @@ export function AiSeoAgency() {
 
             <h3>Is an AI SEO agency worth it for a small business with a limited budget?</h3>
             <p>
-              At agency retainer rates ($2,000-$15,000/month), AI SEO is a significant investment for small businesses. This is precisely why automated platforms exist. AIPUSH delivers the same core output &mdash; daily AI-optimized page publishing on your domain &mdash; for $19.99/month. For most small businesses, automation provides better ROI than agency services.
+              At agency retainer rates ($2,000-$15,000/month), AI SEO is a significant investment for small businesses. This is precisely why automated platforms exist. AIPUSH delivers the same core output &mdash; daily AI-optimized page publishing on your domain &mdash; for $79.99/month. For most small businesses, automation provides better ROI than agency services.
             </p>
 
             <h3>What is the difference between an AI SEO agency, an AI SEO company, and an AI SEO consultant?</h3>
@@ -358,7 +358,7 @@ export function AiSeoAgency() {
             Ready to automate your AI visibility? <Link to="/login">Start with AIPUSH</Link> and let our system generate 20 AI-optimized pages per day on your domain &mdash; fully automated, audit-verified, and built for how AI search actually works.
           </p>
 
-          <InlineSignup pageSlug="ai-seo-agency" ctaText="Start Free — $19.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
+          <InlineSignup pageSlug="ai-seo-agency" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
 
           <nav className="aipush-seo-related">
             <Link to="/ai-seo-services">AI SEO Services</Link>

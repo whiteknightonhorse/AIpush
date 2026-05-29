@@ -135,7 +135,7 @@ export function HowToAppearInAiAnswers() {
 
           <div className="aipush-seo-stats">
             <div>
-              <div className="aipush-seo-stat-number" style={{color: "var(--color-indigo)"}}>$0.66</div>
+              <div className="aipush-seo-stat-number" style={{color: "var(--color-indigo)"}}>$2.67</div>
               <div className="aipush-seo-stat-label">Pages optimized daily</div>
             </div>
             <div>
@@ -319,7 +319,7 @@ export function HowToAppearInAiAnswers() {
             Ready to automate your AI answer visibility? <Link to="/login">Start with AIPUSH</Link> and let our system generate optimized, answer-ready pages for your business at scale. Explore our guides on <Link to="/generative-engine-optimization">generative engine optimization (GEO)</Link>, <Link to="/llm-seo">LLM SEO strategy</Link>, and <Link to="/chatgpt-indexing">how ChatGPT discovers and indexes content</Link> for the complete framework.
           </p>
 
-          <InlineSignup pageSlug="how-to-appear-in-ai-answers" ctaText="Start Free — $19.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
+          <InlineSignup pageSlug="how-to-appear-in-ai-answers" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
 
           <nav className="aipush-seo-related">
             <Link to="/answer-engine-optimization-guide">Answer Engine Optimization</Link>

@@ -343,7 +343,7 @@ export function AiCitationOptimizationGuide() {
             The practical path forward is straightforward: establish the technical foundation (SSR, schema, ai.txt), define your primary topic cluster, and begin publishing structured answer-first content at consistent volume. For most businesses, the bottleneck is publishing velocity — producing 15–20+ structured pages per month manually is expensive and slow. AIPUSH automates the complete pipeline: content generation, schema application, audit gating for factual density and structural compliance, and daily publishing at scale. The strategy behind <Link to="/ai-search-optimization">AI search optimization</Link> and the measurement framework in <Link to="/ai-visibility-tracking">AI visibility tracking</Link> are the right next reads for operationalizing this approach. Start building your citation footprint now — the compounding advantage starts accumulating from day one of publishing.
           </p>
 
-          <InlineSignup pageSlug="ai-citation-optimization-guide" ctaText="Start Free — $19.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
+          <InlineSignup pageSlug="ai-citation-optimization-guide" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
 
           <nav className="aipush-seo-related">
             <Link to="/ai-search-optimization">AI Search Optimization</Link>

@@ -146,7 +146,7 @@ export function AnswerEngineOptimizationGuide() {
               <div className="aipush-seo-stat-label">Answer-first advantage</div>
             </div>
             <div>
-              <div className="aipush-seo-stat-number" style={{color: "var(--color-purple)"}}>$19.99</div>
+              <div className="aipush-seo-stat-number" style={{color: "var(--color-purple)"}}>$79.99</div>
               <div className="aipush-seo-stat-label">AIPUSH monthly cost</div>
             </div>
           </div>
@@ -251,7 +251,7 @@ export function AnswerEngineOptimizationGuide() {
             Content volume is the primary driver of AEO success because AI systems evaluate topical authority at the domain level, not the page level. A domain with 5 well-optimized pages covering a topic is less likely to be selected as a source than a domain with 50 pages covering the same topic comprehensively. AI retrievers interpret content depth as a signal of credibility — the same way academic citations favor comprehensive textbooks over single papers.
           </p>
           <p>
-            This is why the economics of AEO favor high-volume automated content programs over manually produced pages. Building topical authority across even a single cluster — say, 20 pages covering all facets of answer engine optimization — requires more production capacity than most teams can sustain manually. AIPUSH automates this production pipeline: for $19.99/month, a business generates 20 AI-optimized pages per day on its own domain, building the topical depth that drives citation rates. Businesses in the AIPUSH program reach the 50-page threshold within the first week and the 200-page threshold within two weeks, which is when citation rates typically begin to accelerate in <Link to="/ai-search-optimization">AI search systems</Link>.
+            This is why the economics of AEO favor high-volume automated content programs over manually produced pages. Building topical authority across even a single cluster — say, 20 pages covering all facets of answer engine optimization — requires more production capacity than most teams can sustain manually. AIPUSH automates this production pipeline: for $79.99/month, a business generates 20 AI-optimized pages per day on its own domain, building the topical depth that drives citation rates. Businesses in the AIPUSH program reach the 50-page threshold within the first week and the 200-page threshold within two weeks, which is when citation rates typically begin to accelerate in <Link to="/ai-search-optimization">AI search systems</Link>.
           </p>
 
           <div className="aipush-seo-callout">
@@ -333,7 +333,7 @@ export function AnswerEngineOptimizationGuide() {
             The businesses that will build durable AI visibility advantages in 2026 are the ones treating AEO as an ongoing production program — not a one-time audit or a single content batch. Answer engines are continuously updated, new query patterns emerge weekly, and competitor AEO programs intensify over time. The businesses that publish at consistent volume, with consistent structural quality, and measure citation outcomes continuously are the ones that compound their advantage. If you are ready to build that program, the form below connects you to the AIPUSH pipeline — 20 AI-optimized pages per day, automated quality gates, published directly to your domain.
           </p>
 
-          <InlineSignup pageSlug="answer-engine-optimization-guide" ctaText="Start Free — $19.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
+          <InlineSignup pageSlug="answer-engine-optimization-guide" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
 
           <nav className="aipush-seo-related">
             <Link to="/ai-search-optimization">AI Search Optimization</Link>

@@ -303,7 +303,7 @@ export function AiSeoVsTraditionalSeoGuide() {
             <div className="aipush-seo-timeline-step">
               <div className="aipush-seo-timeline-badge">4</div>
               <h3 className="aipush-seo-timeline-title">Scale AI-optimized content production</h3>
-              <p className="aipush-seo-timeline-text">Publish new pages targeting AI query clusters at volume. AIPUSH automates this — 20 pages/day on your domain, each audit-verified for structure, uniqueness, and factual density. $19.99/month versus $5,000-$10,000 for manual production.</p>
+              <p className="aipush-seo-timeline-text">Publish new pages targeting AI query clusters at volume. AIPUSH automates this — 20 pages/day on your domain, each audit-verified for structure, uniqueness, and factual density. $79.99/month versus $5,000-$10,000 for manual production.</p>
             </div>
             <div className="aipush-seo-timeline-step">
               <div className="aipush-seo-timeline-badge">5</div>
@@ -317,15 +317,15 @@ export function AiSeoVsTraditionalSeoGuide() {
 
           <h2>How Much Does It Cost to Cover Both Channels?</h2>
           <p>
-            A comprehensive dual-channel strategy ranges from $1,520/month (automated AI SEO + basic traditional) to $10,020/month (automated AI + enterprise traditional agency). The AI component is the affordable part — AIPUSH generates 600 AI-optimized pages monthly for $19.99, compared to $3,000-$8,000 for a traditional agency producing 20-40 pages. Evaluating an <Link to="/ai-seo-company">AI SEO company</Link> against these benchmarks ensures you pay for results, not overhead.
+            A comprehensive dual-channel strategy ranges from $1,520/month (automated AI SEO + basic traditional) to $10,020/month (automated AI + enterprise traditional agency). The AI component is the affordable part — AIPUSH generates 600 AI-optimized pages monthly for $79.99, compared to $3,000-$8,000 for a traditional agency producing 20-40 pages. Evaluating an <Link to="/ai-seo-company">AI SEO company</Link> against these benchmarks ensures you pay for results, not overhead.
           </p>
           <h3>Cost Breakdown by Service Model</h3>
           <p>
-            The volume difference makes the cost comparison stark. A $5,000/month consultant produces 15-20 pages. A $7,000/month agency delivers 30-40. AIPUSH produces 600 pages monthly per client at $19.99 — a 150x cost efficiency gain. The quality floor is enforced by automated audit gates checking structural compliance, factual density, and uniqueness before every publish. Understanding <Link to="/ai-seo-services">what AI SEO services actually deliver</Link> helps you avoid paying agency prices for repackaged traditional SEO.
+            The volume difference makes the cost comparison stark. A $5,000/month consultant produces 15-20 pages. A $7,000/month agency delivers 30-40. AIPUSH produces 600 pages monthly per client at $79.99 — a 150x cost efficiency gain. The quality floor is enforced by automated audit gates checking structural compliance, factual density, and uniqueness before every publish. Understanding <Link to="/ai-seo-services">what AI SEO services actually deliver</Link> helps you avoid paying agency prices for repackaged traditional SEO.
           </p>
           <h3>Where Your Budget Goes</h3>
           <p>
-            For businesses under $5,000/month total SEO budget: allocate 80% to traditional SEO fundamentals (technical fixes, backlink building, core content) and add AIPUSH at $19.99 for the AI channel. For businesses above $5,000/month: split 60% traditional and 40% AI-specific, with the AI portion focused on content volume and <Link to="/how-to-rank-in-chatgpt">AI citation optimization</Link>.
+            For businesses under $5,000/month total SEO budget: allocate 80% to traditional SEO fundamentals (technical fixes, backlink building, core content) and add AIPUSH at $79.99 for the AI channel. For businesses above $5,000/month: split 60% traditional and 40% AI-specific, with the AI portion focused on content volume and <Link to="/how-to-rank-in-chatgpt">AI citation optimization</Link>.
           </p>
 
           <h2>Frequently Asked Questions</h2>
@@ -348,13 +348,13 @@ export function AiSeoVsTraditionalSeoGuide() {
 
           <h2>Is a Dual AI + Traditional SEO Strategy Worth It?</h2>
           <p>
-            AI SEO vs traditional SEO is not a competition — it is two halves of a complete 2026 search strategy. Traditional SEO captures the 60% of traffic flowing through ranked links. AI SEO captures the 40% flowing through generated answers. Businesses covering both channels see 2.4x more discovery traffic. The cost of adding AI SEO is minimal: AIPUSH automates the entire pipeline for $19.99/month, generating 20 audit-verified pages daily on your domain while you keep your existing SEO investment working.
+            AI SEO vs traditional SEO is not a competition — it is two halves of a complete 2026 search strategy. Traditional SEO captures the 60% of traffic flowing through ranked links. AI SEO captures the 40% flowing through generated answers. Businesses covering both channels see 2.4x more discovery traffic. The cost of adding AI SEO is minimal: AIPUSH automates the entire pipeline for $79.99/month, generating 20 audit-verified pages daily on your domain while you keep your existing SEO investment working.
           </p>
           <p>
             Ready to cover both channels? Enter your email below — 5-minute setup, no code changes, fully automated.
           </p>
 
-          <InlineSignup pageSlug="ai-seo-vs-traditional-seo-guide" ctaText="Start Free — $19.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
+          <InlineSignup pageSlug="ai-seo-vs-traditional-seo-guide" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
 
           <nav className="aipush-seo-related">
             <Link to="/ai-search-optimization">AI Search Optimization</Link>

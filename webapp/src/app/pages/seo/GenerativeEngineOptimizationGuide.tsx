@@ -136,7 +136,7 @@ export function GenerativeEngineOptimizationGuide() {
 
           <div className="aipush-seo-stats">
             <div>
-              <div className="aipush-seo-stat-number" style={{color: "var(--color-indigo)"}}>$0.66</div>
+              <div className="aipush-seo-stat-number" style={{color: "var(--color-indigo)"}}>$2.67</div>
               <div className="aipush-seo-stat-label">GEO pages generated daily</div>
             </div>
             <div>
@@ -340,10 +340,10 @@ export function GenerativeEngineOptimizationGuide() {
             Generative engine optimization is not optional for businesses that depend on online discovery. The share of user queries flowing through AI-generated answers grows every quarter, and businesses without GEO-optimized content are progressively invisible to this entire channel. The structural investments required — answer-first content, schema markup, server rendering, and content clustering — simultaneously improve traditional search performance, making GEO a strategy with zero downside and compounding upside.
           </p>
           <p>
-            Ready to automate your generative engine optimization? <Link to="/login">Start with AIPUSH</Link> and let our pipeline generate 20 GEO-optimized pages daily on your domain. Explore our related guides on <Link to="/how-to-rank-in-chatgpt">how to rank in ChatGPT</Link>, <Link to="/llm-seo">LLM SEO</Link>, and <Link to="/how-to-appear-in-ai-answers">how to appear in AI-generated answers</Link>.
+            Ready to automate your generative engine optimization? <Link to="/login">Start with AIPUSH</Link> and let our pipeline generate 20 GEO-optimized pages daily on your domain. Explore our related guides on <Link to="/how-to-rank-in-chatgpt">how to rank in ChatGPT</Link>, <Link to="/add-my-business-to-chatgpt">how to add your business to ChatGPT</Link>, <Link to="/llm-seo">LLM SEO</Link>, and <Link to="/how-to-appear-in-ai-answers">how to appear in AI-generated answers</Link>.
           </p>
 
-          <InlineSignup pageSlug="generative-engine-optimization" ctaText="Start Free — $19.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
+          <InlineSignup pageSlug="generative-engine-optimization" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
 
           <nav className="aipush-seo-related">
             <Link to="/ai-search-optimization">AI Search Optimization</Link>

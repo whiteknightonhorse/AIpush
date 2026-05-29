@@ -139,7 +139,7 @@ export function HowToRankInChatgpt() {
               <div className="aipush-seo-stat-label">Pages per day on your domain</div>
             </div>
             <div>
-              <div className="aipush-seo-stat-number" style={{color: "var(--color-green)"}}>$0.66</div>
+              <div className="aipush-seo-stat-number" style={{color: "var(--color-green)"}}>$2.67</div>
               <div className="aipush-seo-stat-label">Per day, all-inclusive</div>
             </div>
             <div>
@@ -281,7 +281,7 @@ export function HowToRankInChatgpt() {
             Ready to automate your AI visibility? <Link to="/login">Start with AIPUSH</Link> and let our system generate optimized pages for your business automatically. Explore how <Link to="/chatgpt-indexing">ChatGPT discovers and indexes content</Link> to understand the full picture of AI-driven discoverability.
           </p>
 
-          <InlineSignup pageSlug="how-to-rank-in-chatgpt" ctaText="Start Free — $19.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
+          <InlineSignup pageSlug="how-to-rank-in-chatgpt" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
 
           <nav className="aipush-seo-related">
             <Link to="/how-to-get-mentioned-in-chatgpt">How to Get Mentioned in ChatGPT</Link>

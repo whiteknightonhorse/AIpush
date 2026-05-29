@@ -1,6 +1,7 @@
 import React from "react";
 import { InlineSignup } from "../../components/InlineSignup";
 import { VideoDemo } from "../../components/VideoDemo";
+import { fireAdPixel } from "./adTracking";
 
 function useKw(fallback: string): string {
   const params = new URLSearchParams(window.location.search);
@@ -9,14 +10,6 @@ function useKw(fallback: string): string {
   const decoded = decodeURIComponent(kw).trim();
   const clean = decoded.replace(/<[^>]*>/g, "").slice(0, 80);
   return clean || fallback;
-}
-
-function captureGclid(): void {
-  const params = new URLSearchParams(window.location.search);
-  const gclid = params.get("gclid");
-  if (gclid) sessionStorage.setItem("gclid", gclid);
-  const kw = params.get("kw");
-  if (kw) sessionStorage.setItem("ads_keyword", kw);
 }
 
 function trackOnce(eventName: string, params: Record<string, string | number>) {
@@ -44,18 +37,18 @@ export function AiSeoVsTraditionalSeo() {
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
-    captureGclid();
+    fireAdPixel("ai-seo-vs-traditional-seo");
     document.title = `${keyword} — AIPUSH | AI Visibility`;
     const mDesc = document.querySelector('meta[name="description"]');
     const prev = mDesc?.getAttribute("content") ?? "";
     if (mDesc)
       mDesc.setAttribute(
         "content",
-        "AI SEO vs traditional SEO — why AI-optimized pages win. 20 pages daily on your domain. $19.99/mo."
+        "AI SEO vs traditional SEO — why AI-optimized pages win. 20 pages daily on your domain. $79.99/mo."
       );
     const PAGE_URL = `https://aipush.app/ads/${SLUG}`;
-    const PAGE_OG_TITLE = "AI SEO vs Traditional SEO — $19.99/mo | AIPUSH";
-    const PAGE_OG_DESC = "Traditional SEO takes months. AIPUSH publishes 20 AI-optimized pages daily on your domain. $19.99/mo.";
+    const PAGE_OG_TITLE = "AI SEO vs Traditional SEO — $79.99/mo | AIPUSH";
+    const PAGE_OG_DESC = "Traditional SEO takes months. AIPUSH publishes 20 AI-optimized pages daily on your domain. $79.99/mo.";
     const ogTags: Array<{ prop: string; val: string; prev: string }> = [];
     ([ ["og:title", PAGE_OG_TITLE], ["og:description", PAGE_OG_DESC], ["og:url", PAGE_URL] ] as const).forEach(([prop, val]) => {
       let el = document.querySelector(`meta[property="${prop}"]`) as HTMLMetaElement | null;
@@ -119,7 +112,7 @@ export function AiSeoVsTraditionalSeo() {
             Traditional SEO takes months. AIPUSH publishes 20 AI-optimized pages daily on your domain — get recommended by AI assistants starting today.
           </p>
           <InlineSignup pageSlug={SLUG} ctaText={CTA_TEXT} ctaLocation="hero" onCtaFire={() => fireCta("hero")} variant="dark" />
-          <p className="adlp-hero-social">Results in 7 days · 600 pages/mo · $0.66/day</p>
+          <p className="adlp-hero-social">Results in 7 days · 600 pages/mo · $2.67/day</p>
           <p className="adlp-hero-urgency">Free AI visibility audit &middot; No credit card &middot; Setup in 5 min</p>
           <a href="/guide" className="adlp-hero-demo-link">See how it works &#8594;</a>
         </div>
@@ -156,7 +149,7 @@ export function AiSeoVsTraditionalSeo() {
         </div>
         <div className="adlp-proof-div" />
         <div className="adlp-proof-stat">
-          <span className="adlp-proof-num">$19.99</span>
+          <span className="adlp-proof-num">$79.99</span>
           <span className="adlp-proof-label">per month — everything included</span>
         </div>
         <div className="adlp-proof-div" />
@@ -167,7 +160,7 @@ export function AiSeoVsTraditionalSeo() {
       </div>
 
       <div className="adlp-ticker">
-        <span>Results in 7 days · 600 pages/mo · $0.66/day</span>
+        <span>Results in 7 days · 600 pages/mo · $2.67/day</span>
       </div>
 
       <section className="adlp-testimonial">
@@ -291,14 +284,14 @@ export function AiSeoVsTraditionalSeo() {
           <span className="adlp-pricing-badge">Most popular</span>
           <p className="adlp-pricing-eyebrow">Everything included</p>
           <p className="adlp-pricing-amount">
-            <span className="adlp-pricing-dollar">$19.99</span>
+            <span className="adlp-pricing-dollar">$79.99</span>
             <span className="adlp-pricing-period"> / month</span>
           </p>
           <p className="adlp-pricing-compare">
             <span className="adlp-pricing-old">Agencies charge $2,000+/mo</span>
           </p>
-          <div className="adlp-perday-wrap" data-tooltip="Based on $19.99/mo ÷ 30 days">
-            <p className="adlp-pricing-perday">Just <strong>$0.66</strong>/day</p>
+          <div className="adlp-perday-wrap" data-tooltip="Based on $79.99/mo ÷ 30 days">
+            <p className="adlp-pricing-perday">Just <strong>$2.67</strong>/day</p>
           </div>
           <p className="adlp-pricing-anchor">
             That&apos;s less than a cup of coffee — for 20 AI pages published daily on your domain.

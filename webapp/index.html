@@ -52,15 +52,25 @@
         analytics_storage: 'granted',
         ad_storage: 'granted',
         ad_user_data: 'granted',
-        ad_personalization: 'denied'
+        ad_personalization: 'granted',
+        wait_for_update: 500
+      });
+      /* Consent Mode v2: EU/EEA/UK defaults to denied, update on user action */
+      gtag('consent', 'default', {
+        analytics_storage: 'denied',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        region: ['GB', 'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'IS', 'LI', 'NO']
       });
     </script>
 
-    <!-- Google Ads conversion tracking (AW-18018973770) -->
+    <!-- Google Ads conversion tracking (AW-18018973770) + GA4 (G-V12TGDT7CG) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18018973770"></script>
     <script>
       gtag('js', new Date());
       gtag('config', 'AW-18018973770', { allow_enhanced_conversions: true });
+      gtag('config', 'G-V12TGDT7CG');
     </script>
 
     <!-- Microsoft Clarity (session recordings + heatmaps) -->

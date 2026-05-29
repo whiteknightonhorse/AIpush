@@ -384,7 +384,7 @@ export function Privacy() {
 
         <h2>3. Subscription and Payment</h2>
         <p>
-          AIPUSH is a paid subscription service at $19.99 per month. Payment is accepted exclusively in cryptocurrency
+          AIPUSH is a paid subscription service at $79.99 per month. Payment is accepted exclusively in cryptocurrency
           (USDT or USDC on Ethereum mainnet). Subscriptions renew monthly. There is no automatic billing — each
           renewal requires a new payment transaction. A 30-day money-back guarantee applies to first-time subscribers.
         </p>

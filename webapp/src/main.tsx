@@ -18,6 +18,7 @@ import { Dashboard } from "./app/Dashboard";
 import { ClientDashboard } from "./app/pages/ClientDashboard";
 import { RequireAuth } from "./app/RequireAuth";
 import { Guide } from "./app/pages/Guide";
+import { AeoAnalyzer } from "./app/aeo/AeoAnalyzer";
 import { HowToRankInChatgpt } from "./app/pages/seo/HowToRankInChatgpt";
 import { HowToGetMentionedInChatgpt } from "./app/pages/seo/HowToGetMentionedInChatgpt";
 import { LlmSeo } from "./app/pages/seo/LlmSeo";
@@ -36,6 +37,9 @@ import { AnswerEngineOptimizationGuide } from "./app/pages/seo/AnswerEngineOptim
 import { AiSeoVsTraditionalSeo } from "./app/pages/seo/AiSeoVsTraditionalSeo";
 import { AiSeoVsTraditionalSeoGuide } from "./app/pages/seo/AiSeoVsTraditionalSeoGuide";
 import { CompetitorAnalysisReport } from "./app/pages/seo/CompetitorAnalysisReport";
+import { CompetitiveIntelligenceReport } from "./app/pages/seo/CompetitiveIntelligenceReport";
+import { AiCompetitorAnalysisTool } from "./app/pages/seo/AiCompetitorAnalysisTool";
+import { AddMyBusinessToChatgpt } from "./app/pages/seo/AddMyBusinessToChatgpt";
 import { AgentApi } from "./app/pages/AgentApi";
 import { Privacy } from "./app/pages/Privacy";
 import { DashBro } from "./app/pages/DashBro";
@@ -68,7 +72,7 @@ import { LlmOptimizationService } from "./app/pages/ads/LlmOptimizationService";
 import { AiSearchPresence } from "./app/pages/ads/AiSearchPresence";
 import { BrandMentionsInAiAnswers } from "./app/pages/ads/BrandMentionsInAiAnswers";
 import { AiAnswerOptimization } from "./app/pages/ads/AiAnswerOptimization";
-import { AiSeoVsTraditionalSeo } from "./app/pages/ads/AiSeoVsTraditionalSeo";
+import { AiSeoVsTraditionalSeo as AiSeoVsTraditionalSeoAd } from "./app/pages/ads/AiSeoVsTraditionalSeo";
 import { SeoForAiEra } from "./app/pages/ads/SeoForAiEra";
 import { AiFirstSeoStrategy } from "./app/pages/ads/AiFirstSeoStrategy";
 import { WritesonicAlternative } from "./app/pages/ads/WritesonicAlternative";
@@ -444,7 +448,7 @@ const FAQ_ITEMS: Array<{ q: string; a: React.ReactNode }> = [
     a: (
       <>
         <p>Yes. Run a free AI visibility audit — no account needed, results in 10-30 seconds. The audit shows exactly what blocks AI assistants from finding your business.</p>
-        <p>When you are ready, activate Full Automation for $19.99/month with a 30-day money-back guarantee.</p>
+        <p>When you are ready, activate Full Automation for $79.99/month with a 30-day money-back guarantee.</p>
       </>
     ),
   },
@@ -705,9 +709,9 @@ function Landing() {
     ld.textContent = JSON.stringify([
       { "@context": "https://schema.org", "@type": "Organization", "name": "AIPUSH", "url": "https://aipush.app", "logo": "https://aipush.app/logo.png", "sameAs": ["https://x.com/aipush_app", "https://github.com/whiteknightonhorse/AIpush"], "contactPoint": { "@type": "ContactPoint", "email": "support@aipush.app", "contactType": "customer support" } },
       { "@context": "https://schema.org", "@type": "WebSite", "name": "AIPUSH", "url": "https://aipush.app", "potentialAction": { "@type": "SearchAction", "target": "https://aipush.app/audit?url={search_term_string}", "query-input": "required name=search_term_string" } },
-      { "@context": "https://schema.org", "@type": "SoftwareApplication", "name": "AIPUSH", "applicationCategory": "BusinessApplication", "operatingSystem": "Web", "url": "https://aipush.app", "offers": [{ "@type": "Offer", "price": "0", "priceCurrency": "USD", "name": "Free AI Audit" }, { "@type": "Offer", "price": "19.99", "priceCurrency": "USD", "name": "Full Automation", "billingIncrement": "P1M" }, { "@type": "Offer", "price": "29.99", "priceCurrency": "USD", "name": "Market Report" }] },
+      { "@context": "https://schema.org", "@type": "SoftwareApplication", "name": "AIPUSH", "applicationCategory": "BusinessApplication", "operatingSystem": "Web", "url": "https://aipush.app", "offers": [{ "@type": "Offer", "price": "0", "priceCurrency": "USD", "name": "Free AI Audit" }, { "@type": "Offer", "price": "79.99", "priceCurrency": "USD", "name": "Full Automation", "billingIncrement": "P1M" }, { "@type": "Offer", "price": "29.99", "priceCurrency": "USD", "name": "Market Report" }] },
       { "@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
-        { "@type": "Question", "name": "Can I try AIPUSH for free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Run a free AI visibility audit — no account needed, results in 10-30 seconds. When ready, activate Full Automation for $19.99/month with a 30-day money-back guarantee." } },
+        { "@type": "Question", "name": "Can I try AIPUSH for free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Run a free AI visibility audit — no account needed, results in 10-30 seconds. When ready, activate Full Automation for $79.99/month with a 30-day money-back guarantee." } },
         { "@type": "Question", "name": "Does AIPUSH really work automatically?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. AIPUSH is a fully autonomous authority-building system. Once activated, it builds your Marketing Intelligence Profile, maps semantic territory, detects coverage gaps, publishes up to 20 audit-compliant pages per day, and monitors authority drift. No manual work needed." } },
         { "@type": "Question", "name": "What makes AIPUSH different from traditional SEO?", "acceptedAnswer": { "@type": "Answer", "text": "Traditional SEO focuses on ranking pages and keyword positioning. AIPUSH focuses on semantic territory ownership, structured AI-readable pages, authority validation, and zero-click recommendation capture." } },
         { "@type": "Question", "name": "Where are the 20 pages published?", "acceptedAnswer": { "@type": "Answer", "text": "Pages are published under your own domain via a subdomain like reference.yourdomain.com. SSL is automatically issued, hosted globally via Cloudflare, and your main site remains untouched." } },
@@ -946,7 +950,14 @@ function Landing() {
 
     try {
       const r = await startAudit(normalized);
-
+      // Google Ads conversion: audit started (lead)
+      if (typeof (window as any).gtag === "function") {
+        (window as any).gtag("event", "conversion", {
+          send_to: "AW-18018973770/iAAhCJ66tIkcEMrwjpBD",
+          value: 79.99,
+          currency: "USD",
+        });
+      }
       nav(`/audit?job=${encodeURIComponent(r.jobId)}`);
     } catch (e) {
       nav(`/audit?url=${encodeURIComponent(normalized)}`);
@@ -1007,7 +1018,7 @@ function Landing() {
           </div>
           <div className="aipush-proof-divider" aria-hidden="true" />
           <div className="aipush-proof-stat">
-            <div className="aipush-proof-number">$0.66</div>
+            <div className="aipush-proof-number">$2.67</div>
             <div className="aipush-proof-label">per day, all-inclusive</div>
           </div>
           <div className="aipush-proof-divider" aria-hidden="true" />
@@ -1064,6 +1075,7 @@ function Landing() {
                 placeholder="https://example.com"
                 inputMode="url"
                 autoComplete="url"
+                aria-label="Website URL to audit"
                 data-testid="landing-url-input"
               />
               <button
@@ -1474,7 +1486,7 @@ function Landing() {
             </div>
             <div className="testimonial-card" style={{ fontStyle: "normal" }}>
               <div className="testimonial-avatar" style={{ background: "#a6e3a1", color: "#1e1e2e", fontSize: 20 }}>&#128176;</div>
-              <strong style={{ fontSize: 22, display: "block", marginBottom: 8 }}>$0.66/day</strong>
+              <strong style={{ fontSize: 22, display: "block", marginBottom: 8 }}>$2.67/day</strong>
               Full automation for less than a dollar a day. No writers, no editors, no approvals needed.
             </div>
             <div className="testimonial-card" style={{ fontStyle: "normal" }}>
@@ -1506,7 +1518,7 @@ function Landing() {
                 <div className="aipush-compare-row">Publishing starts within 24 hours</div>
                 <div className="aipush-compare-row">Fully automated — no team needed</div>
                 <div className="aipush-compare-row">Optimized for AI assistants that send ready-to-buy visitors</div>
-                <div className="aipush-compare-row">$19.99/month — unlimited pages (100x cheaper)</div>
+                <div className="aipush-compare-row">$79.99/month — unlimited pages (100x cheaper)</div>
                 <div className="aipush-compare-row">You add one DNS record, we do the rest</div>
                 <div className="aipush-compare-row"><Link to="/mip" style={{ color: "var(--color-indigo)", textDecoration: "none" }}>One-time market report available</Link>, or included in plan</div>
               </div>
@@ -1574,10 +1586,10 @@ function Landing() {
                 <h3 className="pricing-grid-card-name">Full Automation</h3>
                 <p className="pricing-grid-card-for">Best for growing businesses</p>
                 <div className="pricing-grid-card-price">
-                  <span className="pricing-grid-price-amount">$19.99</span>
+                  <span className="pricing-grid-price-amount">$79.99</span>
                   <span className="pricing-grid-price-period">/ month</span>
                 </div>
-                <p className="pricing-grid-price-daily">Just $0.66/day — less than your morning coffee &#9749;</p>
+                <p className="pricing-grid-price-daily">Just $2.67/day — less than your morning coffee &#9749;</p>
                 <Link to="/login" className="pricing-grid-btn pricing-grid-btn--primary" data-testid="landing-pricing-cta">Start Getting Recommended &rarr;</Link>
                 <ul className="pricing-grid-features">
                   <li><strong>MIP included</strong> (market intelligence)</li>
@@ -1660,7 +1672,7 @@ function Landing() {
                     }
                   }}
                 />
-                <span className="aipush-seo-links-count" aria-live="polite">17 guides available</span>
+                <span className="aipush-seo-links-count" aria-live="polite">18 guides available</span>
               </div>
               <div className="aipush-seo-links-featured">
                 <Link to="/how-to-rank-in-chatgpt" className="aipush-seo-card aipush-seo-card--featured">
@@ -1752,6 +1764,21 @@ function Landing() {
                   <div className="aipush-seo-card-desc" title="How to create an AI-powered competitor analysis report — competitors scored, keyword gaps mapped, PDF in 5 minutes.">How to create an AI-powered competitor analysis report — competitors scored, keyword gaps mapped, PDF in 5 minutes.</div>
                   <span className="aipush-seo-card-arrow">Read &rarr;</span>
                 </Link>
+                <Link to="/competitive-intelligence-report" className="aipush-seo-card">
+                  <h3 className="aipush-seo-card-title">Competitive Intelligence Report</h3>
+                  <div className="aipush-seo-card-desc" title="How to build an AI-powered competitive intelligence report — market positioning scored, keyword gaps mapped, AI citation gaps revealed.">How to build an AI-powered competitive intelligence report — market positioning scored, keyword gaps mapped, AI citation gaps revealed.</div>
+                  <span className="aipush-seo-card-arrow">Read &rarr;</span>
+                </Link>
+                <Link to="/add-my-business-to-chatgpt" className="aipush-seo-card">
+                  <h3 className="aipush-seo-card-title">Add My Business to ChatGPT</h3>
+                  <div className="aipush-seo-card-desc" title="How to get ChatGPT to recommend your business — no API or special account needed.">How to get ChatGPT to recommend your business — no API or special account needed.</div>
+                  <span className="aipush-seo-card-arrow">Read &rarr;</span>
+                </Link>
+                <Link to="/ai-competitor-analysis-tool" className="aipush-seo-card">
+                  <h3 className="aipush-seo-card-title">AI Competitor Analysis Tool</h3>
+                  <div className="aipush-seo-card-desc" title="Find the best AI competitor analysis tool — compare features, pricing, and accuracy for automated market intelligence.">Find the best AI competitor analysis tool — compare features, pricing, accuracy.</div>
+                  <span className="aipush-seo-card-arrow">Read &rarr;</span>
+                </Link>
                 <p className="aipush-seo-links-empty">No guides match your search. Try a different keyword.</p>
               </div>
               </div>
@@ -1761,7 +1788,7 @@ function Landing() {
               "@type": "ItemList",
               "name": "AI Search & ChatGPT Visibility Guides",
               "description": "Practical resources for business owners navigating AI-powered search and discoverability.",
-              "numberOfItems": 17,
+              "numberOfItems": 20,
               "itemListElement": [
                 { "@type": "ListItem", "position": 1, "name": "How to Rank in ChatGPT", "url": "https://aipush.app/how-to-rank-in-chatgpt", "description": "Why AI ranking differs from Google and what structure actually matters." },
                 { "@type": "ListItem", "position": 2, "name": "How to Get Mentioned in ChatGPT", "url": "https://aipush.app/how-to-get-mentioned-in-chatgpt", "description": "Brand citation mechanics and the authority signals AI assistants rely on." },
@@ -1779,7 +1806,10 @@ function Landing() {
                 { "@type": "ListItem", "position": 14, "name": "AI SEO vs Traditional SEO", "url": "https://aipush.app/ai-seo-vs-traditional-seo-guide", "description": "How search optimization changed in 2026 — compare ranking signals, content strategies, and tooling for both channels." },
                 { "@type": "ListItem", "position": 15, "name": "Answer Engine Optimization", "url": "https://aipush.app/answer-engine-optimization-guide", "description": "How to get your business cited in AI-generated answers — the complete AEO strategy for 2026." },
                 { "@type": "ListItem", "position": 16, "name": "AI Citation Optimization", "url": "https://aipush.app/ai-citation-optimization-guide", "description": "How to get cited by ChatGPT, Perplexity, and AI Overviews — signals, structure, and strategy." },
-                { "@type": "ListItem", "position": 17, "name": "Competitor Analysis Report", "url": "https://aipush.app/competitor-analysis-report", "description": "How to create an AI-powered competitor analysis report — competitors scored, keyword gaps mapped, PDF in 5 minutes." }
+                { "@type": "ListItem", "position": 17, "name": "Competitor Analysis Report", "url": "https://aipush.app/competitor-analysis-report", "description": "How to create an AI-powered competitor analysis report — competitors scored, keyword gaps mapped, PDF in 5 minutes." },
+                { "@type": "ListItem", "position": 18, "name": "Competitive Intelligence Report", "url": "https://aipush.app/competitive-intelligence-report", "description": "How to build an AI-powered competitive intelligence report — market positioning scored, keyword gaps mapped, AI citation gaps revealed." },
+                { "@type": "ListItem", "position": 19, "name": "Add My Business to ChatGPT", "url": "https://aipush.app/add-my-business-to-chatgpt", "description": "How to get ChatGPT to recommend your business — no API or special account needed." },
+                { "@type": "ListItem", "position": 20, "name": "AI Competitor Analysis Tool", "url": "https://aipush.app/ai-competitor-analysis-tool", "description": "Find the best AI competitor analysis tool — compare features, pricing, and accuracy for automated market intelligence." }
               ]
             }) }} />
           </section>
@@ -1789,7 +1819,7 @@ function Landing() {
             <h2 className="final-cta-title">Still not sure? Try it free.</h2>
             <p className="final-cta-sub">No signup. No credit card. Just paste your URL and see what AI assistants think of your business.</p>
             <Link to="/audit" className="btn hero-cta--uxfix">Run Free Audit &rarr;</Link>
-            <p className="hero-sub-cta">Or <Link to="/login" style={{ color: "var(--color-gold)" }}>start publishing today</Link> for $19.99/mo</p>
+            <p className="hero-sub-cta">Or <Link to="/login" style={{ color: "var(--color-gold)" }}>start publishing today</Link> for $79.99/mo</p>
           </div>
       </div>
     </main>
@@ -1824,6 +1854,14 @@ function Login() {
         throw new Error(j?.error || "Failed to send code");
       }
       setStep("code");
+      // Google Ads conversion: email submitted (login page lead)
+      if (typeof (window as any).gtag === "function") {
+        (window as any).gtag("event", "conversion", {
+          send_to: "AW-18018973770/iAAhCJ66tIkcEMrwjpBD",
+          value: 79.99,
+          currency: "USD",
+        });
+      }
     } catch (e: any) {
       setError(e.message || "Failed to send code");
     } finally {
@@ -1967,11 +2005,11 @@ function Login() {
         Businesses across multiple industries use AIPUSH. Average setup takes 5 minutes. First AI citations typically appear within 2&ndash;4 weeks.
       </p>
 
-      <p className="login-guarantee">Cancel anytime &middot; No lock-in &middot; $19.99/mo all-inclusive &middot; Your domain, your traffic</p>
+      <p className="login-guarantee">Cancel anytime &middot; No lock-in &middot; $79.99/mo all-inclusive &middot; Your domain, your traffic</p>
 
       <div className="login-faq">
         {[
-          { q: "Is this really free to start?", a: "Yes. Enter your email and we run a free AI visibility audit \u2014 you'll see exactly who AI assistants recommend instead of your business. No credit card needed. If you want daily page publishing (20 pages/day on your domain), it's $19.99/mo. Most businesses see the first AI citations within 2\u20134 weeks." },
+          { q: "Is this really free to start?", a: "Yes. Enter your email and we run a free AI visibility audit \u2014 you'll see exactly who AI assistants recommend instead of your business. No credit card needed. If you want daily page publishing (20 pages/day on your domain), it's $79.99/mo. Most businesses see the first AI citations within 2\u20134 weeks." },
           { q: "What happens to my website?", a: "Nothing changes. Your main website stays exactly as it is. AIPUSH publishes on a separate subdomain (reference.yourdomain.com) \u2014 your domain, your authority. You add one DNS record, we handle SSL, hosting, and delivery. Setup takes 5 minutes." },
           { q: "Can I cancel anytime?", a: "Yes, cancel with one click. No contracts, no lock-in, no cancellation fees. Your published pages stay on your domain even after cancellation. Over 1,000 businesses trust AIPUSH \u2014 we keep them because it works, not because they're locked in." },
         ].map((item, i) => (
@@ -2054,6 +2092,56 @@ function Audit() {
       .catch(() => { if (alive) setCtaAuth("anon"); });
     return () => { alive = false; };
   }, []);
+
+  // Email gate: show partial results until email is provided
+  const [gateUnlocked, setGateUnlocked] = React.useState(() => {
+    try { return localStorage.getItem("audit_unlocked") === "1"; } catch { return false; }
+  });
+  const [gateEmail, setGateEmail] = React.useState("");
+  const [gateSending, setGateSending] = React.useState(false);
+  const [gateError, setGateError] = React.useState("");
+
+  // Auto-unlock for authenticated users
+  React.useEffect(() => {
+    if (ctaAuth === "authed") setGateUnlocked(true);
+  }, [ctaAuth]);
+
+  const GATE_EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  async function unlockReport(e: React.FormEvent) {
+    e.preventDefault();
+    const email = gateEmail.trim().toLowerCase();
+    if (!email || !GATE_EMAIL_RE.test(email)) {
+      setGateError("Please enter a valid email address.");
+      return;
+    }
+    setGateSending(true);
+    setGateError("");
+    try {
+      const res = await fetch("/api/audit-gate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, jobId, url }),
+      });
+      const json = await res.json();
+      if (!res.ok) { setGateError(json?.error || "Something went wrong."); return; }
+      setGateUnlocked(true);
+      try { localStorage.setItem("audit_unlocked", "1"); } catch {}
+      // Fire Google Ads conversion
+      const w = window as any;
+      if (typeof w.gtag === "function") {
+        w.gtag("event", "conversion", {
+          send_to: "AW-18018973770/iAAhCJ66tIkcEMrwjpBD",
+          value: 79.99,
+          currency: "USD",
+        });
+      }
+    } catch {
+      setGateError("Network error. Please try again.");
+    } finally {
+      setGateSending(false);
+    }
+  }
 
   // keep input in sync with ?url=... (but don't override user typing)
   React.useEffect(() => {
@@ -2313,7 +2401,7 @@ function Audit() {
 
 
 
-          <div className="auditx-form">
+          <form className="auditx-form" onSubmit={(e) => { e.preventDefault(); run(); }}>
             <input
               className="input auditx-input"
               value={url}
@@ -2325,13 +2413,13 @@ function Audit() {
               inputMode="url"
               autoComplete="url"
               disabled={loading}
+              aria-label="Website URL to audit"
               data-testid="audit-url-input"
             />
 
             <button
               className="btn auditx-runBtn"
-              type="button"
-              onClick={run}
+              type="submit"
               disabled={!canRun}
               data-testid="audit-run-btn"
             >
@@ -2344,7 +2432,7 @@ function Audit() {
                 "Check My Site Free →"
               )}
             </button>
-          </div>
+          </form>
 
           <div className="auditx-metaRow">
             <div className="auditx-metaText">
@@ -2512,8 +2600,8 @@ function Audit() {
                 </div>
               </div>
 
-              {/* RIGHT: Action Plan + CTA */}
-              <div className="auditpro-zone auditpro-zoneAction">
+              {/* RIGHT: Action Plan + CTA — gated */}
+              {gateUnlocked && <div className="auditpro-zone auditpro-zoneAction">
                 <div className="auditpro-stepsTitle">Action Plan</div>
                 <div className="auditpro-steps">
                   {actionSteps.map((step, i) => (
@@ -2529,14 +2617,14 @@ function Audit() {
                   &mdash; analyzing your site, market, and competitors.
                   Based on it, we publish up to <strong>20 pages/day</strong> on a separate
                   subdomain layer linking to your Target URL.
-                  No changes to your website. Fully automated. <strong>$19.99/month.</strong>
+                  No changes to your website. Fully automated. <strong>$79.99/month.</strong>
                 </div>
                 <div className="auditpro-ctaDisclaimer">
                   We don't guarantee rankings; we publish content structured for AI agents to read, cite, and link.
                 </div>
 
                 <a className="auditpro-ctaBtn" href="https://aipush.app/login">
-                  Start publishing 20 pages/day &mdash; $19.99/mo
+                  Start publishing 20 pages/day &mdash; $79.99/mo
                 </a>
 
                 <button
@@ -2546,10 +2634,10 @@ function Audit() {
                 >
                   Run audit again
                 </button>
-              </div>
+              </div>}
             </div>
 
-            {/* Top blockers */}
+            {/* Top blockers — always visible as teaser (titles only, no expand when gated) */}
             {topCritical.length > 0 && (
               <div className="auditpro-topBlockers">
                 <div className="auditpro-topBlockersTitle">Top blockers</div>
@@ -2558,7 +2646,8 @@ function Audit() {
                     key={`topb-${i}`}
                     type="button"
                     className="auditpro-blockerRow"
-                    onClick={() => document.getElementById("audit-findings")?.scrollIntoView({ behavior: "smooth" })}
+                    onClick={gateUnlocked ? () => document.getElementById("audit-findings")?.scrollIntoView({ behavior: "smooth" }) : undefined}
+                    style={gateUnlocked ? undefined : { cursor: "default" }}
                   >
                     <span className="auditpro-blockerText">{f.title}</span>
                     <span className="pill pill-critical">{f.severity}</span>
@@ -2636,12 +2725,46 @@ function Audit() {
           </details>
         ) : null}
 
-        {/* FINDINGS */}
-        {completed && !isPass ? (
+        {/* EMAIL GATE — shown when results ready but not yet unlocked */}
+        {completed && !isPass && !gateUnlocked && (
+          <section className="auditx-gate" aria-label="Email gate — unlock full report">
+            <div className="card auditx-gateCard">
+              <div className="auditx-gateIcon" aria-hidden="true">&#x1F512;</div>
+              <h2 className="auditx-gateTitle">Unlock Your Full Report</h2>
+              <div className="auditx-gateSub">
+                Enter your email to see all {data?.findings?.length ?? 0} findings with detailed fixes and recommendations.
+              </div>
+              <form className="auditx-gateForm" onSubmit={unlockReport}>
+                <input
+                  type="email"
+                  name="email"
+                  id="audit-gate-email"
+                  required
+                  className="input auditx-gateInput"
+                  placeholder="your@email.com"
+                  value={gateEmail}
+                  onChange={(e) => { setGateEmail(e.target.value); setGateError(""); }}
+                  disabled={gateSending}
+                  autoComplete="email"
+                  aria-label="Email address to unlock full report"
+                  aria-describedby="gate-disclaimer"
+                />
+                <button type="submit" className="btn auditx-gateBtn" disabled={gateSending}>
+                  {gateSending ? "Sending..." : "Get Full Report"}
+                </button>
+              </form>
+              {gateError && <div className="auditx-gateError" role="alert">{gateError}</div>}
+              <div className="auditx-gateTrust" id="gate-disclaimer">No spam. We send your report link only.</div>
+            </div>
+          </section>
+        )}
+
+        {/* FINDINGS — gated */}
+        {completed && !isPass && gateUnlocked ? (
           <section className="auditx-findingsWrap" id="audit-findings" data-testid="audit-findings">
             <div className="auditx-findingsHead">
               <div>
-                <div className="auditx-findingsTitle">Detailed Issues &amp; Recommendations</div>
+                <h2 className="auditx-findingsTitle">Detailed Issues &amp; Recommendations</h2>
                 <div className="auditx-findingsSub">
                   Each issue blocks AI assistants from citing your business. Click to see details and fix instructions.
                 </div>
@@ -2754,14 +2877,14 @@ function Audit() {
           </section>
         ) : null}
 
-        {/* Final CTA block after findings */}
-        {completed && hasFindings ? (
+        {/* Final CTA block after findings — gated */}
+        {completed && hasFindings && gateUnlocked ? (
           <section className="audit-final-cta">
             <div className="audit-final-cta-inner">
               <div className="audit-final-cta-icon">🎯</div>
               <h2 className="audit-final-cta-title">Ready to fix these issues?</h2>
               <p className="audit-final-cta-sub">AIPUSH automatically resolves AI visibility problems by publishing 20 optimized pages daily on your domain. No code changes. No manual work.</p>
-              <Link to="/login" className="audit-final-cta-btn">Start Getting Recommended — $19.99/mo</Link>
+              <Link to="/login" className="audit-final-cta-btn">Start Getting Recommended — $79.99/mo</Link>
               <p className="audit-final-cta-guarantee">🔒 30-day money-back guarantee · Cancel anytime</p>
             </div>
           </section>
@@ -2791,14 +2914,14 @@ function Audit() {
                 </div>
               </section>
             ) : null}
-                {/* CTA — visible only for anonymous users */}
-                {ctaAuth === "anon" && (
+                {/* CTA — visible only for anonymous users + gated */}
+                {ctaAuth === "anon" && gateUnlocked && (
                 <div className="auditx-ctaWrap">
                   <div className="auditx-ctaCard">
                     <div className="auditx-ctaLeft">
-                      <div className="auditx-ctaTitle">Activate AIPUSH and start building AI authority</div>
+                      <h3 className="auditx-ctaTitle">Activate AIPUSH and start building AI authority</h3>
                       <div className="auditx-ctaSub">
-                        <strong>$19.99/month.</strong> We publish up to 20 audit-gated pages/day on a separate
+                        <strong>$79.99/month.</strong> We publish up to 20 audit-gated pages/day on a separate
                         subdomain — structured for AI reading, citation, and deep links to your Target URL.
                       </div>
 
@@ -2890,9 +3013,11 @@ function ShellRoutes() {
       <ScrollToHash />
       <CanonicalUpdater />
       <Routes>
-          <Route path="/" element={<Landing />} />
+          <Route path="/" element={<AeoAnalyzer />} />
+          <Route path="/home" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/audit" element={<Audit />} />
+          <Route path="/analyzer" element={<AeoAnalyzer />} />
           <Route path="/guide" element={<Guide />} />
           <Route path="/guide/*" element={<Navigate to="/guide" replace />} />
           <Route path="/mip" element={<MipReport />} />
@@ -2914,6 +3039,9 @@ function ShellRoutes() {
           <Route path="/ai-seo-vs-traditional-seo" element={<AiSeoVsTraditionalSeo />} />
           <Route path="/ai-seo-vs-traditional-seo-guide" element={<AiSeoVsTraditionalSeoGuide />} />
           <Route path="/competitor-analysis-report" element={<CompetitorAnalysisReport />} />
+          <Route path="/competitive-intelligence-report" element={<CompetitiveIntelligenceReport />} />
+          <Route path="/ai-competitor-analysis-tool" element={<AiCompetitorAnalysisTool />} />
+          <Route path="/add-my-business-to-chatgpt" element={<AddMyBusinessToChatgpt />} />
           <Route path="/how-chatgpt-recommends-businesses" element={<HowChatgptRecommendsBusiness />} />
           <Route path="/get-indexed-by-ai" element={<GetIndexedByAi />} />
           <Route path="/agent-api" element={<AgentApi />} />
@@ -2948,7 +3076,7 @@ function ShellRoutes() {
           <Route path="/ads/ai-search-presence" element={<AiSearchPresence />} />
           <Route path="/ads/brand-mentions-in-ai-answers" element={<BrandMentionsInAiAnswers />} />
           <Route path="/ads/ai-answer-optimization" element={<AiAnswerOptimization />} />
-          <Route path="/ads/ai-seo-vs-traditional-seo" element={<AiSeoVsTraditionalSeo />} />
+          <Route path="/ads/ai-seo-vs-traditional-seo" element={<AiSeoVsTraditionalSeoAd />} />
           <Route path="/ads/seo-for-ai-era" element={<SeoForAiEra />} />
           <Route path="/ads/ai-first-seo-strategy" element={<AiFirstSeoStrategy />} />
           <Route path="/ads/writesonic-alternative" element={<WritesonicAlternative />} />

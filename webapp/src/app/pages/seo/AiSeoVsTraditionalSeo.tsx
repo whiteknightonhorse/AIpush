@@ -147,7 +147,7 @@ export function AiSeoVsTraditionalSeo() {
               <div className="aipush-seo-stat-label">Higher citation rate with AI SEO</div>
             </div>
             <div>
-              <div className="aipush-seo-stat-number" style={{color: "var(--color-purple)"}}>$0.66</div>
+              <div className="aipush-seo-stat-number" style={{color: "var(--color-purple)"}}>$2.67</div>
               <div className="aipush-seo-stat-label">Per day, all-inclusive by AIPUSH</div>
             </div>
           </div>
@@ -319,7 +319,7 @@ export function AiSeoVsTraditionalSeo() {
             <p>AI citation changes can appear within days of publishing optimized content, significantly faster than traditional SEO which typically takes 3-6 months. AI crawlers like GPTBot and PerplexityBot index new content faster than Googlebot in many cases. AIPUSH clients typically see initial AI citations within the first week of page generation.</p>
 
             <h3>What tools do I need for AI SEO?</h3>
-            <p>You need an AI visibility monitoring tool (to check if AI assistants cite your business), structured content generation at scale, and schema markup implementation. AIPUSH provides all three in an automated pipeline at $19.99/month — no manual content creation, no technical setup beyond a single DNS record.</p>
+            <p>You need an AI visibility monitoring tool (to check if AI assistants cite your business), structured content generation at scale, and schema markup implementation. AIPUSH provides all three in an automated pipeline at $79.99/month — no manual content creation, no technical setup beyond a single DNS record.</p>
 
             <h3>Does backlink building still matter for AI SEO?</h3>
             <p>Backlinks have minimal direct impact on AI source selection — AI models evaluate content quality and factual density, not link profiles. However, backlinks still drive traditional Google rankings, which indirectly increases your content's crawl frequency and authority. Maintain backlink building as part of your traditional SEO layer.</p>
@@ -327,13 +327,13 @@ export function AiSeoVsTraditionalSeo() {
 
           <h2>Is Investing in AI SEO vs Traditional SEO Worth It?</h2>
           <p>
-            AI SEO vs traditional SEO is not a competition — it is an expansion. The businesses seeing the strongest search performance in 2026 invest in both, using AI-optimized content structure as their foundation and traditional SEO practices as their amplifier. Ignoring either channel means leaving traffic and leads on the table. The cost of AI SEO is primarily in content creation at scale, which is why automated systems like AIPUSH exist: generating 20 audit-verified pages daily on your domain for $19.99/month eliminates the manual bottleneck entirely.
+            AI SEO vs traditional SEO is not a competition — it is an expansion. The businesses seeing the strongest search performance in 2026 invest in both, using AI-optimized content structure as their foundation and traditional SEO practices as their amplifier. Ignoring either channel means leaving traffic and leads on the table. The cost of AI SEO is primarily in content creation at scale, which is why automated systems like AIPUSH exist: generating 20 audit-verified pages daily on your domain for $79.99/month eliminates the manual bottleneck entirely.
           </p>
           <p>
             Ready to cover both channels automatically? Enter your email below and let our pipeline generate AI-optimized, search-friendly pages on your domain — no writing, no technical work, fully automated.
           </p>
 
-          <InlineSignup pageSlug="ai-seo-vs-traditional-seo" ctaText="Start Free — $19.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
+          <InlineSignup pageSlug="ai-seo-vs-traditional-seo" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
 
           <nav className="aipush-seo-related">
             <Link to="/ai-search-optimization">AI Search Optimization</Link>

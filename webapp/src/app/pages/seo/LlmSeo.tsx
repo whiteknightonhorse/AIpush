@@ -139,7 +139,7 @@ export function LlmSeo() {
               <div className="aipush-seo-stat-label">Pages per day on your domain</div>
             </div>
             <div>
-              <div className="aipush-seo-stat-number" style={{color: "var(--color-green)"}}>$0.66</div>
+              <div className="aipush-seo-stat-number" style={{color: "var(--color-green)"}}>$2.67</div>
               <div className="aipush-seo-stat-label">Per day, all-inclusive</div>
             </div>
             <div>
@@ -316,7 +316,7 @@ export function LlmSeo() {
             Ready to automate your LLM SEO strategy? <Link to="/login">Start with AIPUSH</Link> and let our system generate optimized, AI-ready pages for your business at scale. Explore our guides on <Link to="/generative-engine-optimization">generative engine optimization (GEO)</Link>, <Link to="/ai-search-optimization">AI search optimization</Link>, <Link to="/how-to-rank-in-chatgpt">ranking in ChatGPT</Link>, and <Link to="/optimize-website-for-ai">technical website optimization for AI</Link> for specific implementation guidance. If you prefer expert-led strategy, learn what an <Link to="/ai-seo-consultant">AI SEO consultant</Link> brings to the table.
           </p>
 
-          <InlineSignup pageSlug="llm-seo" ctaText="Start Free — $19.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
+          <InlineSignup pageSlug="llm-seo" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
 
           <nav className="aipush-seo-related">
             <Link to="/ai-seo-vs-traditional-seo-guide">AI SEO vs Traditional SEO</Link>

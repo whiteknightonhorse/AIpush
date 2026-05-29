@@ -1046,7 +1046,7 @@ html.adlp-active .app-root::before { display: none !important; }
   padding: 10px 20px;
   border-radius: 12px;
   background: var(--accent);
-  color: #fff;
+  color: #1e1e2e !important;
   font-size: 13px;
   font-weight: 700;
   text-decoration: none;
@@ -1055,7 +1055,7 @@ html.adlp-active .app-root::before { display: none !important; }
 .auditx-fcardCtaBtn:hover{
   transform: translateY(-1px);
   box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 30%, transparent);
-  color: #fff;
+  color: #1e1e2e !important;
 }
 
 /* Final CTA block after findings */
@@ -1106,7 +1106,7 @@ html.adlp-active .app-root::before { display: none !important; }
   padding: 16px 36px;
   border-radius: 999px;
   background: var(--accent);
-  color: #fff;
+  color: #1e1e2e !important;
   font-size: 16px;
   font-weight: 800;
   text-decoration: none;
@@ -1133,7 +1133,7 @@ html.adlp-active .app-root::before { display: none !important; }
   color: #11111b;
 }
 [data-theme="dark"] .auditx-fcardCtaBtn{
-  color: #11111b;
+  color: #11111b !important;
 }
 
 /* Dark theme: blocker pills need light text */
@@ -1378,6 +1378,7 @@ html.adlp-active .app-root::before { display: none !important; }
 .pill{
   border: 1px solid var(--surface-border);
   background: color-mix(in srgb, var(--surface-background) 85%, transparent);
+  font-weight: 600;
 }
 .pill-critical{ background: var(--status-danger-dim); border-color: var(--status-danger-border); }
 .pill-warning { background: var(--status-warning-dim); border-color: var(--status-warning-border); }
@@ -2138,7 +2139,7 @@ html.adlp-active .app-root::before { display: none !important; }
 /* ===== Value section UX polish ===== */
 
 .value-section--uxfix {
-  scroll-margin-top: 80px; /* если потом будешь якоря использовать */
+  scroll-margin-top: 80px; /* anchor scroll offset */
 }
 
 /* Grid stability on mobile */
@@ -2536,6 +2537,7 @@ html.adlp-active .app-root::before { display: none !important; }
   font-weight: 950;
   font-size: 18px;
   letter-spacing: -.01em;
+  margin: 0;
 }
 
 .auditx-findingsSub{
@@ -3736,7 +3738,7 @@ html.adlp-active .app-root::before { display: none !important; }
   display:flex;
   flex-direction:column;
   gap:16px;
-  color:var(--text-primary); /* ✅ важное: фикс белого текста в light theme */
+  color:var(--text-primary); /* fix white text in light theme */
 }
 
 .mipux-head{
@@ -3912,13 +3914,13 @@ html.adlp-active .app-root::before { display: none !important; }
   color:var(--text-primary); /* ✅ */
 }
 
-/* ✅ чтобы “Business / Category / …” (левая колонка) всегда была видимой */
+/* ensure left column (Business / Category / ...) stays visible */
 .mipux-kv > :nth-child(odd){
   color:var(--text-secondary);
   font-weight:800;
 }
 
-/* ✅ чтобы значения (правая колонка) были нормальным текстом */
+/* ensure right column values use normal text style */
 .mipux-kv > :nth-child(even){
   color:var(--text-primary);
 }
@@ -4401,6 +4403,7 @@ html.adlp-active .app-root::before { display: none !important; }
   letter-spacing: -.01em;
   font-size: 15px;
   line-height: 1.25;
+  margin: 0;
   color: var(--text-primary);
 }
 
@@ -4452,7 +4455,7 @@ html.adlp-active .app-root::before { display: none !important; }
   font-size: var(--text-sm);
   border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
   background: var(--accent);
-  color: var(--on-status);
+  color: #1e1e2e !important;
   box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 18%, transparent);
   transition:
     transform var(--dur-1) var(--ease),
@@ -4502,6 +4505,108 @@ html.adlp-active .app-root::before { display: none !important; }
   }
 }
 
+/* ── Email gate card ── */
+.auditx-gate{
+  margin-top: 24px;
+}
+.auditx-gateCard{
+  text-align: center;
+  padding: 40px 24px;
+  border-top: 3px solid var(--accent);
+  border-radius: var(--radius-lg, 20px);
+}
+.auditx-gateIcon{
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+.auditx-gateTitle{
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin: 0;
+}
+.auditx-gateSub{
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+  max-width: 52ch;
+  margin-inline: auto;
+  line-height: 1.5;
+}
+.auditx-gateForm{
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  max-width: 480px;
+  margin-inline: auto;
+}
+.auditx-gateInput{
+  flex: 1;
+  min-width: 0;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1.5px solid color-mix(in srgb, var(--text-secondary) 35%, transparent);
+  background: var(--bg);
+  color: var(--text-primary);
+  font-size: 15px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+}
+.auditx-gateInput::placeholder{
+  color: color-mix(in srgb, var(--text-secondary) 60%, transparent);
+}
+.auditx-gateInput:focus{
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+.auditx-gateBtn{
+  padding: 12px 24px;
+  border-radius: 14px;
+  background: var(--accent);
+  color: #1e1e2e;
+  font-weight: 800;
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+.auditx-gateBtn:hover{
+  opacity: 0.88;
+}
+.auditx-gateBtn:disabled{
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.auditx-gateError{
+  color: var(--color-red);
+  font-size: 13px;
+  margin-top: 10px;
+}
+.auditx-gateTrust{
+  font-size: 12px;
+  color: var(--text-tertiary, var(--text-secondary));
+  margin-top: 14px;
+  letter-spacing: 0.01em;
+}
+
+@media (max-width: 720px){
+  .auditx-gateForm{
+    flex-direction: column;
+  }
+  .auditx-gateBtn{
+    width: 100%;
+  }
+  .auditx-gateCard{
+    padding: 28px 16px;
+  }
+  .auditx-gateTitle{
+    font-size: 19px;
+  }
+}
+
 /* ===========================
    Mobile responsive overrides (Audit Findings + CTA)
    Paste at the VERY END of styles.css
@@ -4524,12 +4629,12 @@ html.adlp-active .app-root::before { display: none !important; }
   }
 
   .auditx-chip{
-    flex: 0 1 auto;        /* не растягиваем на всю ширину, но даём сжиматься */
-    min-width: 0;          /* КРИТИЧНО для flex, иначе будет вылезать */
+    flex: 0 1 auto;        /* don't stretch full width, allow shrinking */
+    min-width: 0;          /* critical for flex — prevents overflow */
     max-width: 100%;
   }
 
-  /* делаем текст/счётчик компактнее */
+  /* compact text and counter */
   .auditx-chip{
     padding: 7px 10px;
     font-size: 12px;
@@ -4548,11 +4653,11 @@ html.adlp-active .app-root::before { display: none !important; }
     align-items: flex-start;
     gap: 12px;
     min-width: 0;
-    padding: 12px 14px;    /* чтобы слева не “срезало” */
+    padding: 12px 14px;    /* prevent left clipping */
   }
 
   .auditx-fcardLeft{
-    min-width: 0;          /* позволяет заголовку переноситься */
+    min-width: 0;          /* allow title to wrap */
   }
 
   .auditx-fcardTitle{
@@ -4562,7 +4667,7 @@ html.adlp-active .app-root::before { display: none !important; }
   }
 
   .auditx-fcardRight{
-    flex: 0 0 auto;        /* pill + chevron всегда видны */
+    flex: 0 0 auto;        /* pill + chevron always visible */
     gap: 10px;
   }
 
@@ -11201,13 +11306,60 @@ body.has-sticky-bar { scroll-padding-top: 108px; /* 48 bar + 60 header */ }
   letter-spacing: 0.05em;
 }
 @media (max-width: 700px) {
+  .mip-promo {
+    padding: 16px 12px 32px;
+  }
   .mip-promo-inner {
     grid-template-columns: 1fr;
-    padding: 28px 24px;
-    gap: 28px;
+    padding: 24px 18px;
+    gap: 24px;
   }
-  .mip-promo-title { font-size: 24px; }
-  .mip-promo-paths { grid-template-columns: 1fr; }
+  .mip-promo-title {
+    font-size: 22px;
+  }
+  .mip-promo-title br {
+    display: none;
+  }
+  .mip-promo-text {
+    font-size: 14px;
+    max-width: 100%;
+  }
+  .mip-promo-cta {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 20px;
+  }
+  .mip-promo-preview {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .mip-promo-stat {
+    padding: 14px 10px;
+  }
+  .mip-promo-stat-number {
+    font-size: 20px;
+  }
+  .mip-promo-stat-label {
+    font-size: 11px;
+  }
+  .mip-promo-paths {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 400px) {
+  .mip-promo-inner {
+    padding: 20px 14px;
+  }
+  .mip-promo-title {
+    font-size: 20px;
+  }
+  .mip-promo-preview {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .mip-promo-stat {
+    padding: 12px;
+  }
 }
 
 /* ========================================================================
@@ -15328,7 +15480,7 @@ body.has-sticky-bar { scroll-padding-top: 108px; /* 48 bar + 60 header */ }
 /* Task #1 — Header "Get Started" CTA */
 .header-cta--uxfix{
   background: var(--color-gold);
-  color: var(--surface-background);
+  color: #1e1e2e !important;
   padding: 8px 18px;
   border-radius: 10px;
   font-weight: 700;

@@ -44,13 +44,13 @@ export function HowChatgptRecommendsBusiness() {
   React.useEffect(() => {
     window.scrollTo(0, 0);
     captureGclid();
-    document.title = `${keyword} — AIPUSH | $19.99/mo`;
+    document.title = `${keyword} — AIPUSH | $79.99/mo`;
     const mDesc = document.querySelector('meta[name="description"]');
     const prev = mDesc?.getAttribute("content") ?? "";
     if (mDesc)
       mDesc.setAttribute(
         "content",
-        "How does ChatGPT choose which businesses to recommend? Structured AI-readable pages on your domain. AIPUSH publishes 20 daily. $19.99/mo."
+        "How does ChatGPT choose which businesses to recommend? Structured AI-readable pages on your domain. AIPUSH publishes 20 daily. $79.99/mo."
       );
     trackOnce("ads_landing_view", { page_slug: SLUG, keyword });
     let robotsMeta = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
@@ -111,7 +111,7 @@ const fadeSections = document.querySelectorAll(".adlp-features, .adlp-audience, 
         </div>
         <div className="adlp-proof-div" />
         <div className="adlp-proof-stat">
-          <span className="adlp-proof-num">$19.99</span>
+          <span className="adlp-proof-num">$79.99</span>
           <span className="adlp-proof-label">per month — everything included</span>
         </div>
         <div className="adlp-proof-div" />
@@ -238,14 +238,14 @@ const fadeSections = document.querySelectorAll(".adlp-features, .adlp-audience, 
           <span className="adlp-pricing-badge">Most popular</span>
           <p className="adlp-pricing-eyebrow">Everything included</p>
           <p className="adlp-pricing-amount">
-            <span className="adlp-pricing-dollar">$19.99</span>
+            <span className="adlp-pricing-dollar">$79.99</span>
             <span className="adlp-pricing-period"> / month</span>
           </p>
           <p className="adlp-pricing-compare">
             <span className="adlp-pricing-old">Agencies charge $2,000+/mo</span>
           </p>
-          <div className="adlp-perday-wrap" data-tooltip="Based on $19.99/mo ÷ 30 days">
-            <p className="adlp-pricing-perday">Just <strong>$0.66</strong>/day</p>
+          <div className="adlp-perday-wrap" data-tooltip="Based on $79.99/mo ÷ 30 days">
+            <p className="adlp-pricing-perday">Just <strong>$2.67</strong>/day</p>
           </div>
           <p className="adlp-pricing-anchor">
             That&apos;s less than a cup of coffee — for 20 AI pages published daily on your domain.
@@ -285,7 +285,7 @@ const fadeSections = document.querySelectorAll(".adlp-features, .adlp-audience, 
       </footer>
 
       <div className="adlp-sticky">
-        <span className="adlp-sticky-meta">$19.99/mo &middot; No credit card</span>
+        <span className="adlp-sticky-meta">$79.99/mo &middot; No credit card</span>
         <button className="btn adlp-hero-cta" onClick={() => { fireCta("sticky"); document.getElementById("inline-signup-hero")?.scrollIntoView({ behavior: "smooth" }); }}>{CTA_TEXT}</button>
       </div>
     </div>

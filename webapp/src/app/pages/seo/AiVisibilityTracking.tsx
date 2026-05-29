@@ -328,7 +328,7 @@ export function AiVisibilityTracking() {
             The businesses that will dominate AI-era customer acquisition are the ones measuring their AI presence today — not the ones who will start measuring after they realize their phone stopped ringing. <Link to="/login">Start with AIPUSH</Link> and get automated AI visibility tracking, weekly diff reports, and 20 optimized pages published daily on your domain — all on autopilot.
           </p>
 
-          <InlineSignup pageSlug="ai-visibility-tracking" ctaText="Start Free — $19.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
+          <InlineSignup pageSlug="ai-visibility-tracking" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
 
           <nav className="aipush-seo-related">
             <Link to="/ai-citation-optimization-guide">AI Citation Optimization</Link>

@@ -143,7 +143,7 @@ export function AiSearchOptimization() {
               <div className="aipush-seo-stat-label">Citation boost with optimization</div>
             </div>
             <div>
-              <div className="aipush-seo-stat-number" style={{color: "var(--color-gold)"}}>$0.66</div>
+              <div className="aipush-seo-stat-number" style={{color: "var(--color-gold)"}}>$2.67</div>
               <div className="aipush-seo-stat-label">Pages optimized daily</div>
             </div>
             <div>
@@ -267,7 +267,7 @@ export function AiSearchOptimization() {
             Building an AI search optimization strategy requires auditing your current AI readiness, identifying target queries, creating structured answer pages, implementing schema markup, building content clusters, and establishing a consistent publishing cadence to expand your retrieval footprint over time.
           </p>
           <p>
-            The strategy is iterative. Start by testing whether your current pages are AI-readable by fetching them without JavaScript. Identify the highest-value queries your customers ask AI assistants and create dedicated answer pages for each. Build these pages into topical clusters interlinked with descriptive anchor text. Implement structured data across your site. Then scale by publishing 5-20 new answer pages weekly, each targeting a distinct query within your clusters. Platforms like AIPUSH automate this entire workflow, generating 20 Per day, all-inclusive per client with built-in audit gates for content quality, schema completeness, and uniqueness verification. To understand how this content gets discovered by AI systems, explore the mechanics of <Link to="/how-to-appear-in-ai-answers">appearing in AI-generated answers</Link> and <Link to="/optimize-website-for-ai">technical website optimization for AI</Link>.
+            The strategy is iterative. Start by testing whether your current pages are AI-readable by fetching them without JavaScript. Identify the highest-value queries your customers ask AI assistants and create dedicated answer pages for each. Build these pages into topical clusters interlinked with descriptive anchor text. Implement structured data across your site. Then scale by publishing 5-20 new answer pages weekly, each targeting a distinct query within your clusters. Platforms like AIPUSH automate this entire workflow, generating 20 Per day, all-inclusive per client with built-in audit gates for content quality, schema completeness, and uniqueness verification. To understand how this content gets discovered by AI systems, explore the mechanics of <Link to="/how-to-appear-in-ai-answers">appearing in AI-generated answers</Link> and <Link to="/optimize-website-for-ai">technical website optimization for AI</Link>. For understanding where you stand relative to competitors, start with a <Link to="/competitive-intelligence-report">competitive intelligence report</Link>.
           </p>
 
           <h2>Frequently Asked Questions</h2>
@@ -293,7 +293,7 @@ export function AiSearchOptimization() {
             Ready to automate your AI search optimization? <Link to="/login">Start with AIPUSH</Link> and let our pipeline generate AI-ready content for your business at scale. Explore our guides on <Link to="/generative-engine-optimization">generative engine optimization (GEO)</Link>, <Link to="/chatgpt-indexing">how ChatGPT indexes content</Link>, <Link to="/how-to-rank-in-chatgpt">ranking in ChatGPT</Link>, and what an <Link to="/ai-seo-consultant">AI SEO consultant</Link> can do for your visibility strategy.
           </p>
 
-          <InlineSignup pageSlug="ai-search-optimization" ctaText="Start Free — $19.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
+          <InlineSignup pageSlug="ai-search-optimization" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
 
           <nav className="aipush-seo-related">
             <Link to="/answer-engine-optimization-guide">Answer Engine Optimization</Link>

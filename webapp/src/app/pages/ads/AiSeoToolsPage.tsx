@@ -1,6 +1,7 @@
 import React from "react";
 import { InlineSignup } from "../../components/InlineSignup";
 import { VideoDemo } from "../../components/VideoDemo";
+import { fireAdPixel } from "./adTracking";
 
 function useKw(fallback: string): string {
   const params = new URLSearchParams(window.location.search);
@@ -9,14 +10,6 @@ function useKw(fallback: string): string {
   const decoded = decodeURIComponent(kw).trim();
   const clean = decoded.replace(/<[^>]*>/g, "").slice(0, 80);
   return clean || fallback;
-}
-
-function captureGclid(): void {
-  const params = new URLSearchParams(window.location.search);
-  const gclid = params.get("gclid");
-  if (gclid) sessionStorage.setItem("gclid", gclid);
-  const kw = params.get("kw");
-  if (kw) sessionStorage.setItem("ads_keyword", kw);
 }
 
 function trackOnce(eventName: string, params: Record<string, string | number>) {
@@ -44,14 +37,14 @@ export function AiSeoToolsPage() {
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
-    captureGclid();
+    fireAdPixel("ai-seo-tools-page");
     document.title = `${keyword} — AIPUSH | AI Visibility`;
     const mDesc = document.querySelector('meta[name="description"]');
     const prev = mDesc?.getAttribute("content") ?? "";
     if (mDesc)
       mDesc.setAttribute(
         "content",
-        "AI SEO tools that actually publish. AIPUSH publishes 20 AI-optimized pages daily on your domain so ChatGPT, Perplexity, and Gemini recommend your business. $19.99/mo."
+        "AI SEO tools that actually publish. AIPUSH publishes 20 AI-optimized pages daily on your domain so ChatGPT, Perplexity, and Gemini recommend your business. $79.99/mo."
       );
     trackOnce("ads_landing_view", { page_slug: SLUG, keyword });
     let robotsMeta = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
@@ -99,10 +92,10 @@ export function AiSeoToolsPage() {
             <span className="gradtext">{keyword}</span> — Are You Missing Out?
           </h1>
           <p className="adlp-hero-sub">
-            Most AI SEO tools only track rankings. AIPUSH publishes 20 AI-optimized pages daily on your domain — so ChatGPT, Perplexity, and Gemini actually recommend your business. $0.66/day.
+            Most AI SEO tools only track rankings. AIPUSH publishes 20 AI-optimized pages daily on your domain — so ChatGPT, Perplexity, and Gemini actually recommend your business. $2.67/day.
           </p>
           <InlineSignup pageSlug={SLUG} ctaText={CTA_TEXT} ctaLocation="hero" onCtaFire={() => fireCta("hero")} variant="dark" />
-          <p className="adlp-hero-social">Results in 7 days · 600 pages/mo · $0.66/day</p>
+          <p className="adlp-hero-social">Results in 7 days · 600 pages/mo · $2.67/day</p>
           <p className="adlp-hero-urgency">Free AI visibility audit &middot; No credit card &middot; Setup in 5 min</p>
           <a href="/guide" className="adlp-hero-demo-link">See how it works &#8594;</a>
         </div>
@@ -139,7 +132,7 @@ export function AiSeoToolsPage() {
         </div>
         <div className="adlp-proof-div" />
         <div className="adlp-proof-stat">
-          <span className="adlp-proof-num">$19.99</span>
+          <span className="adlp-proof-num">$79.99</span>
           <span className="adlp-proof-label">per month — everything included</span>
         </div>
         <div className="adlp-proof-div" />
@@ -150,7 +143,7 @@ export function AiSeoToolsPage() {
       </div>
 
       <div className="adlp-ticker">
-        <span>Results in 7 days · 600 pages/mo · $0.66/day</span>
+        <span>Results in 7 days · 600 pages/mo · $2.67/day</span>
       </div>
 
       <section className="adlp-testimonial">
@@ -274,14 +267,14 @@ export function AiSeoToolsPage() {
           <span className="adlp-pricing-badge">Most popular</span>
           <p className="adlp-pricing-eyebrow">Everything included</p>
           <p className="adlp-pricing-amount">
-            <span className="adlp-pricing-dollar">$19.99</span>
+            <span className="adlp-pricing-dollar">$79.99</span>
             <span className="adlp-pricing-period"> / month</span>
           </p>
           <p className="adlp-pricing-compare">
             <span className="adlp-pricing-old">Agencies charge $2,000+/mo</span>
           </p>
-          <div className="adlp-perday-wrap" data-tooltip="Based on $19.99/mo ÷ 30 days">
-            <p className="adlp-pricing-perday">Just <strong>$0.66</strong>/day</p>
+          <div className="adlp-perday-wrap" data-tooltip="Based on $79.99/mo ÷ 30 days">
+            <p className="adlp-pricing-perday">Just <strong>$2.67</strong>/day</p>
           </div>
           <p className="adlp-pricing-anchor">
             That&apos;s less than a cup of coffee — for 20 AI pages published daily on your domain.

@@ -141,7 +141,7 @@ export function AiSeoCompany() {
               <div className="aipush-seo-stat-label">of B2B buyers now use AI assistants for vendor research</div>
             </div>
             <div>
-              <div className="aipush-seo-stat-number" style={{color: "var(--color-green)"}}>$0.66</div>
+              <div className="aipush-seo-stat-number" style={{color: "var(--color-green)"}}>$2.67</div>
               <div className="aipush-seo-stat-label">AI-optimized pages generated daily by AIPUSH</div>
             </div>
             <div>
@@ -208,7 +208,7 @@ export function AiSeoCompany() {
             <li><strong>Ask where content is published.</strong> It must be on your domain (a subdomain you control), not on the agency&rsquo;s blog or a shared content network.</li>
             <li><strong>Verify content quality.</strong> Ask for sample published pages. Check that they use semantic HTML (not rendered via JavaScript), contain structured H2/H3 headings with direct answers, and pass a basic <Link to="/how-to-appear-in-ai-answers">AI discoverability checklist</Link>.</li>
             <li><strong>Check publishing cadence.</strong> AI models refresh their training data and retrieval indexes continuously. A one-time content dump does not maintain authority. Look for daily or weekly publishing commitments.</li>
-            <li><strong>Understand pricing models.</strong> Retainer-based consulting ($3,000-$10,000/month) is the traditional model. Automated platforms like AIPUSH deliver the same output for $19.99/month because the pipeline is software, not billable hours.</li>
+            <li><strong>Understand pricing models.</strong> Retainer-based consulting ($3,000-$10,000/month) is the traditional model. Automated platforms like AIPUSH deliver the same output for $79.99/month because the pipeline is software, not billable hours.</li>
           </ol>
 
           {/* Section 5 */}
@@ -297,7 +297,7 @@ export function AiSeoCompany() {
           {/* Section 7 */}
           <h2>How Much Does an AI SEO Company Cost?</h2>
           <p>
-            AI SEO company pricing varies dramatically depending on the delivery model. Boutique consulting firms charge $3,000 to $15,000 per month for strategy, content creation, and ongoing optimization. Mid-tier agencies offering AI-specific packages typically price between $1,500 and $5,000 per month. Automated platforms like AIPUSH deliver daily publishing at $19.99 per month &mdash; a 99% cost reduction compared to agency retainers.
+            AI SEO company pricing varies dramatically depending on the delivery model. Boutique consulting firms charge $3,000 to $15,000 per month for strategy, content creation, and ongoing optimization. Mid-tier agencies offering AI-specific packages typically price between $1,500 and $5,000 per month. Automated platforms like AIPUSH deliver daily publishing at $79.99 per month &mdash; a 99% cost reduction compared to agency retainers.
           </p>
           <p>
             The cost difference is structural, not a quality compromise. Agencies bill for human hours: writers, strategists, account managers, meeting time. Automated systems replace those hours with software pipelines that generate, audit, and publish content without human intervention. Our system processes AI-optimized pages daily across clients on a single infrastructure &mdash; the marginal cost per additional client is near zero.
@@ -312,13 +312,13 @@ export function AiSeoCompany() {
                 <tr><td>Boutique AI SEO agency</td><td>$5,000 &ndash; $15,000</td><td>10 &ndash; 30</td><td>$170 &ndash; $500</td></tr>
                 <tr><td>Mid-tier agency</td><td>$1,500 &ndash; $5,000</td><td>8 &ndash; 20</td><td>$75 &ndash; $250</td></tr>
                 <tr><td>Freelance AI SEO consultant</td><td>$500 &ndash; $2,000</td><td>4 &ndash; 10</td><td>$50 &ndash; $200</td></tr>
-                <tr><td>AIPUSH (automated)</td><td>$19.99</td><td>600</td><td>$0.03</td></tr>
+                <tr><td>AIPUSH (automated)</td><td>$79.99</td><td>600</td><td>$0.03</td></tr>
               </tbody>
             </table>
           </div>
 
           <div className="aipush-seo-callout">
-            <p>At $19.99/month for 20 pages per day, AIPUSH produces more AI-optimized content in one week than most agencies deliver in an entire quarter. Every page is audit-verified before publishing &mdash; the same quality gate a human editor would enforce, applied automatically at scale.</p>
+            <p>At $79.99/month for 20 pages per day, AIPUSH produces more AI-optimized content in one week than most agencies deliver in an entire quarter. Every page is audit-verified before publishing &mdash; the same quality gate a human editor would enforce, applied automatically at scale.</p>
           </div>
 
           {/* FAQ Section */}
@@ -359,7 +359,7 @@ export function AiSeoCompany() {
             Ready to automate your AI visibility? <Link to="/login">Start with AIPUSH</Link> and let our system generate 20 optimized pages per day on your domain &mdash; fully automated, audit-verified, and built for how AI search actually works.
           </p>
 
-          <InlineSignup pageSlug="ai-seo-company" ctaText="Start Free — $19.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
+          <InlineSignup pageSlug="ai-seo-company" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
 
           <nav className="aipush-seo-related">
             <Link to="/ai-seo-services">AI SEO Services</Link>

@@ -135,7 +135,7 @@ export function ChatgptIndexing() {
 
           <div className="aipush-seo-stats">
             <div>
-              <div className="aipush-seo-stat-number" style={{color: "var(--color-indigo)"}}>$0.66</div>
+              <div className="aipush-seo-stat-number" style={{color: "var(--color-indigo)"}}>$2.67</div>
               <div className="aipush-seo-stat-label">Per day, all-inclusive</div>
             </div>
             <div>
@@ -274,10 +274,10 @@ export function ChatgptIndexing() {
             AI indexing is not replacing traditional search indexing but running alongside it as a parallel discovery channel. Google's index and AI retrieval systems serve different user intents: Google excels at navigational and broad informational queries, while AI systems excel at recommendation, comparison, and complex decision queries. Businesses that optimize for both channels capture the broadest possible audience. The structural improvements required for ChatGPT indexing — server-rendered HTML, clear content structure, structured data — also strengthen traditional search performance, making dual optimization a strategy with no trade-offs.
           </p>
           <p>
-            Ready to ensure your content is indexed by AI systems? <Link to="/login">Start with AIPUSH</Link> and let our pipeline generate AI-indexed content automatically. Learn more about <Link to="/how-to-rank-in-chatgpt">ranking in ChatGPT</Link> and <Link to="/how-to-get-mentioned-in-chatgpt">earning brand mentions in AI responses</Link> to build a comprehensive AI visibility strategy.
+            Ready to ensure your content is indexed by AI systems? <Link to="/login">Start with AIPUSH</Link> and let our pipeline generate AI-indexed content automatically. Learn more about <Link to="/how-to-rank-in-chatgpt">ranking in ChatGPT</Link>, <Link to="/how-to-get-mentioned-in-chatgpt">earning brand mentions in AI responses</Link>, and <Link to="/add-my-business-to-chatgpt">how to add your business to ChatGPT</Link> to build a comprehensive AI visibility strategy.
           </p>
 
-          <InlineSignup pageSlug="chatgpt-indexing" ctaText="Start Free — $19.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
+          <InlineSignup pageSlug="chatgpt-indexing" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
 
           <nav className="aipush-seo-related">
             <Link to="/how-to-rank-in-chatgpt">How to Rank in ChatGPT</Link>

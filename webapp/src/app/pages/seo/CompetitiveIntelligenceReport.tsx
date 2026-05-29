@@ -252,7 +252,7 @@ export function CompetitiveIntelligenceReport() {
             <div className="aipush-seo-timeline-step">
               <div className="aipush-seo-timeline-badge">2</div>
               <h3 className="aipush-seo-timeline-title">Crawl and Extract Signals</h3>
-              <p className="aipush-seo-timeline-text">Our <Link to="/mip">AIPUSH MIP pipeline</Link> crawls each competitor's pages through 5 automated extraction stages: fetch target, SPA detection, meta extraction, link crawling, and signal scoring. Content freshness, factual density, heading structure, Schema markup, and keyword coverage are extracted and normalized into a structured signal set per competitor.</p>
+              <p className="aipush-seo-timeline-text">Our <Link to="/">AIPUSH MIP pipeline</Link> crawls each competitor's pages through 5 automated extraction stages: fetch target, SPA detection, meta extraction, link crawling, and signal scoring. Content freshness, factual density, heading structure, Schema markup, and keyword coverage are extracted and normalized into a structured signal set per competitor.</p>
             </div>
             <div className="aipush-seo-timeline-step">
               <div className="aipush-seo-timeline-badge">3</div>

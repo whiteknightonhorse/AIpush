@@ -405,7 +405,7 @@ function CopyAllModal({ bundle, onClose }: { bundle: string; onClose: () => void
             <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800 }}>Copy all instructions</h3>
             <p style={{ margin: "4px 0 0", fontSize: 13.5, color: "var(--text-tertiary)" }}>Paste into Cursor, Claude Code, Copilot, or send to your developer.</p>
           </div>
-          <button onClick={onClose} aria-label="Close" style={{ flex: "none", width: 34, height: 34, borderRadius: 999, display: "grid", placeItems: "center", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", color: "var(--text-secondary)", cursor: "pointer", fontSize: 16 }}><I.x /></button>
+          <button onClick={onClose} aria-label="Close" style={{ flex: "none", width: 44, height: 44, borderRadius: 999, display: "grid", placeItems: "center", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", color: "var(--text-secondary)", cursor: "pointer", fontSize: 16 }}><I.x /></button>
         </div>
         <pre className="scroll-thin" style={{ margin: "0 22px", flex: 1, overflow: "auto", padding: "16px 18px", fontSize: 12.5, lineHeight: 1.6, fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", color: "var(--text-secondary)", whiteSpace: "pre-wrap", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", borderRadius: "var(--radius-md)" }}>{bundle}</pre>
         <div style={{ padding: "16px 22px 20px" }}><CopyButton text={bundle} label="Copy all instructions" primary full /></div>
@@ -525,7 +525,7 @@ function ShareModal({ url, score, level, onClose }: { url: string; score: number
             <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800 }}>Share your result</h3>
             <p style={{ margin: "4px 0 0", fontSize: 13.5, color: "var(--text-tertiary)" }}>Score {score}/100 · AEO Level {level.n}{level.name ? " · " + level.name : ""}</p>
           </div>
-          <button onClick={onClose} aria-label="Close" style={{ flex: "none", width: 34, height: 34, borderRadius: 999, display: "grid", placeItems: "center", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", color: "var(--text-secondary)", cursor: "pointer", fontSize: 16 }}><I.x /></button>
+          <button onClick={onClose} aria-label="Close" style={{ flex: "none", width: 44, height: 44, borderRadius: 999, display: "grid", placeItems: "center", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", color: "var(--text-secondary)", cursor: "pointer", fontSize: 16 }}><I.x /></button>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: 8 }}>
           {targets.map((t) => (

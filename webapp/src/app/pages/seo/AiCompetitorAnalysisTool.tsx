@@ -329,7 +329,7 @@ export function AiCompetitorAnalysisTool() {
           {/* ── H2 #6: How Much Does an AI Competitor Analysis Tool Cost? ── */}
           <h2>How Much Does an AI Competitor Analysis Tool Cost?</h2>
           <p>
-            AI competitor analysis tools span a wide cost range — from free basic tools with limited data to enterprise platforms charging hundreds per month. For most businesses, the right choice depends on how often you need competitive intelligence and whether you want ongoing monitoring or periodic deep-dives. Our <Link to="/mip">Market Intelligence Report</Link> is designed for businesses that want a comprehensive one-time analysis without a subscription commitment.
+            AI competitor analysis tools span a wide cost range — from free basic tools with limited data to enterprise platforms charging hundreds per month. For most businesses, the right choice depends on how often you need competitive intelligence and whether you want ongoing monitoring or periodic deep-dives. Our <Link to="/">Market Intelligence Report</Link> is designed for businesses that want a comprehensive one-time analysis without a subscription commitment.
           </p>
           <p>
             Cost tiers for AI competitor analysis tools in 2026:

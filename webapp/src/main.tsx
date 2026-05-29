@@ -2968,6 +2968,9 @@ function AppRoutes() {
       {DASHBRO_PATH && (
         <Route path={`/${DASHBRO_PATH}`} element={<RequireAdminAuth><DashBro /></RequireAdminAuth>} />
       )}
+      {/* AEO Analyzer — standalone, NO site header/footer (own chrome only) */}
+      <Route path="/" element={<AeoAnalyzer />} />
+      <Route path="/analyzer" element={<AeoAnalyzer />} />
       <Route path="*" element={<ShellRoutes />} />
     </Routes>
   );
@@ -3013,11 +3016,9 @@ function ShellRoutes() {
       <ScrollToHash />
       <CanonicalUpdater />
       <Routes>
-          <Route path="/" element={<AeoAnalyzer />} />
           <Route path="/home" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/audit" element={<Audit />} />
-          <Route path="/analyzer" element={<AeoAnalyzer />} />
           <Route path="/guide" element={<Guide />} />
           <Route path="/guide/*" element={<Navigate to="/guide" replace />} />
           <Route path="/mip" element={<MipReport />} />

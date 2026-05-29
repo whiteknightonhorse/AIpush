@@ -557,14 +557,9 @@ function Results({ data, unlocked, lockedCount, sent, gate, onScanAnother }: {
   const [modal, setModal] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [activeCat, setActiveCat] = useState<string | null>(null);
-  const onShare = async () => {
-    const pageUrl = `${location.origin}/?url=${encodeURIComponent(data.url)}`;
-    const shareData = { title: "AIPUSH AEO score", text: `My site scored ${data.score}/100 on the AIPUSH AI-readiness analyzer.`, url: pageUrl };
-    if (typeof navigator !== "undefined" && (navigator as Navigator & { share?: (d: ShareData) => Promise<void> }).share) {
-      try { await (navigator as Navigator & { share: (d: ShareData) => Promise<void> }).share(shareData); return; } catch { /* user cancelled or unsupported → fall back to modal */ }
-    }
-    setShareOpen(true);
-  };
+  // Always open our own branded share modal — consistent on every device and
+  // avoids the OS native share sheet opening alongside it (the two-windows bug).
+  const onShare = () => setShareOpen(true);
   const findingsRef = useRef<HTMLDivElement>(null);
   const bundle = useMemo(() => buildBundle(data), [data]);
   const freeFixes = useMemo(() => {

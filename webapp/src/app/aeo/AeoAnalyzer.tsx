@@ -1,326 +1,295 @@
-import React from "react";
+/* AEO Analyzer — faithful port of the claude.ai/design prototype
+   (temp/aeo-design/*), wired to the live /api/aeo/* backend.
+   Visual source of truth: prototype inline styles + aeo.css tokens.
+   Prototype-only affordances (StateJumper, TweaksPanel) are removed;
+   the gauge is fixed to the prototype default (semicircle).
+
+   API contract (src/aeo/routes/aeo.ts):
+     POST /api/aeo/scan            {url}                      -> gated view
+     GET  /api/aeo/scan/:id        -> gated view of stored scan
+     POST /api/aeo/subscribe       {email, scanId, consent}   -> {ok}
+     GET  /api/aeo/confirm?token=  -> sets cookie, redirects /?scan=<id>&unlocked=1
+     GET  /api/aeo/scan/:id/full   -> full findings (confirmed cookie; 403 otherwise)
+   Gated findings: failing fixes beyond the first 2 arrive as stubs (locked:true,
+   no fix text); only the first 2 fails carry copy/goal/how. */
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import "./aeo.css";
 
-// ===========================================================================
-// AIPUSH AEO Analyzer — production React page wired to /api/aeo/*.
-// Single-page flow: landing -> scanning -> results, with a server-side email
-// gate. Faithful to the claude.ai/design prototype (Catppuccin tokens, gold
-// accent, semicircle gauge), scoped under .aeo-root so it cannot collide with
-// the rest of the site's styles.
-// ===========================================================================
+type CSS = React.CSSProperties;
 
-const { useState, useEffect, useRef, useCallback, useMemo } = React;
-
-type Status = "pass" | "fail" | "skip" | "info";
-
-interface Doc {
-  t: string;
-  u: string;
-}
-
-interface ApiFinding {
-  id: string;
-  title: string;
-  category: string;
-  categoryLabel: string;
-  severity: string;
-  status: Status;
-  goal?: string;
-  why?: string;
-  issue?: string;
-  fix?: string;
-  techDetail?: string;
-  skillSlug?: string;
-  skillUrl?: string;
-  docs?: string[];
-  scoring?: boolean;
-  locked?: boolean;
-}
-
-interface ApiCategory {
-  id: string;
-  label: string;
-  score: number;
-  passed: number;
-  total: number;
-}
-
-interface ScanResponse {
-  scanId: string;
-  url: string;
-  host: string;
-  score: number;
-  level: number;
-  levelLabel: string;
-  categories: ApiCategory[];
-  findings: ApiFinding[];
-  lockedCount?: number;
-  locked?: boolean;
-  scannedAt?: string;
-}
+/* ============================================================ types */
+type Status = "pass" | "fail" | "info";
+interface Check { id: string; title: string; status: Status; goal: string; result: string; how: string; res: { t: string; u: string }[]; copy: string; skillSlug: string | null; }
+interface Category { id: string; label: string; blurb: string; score: number; checks: Check[]; }
+interface Level { n: number; name: string; }
+interface Data { url: string; score: number; level: Level; categories: Category[]; commerce: Category | null; markdown: string | null; }
 
 const SCAN_PHASES = [
-  "Fetching homepage…",
-  "Reading robots.txt…",
-  "Probing /.well-known…",
-  "Inspecting response headers…",
-  "Negotiating Markdown…",
-  "Checking structured data…",
-  "Scoring agent-readiness…",
+  "Fetching homepage & response headers",
+  "Reading robots.txt & sitemaps",
+  "Probing /.well-known/ endpoints",
+  "Checking structured data & metadata",
+  "Evaluating answer-units & content",
+  "Scoring agent-readiness",
 ];
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+/* ============================================================ helpers */
+function scoreColor(s: number): string {
+  if (s < 40) return "var(--score-low)";
+  if (s < 70) return "var(--score-mid)";
+  return "var(--score-high)";
+}
+function countPass(checks: Check[]): { pass: number; total: number } {
+  const scored = checks.filter((c) => c.status !== "info");
+  return { pass: scored.filter((c) => c.status === "pass").length, total: scored.length };
+}
 
-// ---- theme ----------------------------------------------------------------
-
-function initialTheme(): "light" | "dark" {
+function normalizeUrl(raw: string): string | null {
+  let v = (raw || "").trim();
+  if (!v) return null;
+  if (!/^https?:\/\//i.test(v)) v = "https://" + v;
   try {
-    const s = localStorage.getItem("aeo-theme");
-    if (s === "light" || s === "dark") return s;
-  } catch {
-    /* ignore */
+    const u = new URL(v);
+    if (u.protocol !== "http:" && u.protocol !== "https:") return null;
+    if (!u.hostname.includes(".")) return null;
+    return u.toString();
+  } catch { return null; }
+}
+
+/* adapt the API response (flat findings + categories) -> nested Data */
+function adapt(resp: any): Data {
+  const findings: any[] = Array.isArray(resp.findings) ? resp.findings : [];
+  const byCat: Record<string, Check[]> = {};
+  for (const f of findings) {
+    const ch: Check = {
+      id: f.id, title: f.title, status: f.status,
+      goal: f.goal ?? "", result: f.evidence ?? "", how: f.fix ?? "",
+      copy: (f.fixCode || f.fix) ?? "", skillSlug: f.skillSlug ?? null,
+      res: Array.isArray(f.resources) ? f.resources.map((r: any) => ({ t: r.label ?? r.title ?? "", u: r.url })) : [],
+    };
+    (byCat[f.category] ||= []).push(ch);
   }
-  if (typeof window !== "undefined" && window.matchMedia) {
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  }
-  return "light";
+  const cats: any[] = Array.isArray(resp.categories) ? resp.categories : [];
+  const categories: Category[] = cats
+    .filter((c) => c.id !== "commerce")
+    .map((c) => ({ id: c.id, label: c.label, blurb: c.blurb, score: c.score, checks: byCat[c.id] || [] }));
+  const commerceCat = cats.find((c) => c.id === "commerce");
+  const commerce: Category | null = commerceCat
+    ? { id: commerceCat.id, label: commerceCat.label, blurb: commerceCat.blurb, score: commerceCat.score, checks: byCat["commerce"] || [] }
+    : null;
+  return {
+    url: resp.url, score: resp.score,
+    level: { n: resp.level || 1, name: resp.levelLabel || "" },
+    categories, commerce, markdown: resp.markdown ?? null,
+  };
 }
 
-// ---- helpers --------------------------------------------------------------
-
-function docLabel(url: string): string {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return url;
-  }
+function buildBundle(d: Data): string {
+  if (d.markdown) return d.markdown;
+  const fails: { cat: string; ch: Check }[] = [];
+  d.categories.forEach((c) => c.checks.forEach((ch) => { if (ch.status === "fail" && ch.copy) fails.push({ cat: c.label, ch }); }));
+  let out = `# AEO fixes for ${d.url}\n# AIPUSH AEO Analyzer · score ${d.score}/100\n# ${fails.length} actionable fixes — paste into your AI coding agent.\n\n`;
+  fails.forEach((f, i) => { out += `## ${i + 1}. ${f.ch.title}  (${f.cat})\n${f.ch.goal}\n\n${f.ch.copy}\n\n`; });
+  return out.trim();
 }
+function skillUrl(slug: string): string { return `https://aipush.app/.well-known/agent-skills/${slug}/SKILL.md`; }
 
-/** Build the copy-ready markdown instruction for one finding (mirrors the
- *  server's renderFindingMarkdown so the per-card "Copy" matches the bundle). */
-function findingMarkdown(f: ApiFinding, targetUrl: string): string {
-  const lines: string[] = [];
-  lines.push(`## ${f.title}`);
-  lines.push("");
-  if (f.goal) lines.push(`**Goal:** ${f.goal}`);
-  if (f.why) lines.push(`**Why it matters:** ${f.why}`);
-  if (f.issue) lines.push(`**Issue:** ${f.issue}`);
-  if (f.fix) lines.push(`**Fix:** ${f.fix}`);
-  if (f.techDetail) {
-    lines.push("");
-    lines.push("```");
-    lines.push(f.techDetail);
-    lines.push("```");
-  }
-  lines.push("");
-  lines.push(`Target site: ${targetUrl}`);
-  if (f.skillUrl) lines.push(`Skill: ${f.skillUrl}`);
-  if (f.docs && f.docs.length) lines.push(`Docs: ${f.docs.join(", ")}`);
-  return lines.join("\n");
+/* ============================================================ icons */
+type IconFn = (p?: React.SVGProps<SVGSVGElement>) => React.ReactElement;
+const I: Record<string, IconFn> = {
+  check: (p) => <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M20 6 9 17l-5-5" /></svg>,
+  x: (p) => <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M18 6 6 18M6 6l12 12" /></svg>,
+  info: (p) => <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><circle cx="12" cy="12" r="9" /><path d="M12 16v-4M12 8h.01" /></svg>,
+  copy: (p) => <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><rect x="9" y="9" width="11" height="11" rx="2.2" /><path d="M5 15V5a2 2 0 0 1 2-2h10" /></svg>,
+  chevron: (p) => <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="m6 9 6 6 6-6" /></svg>,
+  lock: (p) => <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><rect x="4" y="11" width="16" height="9" rx="2.2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>,
+  sun: (p) => <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><circle cx="12" cy="12" r="4.2" /><path d="M12 2v2.5M12 19.5V22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2 12h2.5M19.5 12H22M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" /></svg>,
+  moon: (p) => <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>,
+  share: (p) => <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4" /></svg>,
+  mail: (p) => <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><rect x="3" y="5" width="18" height="14" rx="2.4" /><path d="m3.5 7 8.5 6 8.5-6" /></svg>,
+  arrow: (p) => <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M5 12h14M13 6l6 6-6 6" /></svg>,
+  ext: (p) => <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M14 5h5v5M19 5l-8 8M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" /></svg>,
+  spark: (p) => <svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" {...p}><path d="M12 2l1.6 5.4L19 9l-5.4 1.6L12 16l-1.6-5.4L5 9l5.4-1.6L12 2z" /></svg>,
+  refresh: (p) => <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v4h-4" /></svg>,
+};
+
+const STATUS_META: Record<Status, { color: string; dim: string; bd: string; icon: IconFn }> = {
+  pass: { color: "var(--status-success)", dim: "var(--status-success-dim)", bd: "var(--status-success-border)", icon: I.check },
+  fail: { color: "var(--status-danger)", dim: "var(--status-danger-dim)", bd: "var(--status-danger-border)", icon: I.x },
+  info: { color: "var(--text-tertiary)", dim: "var(--surface-inset)", bd: "var(--surface-border)", icon: I.info },
+};
+
+/* ============================================================ theme */
+function applyTheme(t: string) { document.documentElement.setAttribute("data-theme", t); }
+function initialTheme(): string {
+  const saved = localStorage.getItem("aeo-theme");
+  if (saved === "light" || saved === "dark") return saved;
+  return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
-
-function bundleMarkdown(data: ScanResponse): string {
-  const actionable = data.findings.filter((f) => f.status === "fail" && !f.locked);
-  const out: string[] = [];
-  out.push(`# AEO fixes for ${data.url}`);
-  out.push("");
-  out.push(`Score: ${data.score}/100 — AEO Level ${data.level} (${data.levelLabel})`);
-  out.push("");
-  for (const f of actionable) {
-    out.push(findingMarkdown(f, data.url));
-    out.push("");
-    out.push("---");
-    out.push("");
-  }
-  out.push("Generated by AIPUSH — https://aipush.app");
-  return out.join("\n");
-}
-
-// ---- API ------------------------------------------------------------------
-
-async function apiScan(url: string): Promise<ScanResponse> {
-  const r = await fetch("/api/aeo/scan", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify({ url }),
-  });
-  const j = await r.json().catch(() => null);
-  if (!r.ok) throw new Error(j?.error || "SCAN_FAILED");
-  return j as ScanResponse;
-}
-
-async function apiGetScan(scanId: string, full: boolean): Promise<ScanResponse | null> {
-  const path = full ? `/api/aeo/scan/${scanId}/full` : `/api/aeo/scan/${scanId}`;
-  const r = await fetch(path, { credentials: "include" });
-  if (!r.ok) return null;
-  return (await r.json().catch(() => null)) as ScanResponse | null;
-}
-
-async function apiSubscribe(email: string, scanId: string): Promise<boolean> {
-  const r = await fetch("/api/aeo/subscribe", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify({ email, consent: true, scanId }),
-  });
-  return r.ok;
-}
-
-// ---- components -----------------------------------------------------------
-
-function CopyBtn({ text, label = "Copy", cls = "copy-btn" }: { text: string; label?: string; cls?: string }) {
-  const [done, setDone] = useState(false);
+function ThemeToggle({ theme, setTheme }: { theme: string; setTheme: (v: string) => void }) {
   return (
-    <button
-      className={cls}
-      type="button"
-      onClick={async () => {
-        try {
-          await navigator.clipboard.writeText(text);
-        } catch {
-          /* ignore */
-        }
-        setDone(true);
-        setTimeout(() => setDone(false), 1400);
-      }}
-    >
-      {done ? "Copied ✓" : label}
+    <button aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      style={{ width: 40, height: 40, borderRadius: 999, display: "grid", placeItems: "center", cursor: "pointer", fontSize: 18, background: "var(--surface-card)", color: "var(--text-secondary)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-sm)" }}>
+      {theme === "dark" ? <I.sun /> : <I.moon />}
     </button>
   );
 }
 
-function Gauge({ score, levelLabel, level, style }: { score: number; levelLabel: string; level: number; style: string }) {
-  const pct = Math.max(0, Math.min(100, score)) / 100;
-  const color = score >= 70 ? "var(--green)" : score >= 40 ? "var(--gold)" : "var(--red)";
-  if (style === "ring") {
-    const r = 80;
-    const c = 2 * Math.PI * r;
-    const dash = `${c * pct} ${c}`;
-    return (
-      <div className="gauge-wrap">
-        <svg viewBox="0 0 200 200" className="gauge gauge-ring" role="img" aria-label={`Score ${score} of 100`}>
-          <circle cx="100" cy="100" r="80" fill="none" stroke="var(--surface0)" strokeWidth="14" />
-          <circle
-            cx="100"
-            cy="100"
-            r="80"
-            fill="none"
-            stroke={color}
-            strokeWidth="14"
-            strokeLinecap="round"
-            strokeDasharray={dash}
-            transform="rotate(-90 100 100)"
-            style={{ transition: "stroke-dasharray 1s ease" }}
-          />
-        </svg>
-        <div className="gauge-num">
-          <span className="gnum">{score}</span>
-          <span className="gmax">/100</span>
-        </div>
-        <div className="gauge-level">Level {level} · {levelLabel}</div>
-      </div>
-    );
-  }
-  if (style === "dashed") {
-    const seg = 40;
-    const r = 80;
-    const on = Math.round(seg * pct);
-    return (
-      <div className="gauge-wrap">
-        <svg viewBox="0 0 200 120" className="gauge" role="img" aria-label={`Score ${score} of 100`}>
-          {Array.from({ length: seg }).map((_, i) => {
-            const a = (Math.PI * (i + 0.5)) / seg;
-            const x = 100 - Math.cos(a) * r;
-            const y = 100 - Math.sin(a) * r;
-            return <circle key={i} cx={x} cy={y} r="3.2" fill={i < on ? color : "var(--surface0)"} />;
-          })}
-        </svg>
-        <div className="gauge-num">
-          <span className="gnum">{score}</span>
-          <span className="gmax">/100</span>
-        </div>
-        <div className="gauge-level">Level {level} · {levelLabel}</div>
-      </div>
-    );
-  }
-  // semicircle (default)
-  const r = 80;
-  const c = Math.PI * r;
-  const dash = `${c * pct} ${c}`;
+/* ============================================================ small UI */
+function Spinner({ sm }: { sm?: boolean }) {
+  const s = sm ? 13 : 18;
+  return <span style={{ width: s, height: s, borderRadius: 999, border: "2px solid var(--surface-border)", borderTopColor: "var(--accent)", display: "inline-block", animation: "aeo-spin .7s linear infinite" }} />;
+}
+function StatusIcon({ status, size = 26 }: { status: Status; size?: number }) {
+  const m = STATUS_META[status];
+  const Ico = m.icon;
+  return <span style={{ display: "inline-grid", placeItems: "center", flex: "none", width: size, height: size, borderRadius: 999, background: m.dim, color: m.color, border: `1px solid ${m.bd}`, fontSize: size * 0.62 }} aria-hidden="true"><Ico /></span>;
+}
+function Chip({ href, children, skill }: { href?: string; children: React.ReactNode; skill?: boolean }) {
   return (
-    <div className="gauge-wrap">
-      <svg viewBox="0 0 200 120" className="gauge" role="img" aria-label={`Score ${score} of 100`}>
-        <path d="M20 100 A80 80 0 0 1 180 100" fill="none" stroke="var(--surface0)" strokeWidth="14" strokeLinecap="round" />
-        <path
-          d="M20 100 A80 80 0 0 1 180 100"
-          fill="none"
-          stroke={color}
-          strokeWidth="14"
-          strokeLinecap="round"
-          strokeDasharray={dash}
-          style={{ transition: "stroke-dasharray 1s ease" }}
-        />
-      </svg>
-      <div className="gauge-num">
-        <span className="gnum">{score}</span>
-        <span className="gmax">/100</span>
-      </div>
-      <div className="gauge-level">Level {level} · {levelLabel}</div>
-    </div>
+    <a href={href || "#"} target="_blank" rel="noopener noreferrer" onClick={(e) => { if (!href) e.preventDefault(); }}
+      style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "4px 9px", fontSize: 12, fontWeight: 600, textDecoration: "none", borderRadius: 999, color: skill ? "var(--on-accent)" : "var(--text-secondary)", background: skill ? "var(--accent)" : "var(--surface-card-strong)", border: "1px solid", borderColor: skill ? "transparent" : "var(--surface-border)" }}>
+      {skill && <span style={{ fontSize: 11, display: "inline-flex" }}><I.spark /></span>}
+      {children}
+      {!skill && <span style={{ fontSize: 11, opacity: 0.6, display: "inline-flex" }}><I.ext /></span>}
+    </a>
+  );
+}
+function CopyButton({ text, label = "Copy", primary, full }: { text: string; label?: string; primary?: boolean; full?: boolean }) {
+  const [done, setDone] = useState(false);
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(text); }
+    catch { const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); }
+    setDone(true); setTimeout(() => setDone(false), 1600);
+  };
+  return (
+    <button onClick={copy} aria-live="polite"
+      style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7, padding: full ? "13px 18px" : "8px 14px", width: full ? "100%" : "auto", fontSize: 13.5, fontWeight: 700, cursor: "pointer", borderRadius: "var(--radius-sm)", transition: "background .15s, transform .1s, color .15s", color: primary ? "var(--on-accent)" : done ? "var(--status-success)" : "var(--text-primary)", background: primary ? "var(--accent)" : "var(--surface-card-strong)", border: "1px solid", borderColor: primary ? "transparent" : "var(--surface-border)", boxShadow: primary ? "var(--shadow-accent)" : "none" }}>
+      <span style={{ fontSize: 15, display: "inline-flex" }}>{done ? <I.check /> : <I.copy />}</span>
+      {done ? "Copied" : label}
+    </button>
+  );
+}
+function GhostBtn({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick?: () => void }) {
+  return (
+    <button onClick={onClick} style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 13px", fontSize: 13, fontWeight: 600, cursor: "pointer", borderRadius: "var(--radius-sm)", color: "var(--text-secondary)", background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
+      <span style={{ fontSize: 14, display: "inline-flex" }}>{icon}</span><span className="ghost-label">{label}</span>
+    </button>
   );
 }
 
-function FixCard({ finding, url, density }: { finding: ApiFinding; url: string; density: string }) {
-  const [open, setOpen] = useState(false);
-  const st = finding.status;
-  const icon = st === "pass" ? "✓" : st === "fail" ? "✕" : "•";
-  const docs: Doc[] = (finding.docs || []).map((u) => ({ t: docLabel(u), u }));
+/* ============================================================ gauges */
+function ScoreGauge({ score }: { score: number }) {
+  const [shown, setShown] = useState(0);
+  const reduce = useRef(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches).current;
+  useEffect(() => {
+    if (reduce) { setShown(score); return; }
+    let raf = 0; let start = 0; const dur = 1100;
+    const step = (t: number) => { if (!start) start = t; const p = Math.min(1, (t - start) / dur); const e = 1 - Math.pow(1 - p, 3); setShown(Math.round(score * e)); if (p < 1) raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+    const settle = setTimeout(() => setShown(score), dur + 200);
+    return () => { cancelAnimationFrame(raf); clearTimeout(settle); };
+  }, [score]);
+  const col = scoreColor(score);
+  const path = "M 24 150 A 126 126 0 0 1 276 150";
+  const ARC = Math.PI * 126;
   return (
-    <div className={`fix-card ${st} ${open ? "open" : ""} ${density}`}>
-      <button className="fix-head" type="button" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        <span className={`fix-icon ${st}`}>{icon}</span>
-        <span className="fix-title">{finding.title}</span>
-        <span className="fix-status">{st}</span>
-        <span className="fix-chev">{open ? "▲" : "▼"}</span>
+    <div style={{ position: "relative", width: 300, height: 172 }} role="meter" aria-valuenow={score} aria-valuemin={0} aria-valuemax={100} aria-label="AEO score">
+      <svg viewBox="0 0 300 172" width="300" height="172">
+        <path d={path} fill="none" stroke="var(--surface-inset)" strokeWidth="18" strokeLinecap="round" />
+        <path d={path} fill="none" stroke={col} strokeWidth="18" strokeLinecap="round" strokeDasharray={`${(shown / 100) * ARC} ${ARC}`} />
+      </svg>
+      <div style={{ position: "absolute", left: 0, right: 0, top: 64, display: "grid", placeItems: "center" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", lineHeight: 1 }}>
+          <div style={{ fontSize: 64, fontWeight: 800, letterSpacing: "-.03em", fontVariantNumeric: "tabular-nums", color: "var(--text-primary)" }}>{shown}</div>
+          <div style={{ fontSize: 13, color: "var(--text-tertiary)", marginTop: 6, fontWeight: 600 }}>/ 100</div>
+        </div>
+      </div>
+      <div style={{ position: "absolute", left: 18, bottom: 2, fontSize: 12, color: "var(--text-tertiary)", fontWeight: 600 }}>0</div>
+      <div style={{ position: "absolute", right: 14, bottom: 2, fontSize: 12, color: "var(--text-tertiary)", fontWeight: 600 }}>100</div>
+    </div>
+  );
+}
+function LevelBadge({ level, score }: { level: Level; score: number }) {
+  const col = scoreColor(score);
+  return (
+    <div style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "8px 16px 8px 12px", borderRadius: 999, background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-sm)" }}>
+      <span style={{ display: "inline-flex", gap: 3 }}>
+        {[1, 2, 3, 4, 5].map((n) => <span key={n} style={{ width: 7, height: 14, borderRadius: 3, background: n <= level.n ? col : "var(--surface-border)" }} />)}
+      </span>
+      <span style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary)" }}>AEO Level {level.n}</span>
+      {level.name ? <span style={{ width: 4, height: 4, borderRadius: 9, background: "var(--text-tertiary)" }} /> : null}
+      {level.name ? <span style={{ fontSize: 14, color: "var(--text-secondary)", fontWeight: 500 }}>{level.name}</span> : null}
+    </div>
+  );
+}
+function MiniGauge({ score, label, passText, active, onClick }: { score: number; label: string; passText?: string; active?: boolean; onClick?: () => void }) {
+  const r = 26, c = 2 * Math.PI * r, col = scoreColor(score);
+  return (
+    <button onClick={onClick} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 9, padding: "14px 8px 12px", background: active ? "var(--surface-card-strong)" : "transparent", border: "1px solid", borderColor: active ? "var(--surface-border-strong)" : "transparent", borderRadius: "var(--radius-md)", cursor: "pointer", minWidth: 96, flex: "1 1 96px", transition: "background .15s,border-color .15s" }}>
+      <div style={{ position: "relative", width: 64, height: 64 }}>
+        <svg viewBox="0 0 64 64" width="64" height="64" style={{ transform: "rotate(-90deg)" }}>
+          <circle cx="32" cy="32" r={r} fill="none" stroke="var(--surface-inset)" strokeWidth="6" />
+          <circle cx="32" cy="32" r={r} fill="none" stroke={col} strokeWidth="6" strokeLinecap="round" strokeDasharray={`${(score / 100) * c} ${c}`} style={{ transition: "stroke-dasharray .6s ease" }} />
+        </svg>
+        <span style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", fontSize: 17, fontWeight: 800, color: "var(--text-primary)", fontVariantNumeric: "tabular-nums" }}>{score}</span>
+      </div>
+      <span style={{ fontSize: 12.5, fontWeight: 600, color: "var(--text-primary)", textAlign: "center", lineHeight: 1.25 }}>{label}</span>
+      {passText ? <span style={{ fontSize: 11.5, color: "var(--text-tertiary)", fontWeight: 600 }}>{passText}</span> : null}
+    </button>
+  );
+}
+
+/* ============================================================ fix cards */
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "minmax(96px,118px) 1fr", gap: 14, alignItems: "baseline" }}>
+      <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: ".06em" }}>{label}</span>
+      <span style={{ fontSize: 14.5, lineHeight: 1.5 }}>{children}</span>
+    </div>
+  );
+}
+function FixCard({ check, density = "comfy", defaultOpen }: { check: Check; density?: string; defaultOpen?: boolean }) {
+  const failing = check.status === "fail";
+  const [open, setOpen] = useState(defaultOpen != null ? defaultOpen : failing);
+  const pad = density === "compact" ? "14px 16px" : "18px 20px";
+  const resultColor = check.status === "pass" ? "var(--status-success)" : check.status === "fail" ? "var(--status-danger)" : "var(--text-tertiary)";
+  return (
+    <div style={{ position: "relative", borderRadius: "var(--radius-md)", overflow: "hidden", background: "var(--surface-card)", border: "1px solid var(--surface-border)", borderLeft: failing ? "3px solid var(--status-danger)" : "1px solid var(--surface-border)", boxShadow: open ? "var(--shadow-sm)" : "none", transition: "box-shadow .15s" }}>
+      <button onClick={() => setOpen((o) => !o)} aria-expanded={open} style={{ display: "flex", alignItems: "center", gap: 13, width: "100%", textAlign: "left", padding: pad, background: "transparent", border: "none", cursor: "pointer" }}>
+        <StatusIcon status={check.status} size={density === "compact" ? 24 : 28} />
+        <span style={{ flex: 1, minWidth: 0 }}>
+          <span style={{ display: "block", fontSize: density === "compact" ? 14.5 : 15.5, fontWeight: 700, color: "var(--text-primary)" }}>{check.title}</span>
+          {!open && check.result && <span style={{ display: "block", fontSize: 13, color: resultColor, fontWeight: 500, marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{check.result}</span>}
+        </span>
+        {check.status === "info" && <span style={{ fontSize: 11, fontWeight: 700, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: ".06em", flex: "none" }}>Info</span>}
+        <span style={{ fontSize: 18, color: "var(--text-tertiary)", display: "inline-flex", transform: open ? "rotate(180deg)" : "none", transition: "transform .2s", flex: "none" }}><I.chevron /></span>
       </button>
       {open && (
-        <div className="fix-body">
-          {finding.goal && (
-            <div className="fix-line">
-              <b>Goal</b>
-              <span>{finding.goal}</span>
-            </div>
+        <div style={{ padding: `0 ${density === "compact" ? 16 : 20}px ${density === "compact" ? 16 : 20}px`, display: "grid", gap: 14 }}>
+          <div style={{ height: 1, background: "var(--surface-border)" }} />
+          {check.goal && <Field label="Goal"><span style={{ color: "var(--text-secondary)" }}>{check.goal}</span></Field>}
+          {check.result && (
+            <Field label={check.status === "pass" ? "Result" : "Issue"}>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 7, color: resultColor, fontWeight: 600 }}>
+                <span style={{ fontSize: 14, display: "inline-flex" }}>{check.status === "pass" ? <I.check /> : check.status === "fail" ? <I.x /> : <I.info />}</span>
+                {check.result}
+              </span>
+            </Field>
           )}
-          {finding.issue && (
-            <div className="fix-line">
-              <b>Issue</b>
-              <span>{finding.issue}</span>
-            </div>
+          {check.how && <Field label="How to implement"><span style={{ color: "var(--text-secondary)" }}>{check.how}</span></Field>}
+          {(check.res.length > 0 || check.skillSlug) && (
+            <Field label="Resources">
+              <span style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {check.res.map((r, i) => <Chip key={i} href={r.u}>{r.t}</Chip>)}
+                {check.skillSlug && <Chip skill href={skillUrl(check.skillSlug)}>Skill</Chip>}
+              </span>
+            </Field>
           )}
-          {finding.fix && (
-            <div className="fix-line">
-              <b>How</b>
-              <span>{finding.fix}</span>
-            </div>
-          )}
-          {docs.length > 0 && (
-            <div className="fix-res">
-              {docs.map((d, i) => (
-                <a key={i} href={d.u} target="_blank" rel="noopener noreferrer">
-                  {d.t} ↗
-                </a>
-              ))}
-              {finding.skillUrl && (
-                <a href={finding.skillUrl} target="_blank" rel="noopener noreferrer">
-                  Skill ↗
-                </a>
-              )}
-            </div>
-          )}
-          {finding.status === "fail" && (
-            <div className="fix-actions">
-              <CopyBtn text={findingMarkdown(finding, url)} label="Copy fix for agent" />
+          {check.status === "fail" && check.copy && (
+            <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: 2 }}>
+              <CopyButton text={check.copy} label="Copy fix for agent" primary />
             </div>
           )}
         </div>
@@ -328,419 +297,408 @@ function FixCard({ finding, url, density }: { finding: ApiFinding; url: string; 
     </div>
   );
 }
+function CategorySection({ cat, idAttr }: { cat: Category; idAttr: string }) {
+  const { pass, total } = countPass(cat.checks);
+  return (
+    <section id={idAttr} style={{ scrollMarginTop: 24, display: "grid", gap: 12 }}>
+      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, marginTop: 6 }}>
+        <div>
+          <h3 style={{ margin: 0, fontSize: 17, fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-.01em" }}>{cat.label}</h3>
+          <p style={{ margin: "3px 0 0", fontSize: 13.5, color: "var(--text-tertiary)" }}>{cat.blurb}</p>
+        </div>
+        <span style={{ flex: "none", fontSize: 13, fontWeight: 700, color: pass === total ? "var(--status-success)" : "var(--text-secondary)", padding: "5px 11px", borderRadius: 999, background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", whiteSpace: "nowrap" }}>{pass}/{total} passed</span>
+      </div>
+      <div style={{ display: "grid", gap: 10 }}>{cat.checks.map((c) => <FixCard key={c.id} check={c} />)}</div>
+    </section>
+  );
+}
+function CommerceSection({ cat }: { cat: Category }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <section style={{ display: "grid", gap: 12 }}>
+      <button onClick={() => setOpen((o) => !o)} aria-expanded={open} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "16px 18px", borderRadius: "var(--radius-md)", background: "var(--surface-card-strong)", border: "1px dashed var(--surface-border-strong)", cursor: "pointer", textAlign: "left" }}>
+        <span>
+          <span style={{ display: "block", fontSize: 15.5, fontWeight: 700, color: "var(--text-primary)" }}>{cat.label} <span style={{ fontSize: 11, fontWeight: 700, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: ".06em" }}>· informational</span></span>
+          <span style={{ display: "block", fontSize: 13.5, color: "var(--text-tertiary)", marginTop: 2 }}>{cat.blurb}</span>
+        </span>
+        <span style={{ fontSize: 18, color: "var(--text-tertiary)", display: "inline-flex", transform: open ? "rotate(180deg)" : "none", transition: "transform .2s", flex: "none" }}><I.chevron /></span>
+      </button>
+      {open && <div style={{ display: "grid", gap: 10 }}>{cat.checks.map((c) => <FixCard key={c.id} check={c} />)}</div>}
+    </section>
+  );
+}
 
-function Gate({ locked, scanId, onSent }: { locked: number; scanId: string; onSent: () => void }) {
-  const [email, setEmail] = useState("");
-  const [agree, setAgree] = useState(false);
-  const [sent, setSent] = useState(false);
-  const [busy, setBusy] = useState(false);
+/* ============================================================ gate */
+const gateWrap: CSS = { position: "absolute", inset: 0, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 54, zIndex: 3 };
+const gateCard: CSS = { width: "min(420px,92%)", display: "grid", gap: 13, padding: "28px 26px", background: "var(--surface-card)", border: "1px solid var(--surface-border)", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-lg)" };
+function GatePanel({ lockedCount, sent, email, setEmail, agree, setAgree, onSubmit, error }: { lockedCount: number; sent: boolean; email: string; setEmail: (v: string) => void; agree: boolean; setAgree: (v: boolean) => void; onSubmit: () => void; error: string }) {
   const [err, setErr] = useState("");
-  const ok = EMAIL_RE.test(email) && agree;
-
+  const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!valid) { setErr("Enter a valid email address."); return; }
+    if (!agree) { setErr("Please agree to receive emails to continue."); return; }
+    setErr(""); onSubmit();
+  };
   if (sent) {
     return (
-      <div className="gate gate-sent">
-        <div className="gate-icon">✉</div>
-        <h3>Check your inbox</h3>
-        <p>
-          We sent a confirmation link to <b>{email}</b>. Click it to unlock all {locked} fixes.
-        </p>
+      <div style={gateWrap}>
+        <div style={{ ...gateCard, textAlign: "center" }}>
+          <span style={{ width: 56, height: 56, borderRadius: 999, display: "grid", placeItems: "center", margin: "0 auto 4px", background: "var(--status-info-dim)", color: "var(--status-info)", border: "1px solid var(--status-info-border)", fontSize: 26 }}><I.mail /></span>
+          <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800 }}>Check your inbox</h3>
+          <p style={{ margin: 0, fontSize: 14.5, color: "var(--text-secondary)", lineHeight: 1.55 }}>We sent a confirmation link to <strong style={{ color: "var(--text-primary)" }}>{email}</strong>. Click it to unlock all fixes.</p>
+          <p style={{ margin: 0, fontSize: 12.5, color: "var(--text-tertiary)" }}>Didn't get it? Check spam, or wait a minute and try again.</p>
+        </div>
       </div>
     );
   }
-
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!ok || busy) return;
-    setBusy(true);
-    setErr("");
-    const success = await apiSubscribe(email.trim().toLowerCase(), scanId);
-    setBusy(false);
-    if (success) {
-      setSent(true);
-      onSent();
-    } else {
-      setErr("Something went wrong. Please try again.");
-    }
-  };
-
   return (
-    <div className="gate">
-      <div className="gate-lock">🔒</div>
-      <h3>Unlock all {locked} fixes</h3>
-      <p>Get the full report plus copy-ready fixes for every issue. Free.</p>
-      <form onSubmit={submit}>
-        <input
-          type="email"
-          placeholder="you@company.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          autoComplete="email"
-        />
-        <label className="gate-agree">
-          <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} />
-          <span>Email me my report and occasional AEO tips. Unsubscribe anytime.</span>
-        </label>
-        <button className="gate-btn" type="submit" disabled={!ok || busy}>
-          {busy ? "Sending…" : "Unlock report →"}
-        </button>
-        {err && <div className="gate-err">{err}</div>}
-        <div className="gate-agree" style={{ justifyContent: "center", opacity: 0.7 }}>
-          <span>Double opt-in — confirm via the link we email you.</span>
+    <div style={gateWrap}>
+      <form onSubmit={submit} noValidate style={gateCard}>
+        <span style={{ width: 48, height: 48, borderRadius: 999, display: "grid", placeItems: "center", margin: "0 auto", background: "var(--surface-card-strong)", color: "var(--accent)", border: "1px solid var(--surface-border)", fontSize: 22 }}><I.lock /></span>
+        <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800, textAlign: "center", letterSpacing: "-.01em" }}>Unlock all {lockedCount > 0 ? lockedCount + " " : ""}fixes</h3>
+        <p style={{ margin: 0, fontSize: 14.5, color: "var(--text-secondary)", textAlign: "center", lineHeight: 1.5 }}>Get the full report + copy-ready instructions for your AI agent.</p>
+        <div style={{ display: "grid", gap: 10, marginTop: 2 }}>
+          <input type="email" value={email} onChange={(e) => { setEmail(e.target.value); setErr(""); }} placeholder="you@company.com" aria-label="Email address"
+            style={{ padding: "13px 15px", fontSize: 15, borderRadius: "var(--radius-sm)", width: "100%", background: "var(--surface-card-strong)", color: "var(--text-primary)", border: `1px solid ${err && !valid ? "var(--status-danger)" : "var(--surface-border)"}`, outline: "none" }} />
+          <label style={{ display: "flex", gap: 9, alignItems: "flex-start", fontSize: 13, color: "var(--text-secondary)", cursor: "pointer", lineHeight: 1.45 }}>
+            <input type="checkbox" checked={agree} onChange={(e) => { setAgree(e.target.checked); setErr(""); }} style={{ marginTop: 2, width: 17, height: 17, accentColor: "var(--accent)", flex: "none" }} />
+            <span>I agree to receive emails from AIPUSH. Unsubscribe anytime.</span>
+          </label>
+          {(err || error) && <span style={{ fontSize: 12.5, color: "var(--status-danger)", fontWeight: 600 }}>{err || error}</span>}
+          <button type="submit" style={{ padding: "13px 18px", fontSize: 15, fontWeight: 700, cursor: "pointer", borderRadius: "var(--radius-sm)", color: "var(--on-accent)", background: "var(--accent)", border: "none", boxShadow: "var(--shadow-accent)", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            Unlock report <span style={{ fontSize: 16, display: "inline-flex" }}><I.arrow /></span>
+          </button>
         </div>
+        <p style={{ margin: 0, fontSize: 12, color: "var(--text-tertiary)", textAlign: "center" }}>Double opt-in — confirm via the link we email you.</p>
       </form>
     </div>
   );
 }
-
-function useTweaks() {
-  const [gauge, setGauge] = useState("semicircle");
-  const [density, setDensity] = useState("comfy");
-  return { gauge, setGauge, density, setDensity };
-}
-
-function TweaksPanel({ t }: { t: ReturnType<typeof useTweaks> }) {
-  const [open, setOpen] = useState(false);
-  if (!open) {
-    return (
-      <button className="tweaks-fab" type="button" onClick={() => setOpen(true)} aria-label="Open tweaks">
-        ⚙
-      </button>
-    );
-  }
+function LockedStack() {
   return (
-    <div className="tweaks-panel">
-      <div className="tweaks-head">
-        <span>Tweaks</span>
-        <button type="button" onClick={() => setOpen(false)} aria-label="Close">
-          ✕
-        </button>
-      </div>
-      <div className="tweaks-row">
-        <label>Score gauge</label>
-        <div className="seg">
-          {["semicircle", "ring", "dashed"].map((g) => (
-            <button key={g} type="button" className={t.gauge === g ? "on" : ""} onClick={() => t.setGauge(g)}>
-              {g}
-            </button>
-          ))}
+    <div aria-hidden="true" style={{ position: "relative", filter: "blur(5px) saturate(.6)", opacity: 0.55, pointerEvents: "none", userSelect: "none", display: "grid", gap: 10 }}>
+      {[0, 1, 2].map((i) => (
+        <div key={i} style={{ height: 70 - i * 4, borderRadius: "var(--radius-md)", background: "var(--surface-card)", border: "1px solid var(--surface-border)", borderLeft: "3px solid var(--status-danger)", display: "flex", alignItems: "center", gap: 13, padding: "0 20px" }}>
+          <span style={{ width: 26, height: 26, borderRadius: 999, background: "var(--surface-inset)", flex: "none" }} />
+          <span style={{ display: "grid", gap: 7, flex: 1 }}>
+            <span style={{ height: 11, width: `${55 - i * 8}%`, background: "var(--surface-inset)", borderRadius: 6 }} />
+            <span style={{ height: 9, width: `${72 - i * 6}%`, background: "var(--surface-inset)", borderRadius: 6 }} />
+          </span>
         </div>
-      </div>
-      <div className="tweaks-row">
-        <label>Card density</label>
-        <div className="seg">
-          {["comfy", "compact"].map((d) => (
-            <button key={d} type="button" className={t.density === d ? "on" : ""} onClick={() => t.setDensity(d)}>
-              {d}
-            </button>
-          ))}
-        </div>
-      </div>
+      ))}
     </div>
   );
 }
-
-function Landing({ onAnalyze, error }: { onAnalyze: (url: string) => void; error: string }) {
-  const [url, setUrl] = useState("");
-  return (
-    <div className="hero">
-      <div className="hero-badge">✦ AIPUSH · AEO ANALYZER</div>
-      <h1>
-        Is your site ready
-        <br />
-        for AI agents?
-      </h1>
-      <p className="sub">
-        Scan your site for AI-agent and answer-engine readiness — robots, sitemaps, MCP, structured data, and more.
-      </p>
-      <form
-        className="url-row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (url.trim()) onAnalyze(url.trim());
-        }}
-      >
-        <input
-          className="url-input"
-          type="text"
-          inputMode="url"
-          placeholder="https://yourwebsite.com"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          autoFocus
-        />
-        <button className="analyze-btn" type="submit" disabled={!url.trim()}>
-          Analyze →
-        </button>
-      </form>
-      <p className="tiny">Free · No account needed to start</p>
-      {error && <p className="err">{error}</p>}
-    </div>
-  );
-}
-
-function Scanning({ url, done }: { url: string; done: boolean }) {
-  const [i, setI] = useState(0);
+function CopyAllModal({ bundle, onClose }: { bundle: string; onClose: () => void }) {
   useEffect(() => {
-    // Advance phases on a gentle timer until the real scan resolves; when the
-    // request completes (`done`), jump to the final phase.
-    if (done) {
-      setI(SCAN_PHASES.length);
-      return;
-    }
-    if (i >= SCAN_PHASES.length - 1) return;
-    const t = setTimeout(() => setI((n) => n + 1), 900);
-    return () => clearTimeout(t);
-  }, [i, done]);
-  const shown = Math.min(i, SCAN_PHASES.length);
-  const pct = Math.min(100, Math.round((100 * shown) / SCAN_PHASES.length));
+    const k = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    document.addEventListener("keydown", k);
+    document.body.style.overflow = "hidden";
+    return () => { document.removeEventListener("keydown", k); document.body.style.overflow = ""; };
+  }, [onClose]);
   return (
-    <div className="scanning">
-      <div className="scan-url">{url}</div>
-      <div className="scan-ring">
-        <div className="scan-fill" style={{ width: `${pct}%` }} />
-      </div>
-      <ul className="scan-phases">
-        {SCAN_PHASES.map((p, idx) => (
-          <li key={idx} className={idx < shown ? "done" : idx === shown ? "active" : ""}>
-            <span className="ph-dot">{idx < shown ? "✓" : "○"}</span>
-            {p}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function Results({
-  data,
-  tweaks,
-  unlocked,
-  onSent,
-}: {
-  data: ScanResponse;
-  tweaks: ReturnType<typeof useTweaks>;
-  unlocked: boolean;
-  onSent: () => void;
-}) {
-  // Group findings by category, preserving catalog order within each category.
-  const byCat = useMemo(() => {
-    const map = new Map<string, ApiFinding[]>();
-    for (const f of data.findings) {
-      const arr = map.get(f.category) || [];
-      arr.push(f);
-      map.set(f.category, arr);
-    }
-    return map;
-  }, [data]);
-
-  const lockedCount = data.lockedCount || data.findings.filter((f) => f.locked).length;
-  const scoringCats = data.categories;
-
-  let gateRendered = false;
-
-  return (
-    <div className="results">
-      <div className="result-head">
-        <span className="result-url">{data.url}</span>
-        <button className="rescan" type="button" onClick={() => location.assign("/")}>
-          Scan another ↻
-        </button>
-      </div>
-
-      <Gauge score={data.score} levelLabel={data.levelLabel} level={data.level} style={tweaks.gauge} />
-
-      <div className="cat-strip">
-        {scoringCats.map((c) => (
-          <a key={c.id} className="cat-chip" href={`#cat-${c.id}`}>
-            <span className="cat-score">{c.score}</span>
-            <span className="cat-label">{c.label}</span>
-          </a>
-        ))}
-      </div>
-
-      <div className="cta-row">
-        <CopyBtn text={bundleMarkdown(data)} label="Copy all fixes" cls="copy-all" />
-      </div>
-
-      {scoringCats.map((c) => {
-        const checks = byCat.get(c.id) || [];
-        return (
-          <div key={c.id} id={`cat-${c.id}`} className="cat-block">
-            <div className="cat-h">
-              <span>{c.label}</span>
-              <span className="cat-meta">
-                {c.passed}/{c.total} pass
-              </span>
-            </div>
-            {checks.map((f) => {
-              if (f.locked && !unlocked) {
-                if (!gateRendered) {
-                  gateRendered = true;
-                  return (
-                    <React.Fragment key={f.id}>
-                      <Gate locked={lockedCount} scanId={data.scanId} onSent={onSent} />
-                      <div className="locked-stack">{`+${lockedCount} more fixes`}</div>
-                    </React.Fragment>
-                  );
-                }
-                return null;
-              }
-              return <FixCard key={f.id} finding={f} url={data.url} density={tweaks.density} />;
-            })}
+    <div onClick={onClose} role="dialog" aria-modal="true" aria-label="Copy all fixes" style={{ position: "fixed", inset: 0, zIndex: 60, background: "color-mix(in oklab, var(--ctp-crust) 62%, transparent)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 18 }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ width: "min(680px,100%)", maxHeight: "86vh", display: "flex", flexDirection: "column", background: "var(--surface-card)", border: "1px solid var(--surface-border)", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-lg)", overflow: "hidden" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, padding: "20px 22px 14px" }}>
+          <div>
+            <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800 }}>Copy all instructions</h3>
+            <p style={{ margin: "4px 0 0", fontSize: 13.5, color: "var(--text-tertiary)" }}>Paste into Cursor, Claude Code, Copilot, or send to your developer.</p>
           </div>
-        );
-      })}
-
-      {/* Commerce + any non-scoring findings render under their own category id
-          if present in findings but absent from scoringCats. */}
-      {Array.from(byCat.keys())
-        .filter((catId) => !scoringCats.some((c) => c.id === catId))
-        .map((catId) => {
-          const checks = byCat.get(catId) || [];
-          const label = checks[0]?.categoryLabel || catId;
-          return (
-            <div key={catId} id={`cat-${catId}`} className="cat-block">
-              <div className="cat-h">
-                <span>{label}</span>
-                <span className="cat-meta">informational</span>
-              </div>
-              {checks.map((f) => (
-                <FixCard key={f.id} finding={f} url={data.url} density={tweaks.density} />
-              ))}
-            </div>
-          );
-        })}
-
-      <TweaksPanel t={tweaks} />
+          <button onClick={onClose} aria-label="Close" style={{ flex: "none", width: 34, height: 34, borderRadius: 999, display: "grid", placeItems: "center", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", color: "var(--text-secondary)", cursor: "pointer", fontSize: 16 }}><I.x /></button>
+        </div>
+        <pre className="scroll-thin" style={{ margin: "0 22px", flex: 1, overflow: "auto", padding: "16px 18px", fontSize: 12.5, lineHeight: 1.6, fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", color: "var(--text-secondary)", whiteSpace: "pre-wrap", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", borderRadius: "var(--radius-md)" }}>{bundle}</pre>
+        <div style={{ padding: "16px 22px 20px" }}><CopyButton text={bundle} label="Copy all instructions" primary full /></div>
+      </div>
     </div>
   );
 }
 
-// ---- root -----------------------------------------------------------------
-
-export function AeoAnalyzer() {
-  const [theme, setTheme] = useState<"light" | "dark">(initialTheme);
-  const [stage, setStage] = useState<"landing" | "scanning" | "results">("landing");
+/* ============================================================ screens */
+function Landing({ onAnalyze, busy, error }: { onAnalyze: (u: string) => void; busy: boolean; error: string }) {
   const [url, setUrl] = useState("");
-  const [data, setData] = useState<ScanResponse | null>(null);
+  const [custom, setCustom] = useState(false);
+  const submit = (e: React.FormEvent) => { e.preventDefault(); onAnalyze(url); };
+  return (
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "90px 20px 64px" }}>
+      <div style={{ width: "min(620px,100%)", display: "grid", gap: 22 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, justifySelf: "center", fontSize: 13, fontWeight: 700, color: "var(--text-tertiary)", letterSpacing: ".04em", textTransform: "uppercase" }}>
+          <span style={{ color: "var(--accent)", fontSize: 15, display: "inline-flex" }}><I.spark /></span> AIPUSH · AEO Analyzer
+        </div>
+        <h1 style={{ margin: 0, textAlign: "center", fontSize: "clamp(30px,6vw,44px)", fontWeight: 800, lineHeight: 1.08, letterSpacing: "-.025em" }}>Is your site ready for AI agents?</h1>
+        <p style={{ margin: "0 auto", maxWidth: 540, textAlign: "center", fontSize: 16, color: "var(--text-secondary)", lineHeight: 1.55 }}>Scan your site for AI-agent and answer-engine readiness — robots, sitemaps, MCP, structured data, and more.</p>
+        <form onSubmit={submit} style={{ marginTop: 4 }}>
+          <div className="url-row" style={{ display: "flex", gap: 10, padding: 6, borderRadius: "var(--radius-lg)", background: "var(--surface-card)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-md)" }}>
+            <input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://yourwebsite.com" inputMode="url" aria-label="Website URL" style={{ flex: 1, minWidth: 0, padding: "14px 14px", fontSize: 16, background: "transparent", border: "none", outline: "none", color: "var(--text-primary)" }} />
+            <button type="submit" className="analyze-btn" disabled={busy} style={{ flex: "none", padding: "14px 24px", fontSize: 15.5, fontWeight: 700, cursor: busy ? "default" : "pointer", opacity: busy ? 0.7 : 1, borderRadius: "var(--radius-md)", color: "var(--on-accent)", background: "var(--accent)", border: "none", boxShadow: "var(--shadow-accent)", display: "inline-flex", alignItems: "center", gap: 8 }}>
+              Analyze <span style={{ fontSize: 16, display: "inline-flex" }}><I.arrow /></span>
+            </button>
+          </div>
+        </form>
+        {error && <p style={{ margin: 0, textAlign: "center", fontSize: 13.5, color: "var(--status-danger)", fontWeight: 600 }}>{error}</p>}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }}>
+          <span style={{ fontSize: 13, color: "var(--text-tertiary)" }}>Free · No account needed to start</span>
+          <button onClick={() => setCustom((c) => !c)} aria-expanded={custom} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 600, color: "var(--text-secondary)", background: "transparent", border: "none", cursor: "pointer" }}>
+            What we check <span style={{ fontSize: 14, display: "inline-flex", transform: custom ? "rotate(180deg)" : "none", transition: "transform .2s" }}><I.chevron /></span>
+          </button>
+        </div>
+        {custom && (
+          <div style={{ display: "grid", gap: 10, padding: "18px 20px", borderRadius: "var(--radius-md)", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)" }}>
+            {["Discoverability — robots, sitemaps, crawlability", "Agent access & content — readable, structured content", "Identity & auth — OAuth & agent identity discovery", "Content structure — schema, FAQ, answer-units", "Structured data — JSON-LD, metadata, machine-readable signals"].map((t) => (
+              <div key={t} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, color: "var(--text-secondary)" }}>
+                <span style={{ color: "var(--accent)", fontSize: 13, display: "inline-flex" }}><I.check /></span>{t}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+function Scanning({ url, ready, onDone }: { url: string; ready: boolean; onDone: () => void }) {
+  const phases = SCAN_PHASES;
+  const [idx, setIdx] = useState(0);
+  const reduce = useRef(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches).current;
+  useEffect(() => {
+    const step = reduce ? 180 : 460;
+    const t = setInterval(() => setIdx((i) => Math.min(i + 1, phases.length)), step);
+    return () => clearInterval(t);
+  }, [phases.length, reduce]);
+  useEffect(() => {
+    if (idx >= phases.length && ready) { const t = setTimeout(onDone, 380); return () => clearTimeout(t); }
+    return undefined;
+  }, [idx, ready, phases.length, onDone]);
+  return (
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "90px 20px 64px" }}>
+      <div style={{ width: "min(560px,100%)", display: "grid", gap: 30, justifyItems: "center" }}>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "9px 16px", borderRadius: 999, background: "var(--surface-card)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-sm)", maxWidth: "100%" }}>
+          <Spinner />
+          <span style={{ fontSize: 14, fontWeight: 600, color: "var(--text-secondary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Scanning {url}</span>
+        </div>
+        <div style={{ width: "min(420px,100%)", display: "grid", gap: 9 }}>
+          {phases.map((p, i) => {
+            const done = i < idx, active = i === idx;
+            return (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 11, padding: "11px 15px", borderRadius: "var(--radius-md)", background: active ? "var(--surface-card)" : "transparent", border: "1px solid", borderColor: active ? "var(--surface-border-strong)" : "transparent", opacity: done || active ? 1 : 0.4, transition: "opacity .25s, background .25s, border-color .25s" }}>
+                <span style={{ width: 22, height: 22, borderRadius: 999, flex: "none", display: "grid", placeItems: "center", fontSize: 13, background: done ? "var(--status-success-dim)" : "var(--surface-inset)", color: done ? "var(--status-success)" : "var(--text-tertiary)", border: `1px solid ${done ? "var(--status-success-border)" : "var(--surface-border)"}` }}>
+                  {done ? <I.check /> : active ? <Spinner sm /> : <span style={{ width: 5, height: 5, borderRadius: 9, background: "var(--text-tertiary)" }} />}
+                </span>
+                <span style={{ fontSize: 14, fontWeight: active ? 700 : 500, color: done || active ? "var(--text-primary)" : "var(--text-tertiary)" }}>{p}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const primaryBtn: CSS = { display: "inline-flex", alignItems: "center", gap: 8, padding: "12px 20px", fontSize: 14.5, fontWeight: 700, cursor: "pointer", borderRadius: "var(--radius-md)", color: "var(--on-accent)", background: "var(--accent)", border: "none", boxShadow: "var(--shadow-accent)" };
+const secondaryBtn: CSS = { display: "inline-flex", alignItems: "center", gap: 7, padding: "12px 18px", fontSize: 14.5, fontWeight: 700, cursor: "pointer", borderRadius: "var(--radius-md)", color: "var(--text-primary)", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)" };
+
+function Results({ data, unlocked, lockedCount, sent, gate, onScanAnother }: {
+  data: Data; unlocked: boolean; lockedCount: number; sent: boolean;
+  gate: { email: string; setEmail: (v: string) => void; agree: boolean; setAgree: (v: boolean) => void; onSubmit: () => void; error: string };
+  onScanAnother: () => void;
+}) {
+  const [modal, setModal] = useState(false);
+  const [activeCat, setActiveCat] = useState<string | null>(null);
+  const findingsRef = useRef<HTMLDivElement>(null);
+  const bundle = useMemo(() => buildBundle(data), [data]);
+  const freeFixes = useMemo(() => {
+    const arr: Check[] = [];
+    data.categories.forEach((c) => c.checks.forEach((ch) => { if (ch.status === "fail" && ch.copy) arr.push(ch); }));
+    return arr.slice(0, 2);
+  }, [data]);
+  const scrollToFindings = () => { const el = findingsRef.current; if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 16, behavior: "smooth" }); };
+  const scrollToCat = (id: string) => { const el = document.getElementById("cat-" + id); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 16, behavior: "smooth" }); };
+
+  return (
+    <div style={{ minHeight: "100vh", padding: "74px 18px 80px" }}>
+      <div style={{ width: "min(720px,100%)", margin: "0 auto", display: "grid", gap: 18 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+          <span style={{ fontSize: 13.5, color: "var(--text-tertiary)", display: "inline-flex", alignItems: "center", gap: 7, minWidth: 0 }}>
+            <span style={{ width: 7, height: 7, borderRadius: 9, background: "var(--status-success)", flex: "none" }} />
+            <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{data.url}</span>
+          </span>
+          <div style={{ display: "flex", gap: 8, flex: "none" }}>
+            <GhostBtn icon={<I.share />} label="Share" onClick={() => { const u = `${location.origin}/?url=${encodeURIComponent(data.url)}`; navigator.clipboard?.writeText(u).catch(() => {}); }} />
+            <GhostBtn icon={<I.refresh />} label="Scan another" onClick={onScanAnother} />
+          </div>
+        </div>
+
+        <div style={{ display: "grid", gap: 18, padding: "30px 24px 26px", borderRadius: "var(--radius-xl)", background: "var(--surface-card)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-md)", justifyItems: "center" }}>
+          <ScoreGauge score={data.score} />
+          <LevelBadge level={data.level} score={data.score} />
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center", marginTop: 2 }}>
+            <button onClick={scrollToFindings} style={primaryBtn}>Improve your score <span style={{ fontSize: 15, display: "inline-flex" }}><I.arrow /></span></button>
+            <button onClick={() => setModal(true)} style={secondaryBtn}><span style={{ fontSize: 15, display: "inline-flex" }}><I.copy /></span> Copy all fixes</button>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 4, padding: 8, borderRadius: "var(--radius-lg)", background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
+          {data.categories.map((c) => {
+            const { pass, total } = countPass(c.checks);
+            return <MiniGauge key={c.id} score={c.score} label={c.label} passText={unlocked ? `${pass}/${total}` : undefined} active={activeCat === c.id} onClick={() => { setActiveCat(c.id); scrollToCat(c.id); }} />;
+          })}
+        </div>
+
+        <div ref={findingsRef} style={{ display: "grid", gap: 18, marginTop: 4 }}>
+          {unlocked ? (
+            <>
+              {data.categories.map((c) => <CategorySection key={c.id} cat={c} idAttr={"cat-" + c.id} />)}
+              {data.commerce && <CommerceSection cat={data.commerce} />}
+            </>
+          ) : (
+            <>
+              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12 }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: 17, fontWeight: 800 }}>Recommended fixes</h3>
+                  <p style={{ margin: "3px 0 0", fontSize: 13.5, color: "var(--text-tertiary)" }}>{lockedCount + freeFixes.length} fixes found · {freeFixes.length} unlocked free</p>
+                </div>
+              </div>
+              <div style={{ display: "grid", gap: 10 }}>{freeFixes.map((ch) => <FixCard key={ch.id} check={ch} defaultOpen />)}</div>
+              {lockedCount > 0 && (
+                <div style={{ position: "relative", minHeight: 430 }}>
+                  <div style={{ position: "absolute", top: -6, left: "50%", transform: "translateX(-50%)", zIndex: 4, fontSize: 12.5, fontWeight: 700, color: "var(--text-secondary)", padding: "5px 13px", borderRadius: 999, background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-sm)" }}>+ {lockedCount} more fixes</div>
+                  <div style={{ paddingTop: 18 }}><LockedStack /></div>
+                  <GatePanel lockedCount={lockedCount} sent={sent} email={gate.email} setEmail={gate.setEmail} agree={gate.agree} setAgree={gate.setAgree} onSubmit={gate.onSubmit} error={gate.error} />
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+      {modal && <CopyAllModal bundle={bundle} onClose={() => setModal(false)} />}
+    </div>
+  );
+}
+
+/* ============================================================ root */
+export function AeoAnalyzer() {
+  const [theme, setThemeState] = useState(initialTheme);
+  const [screen, setScreen] = useState<"landing" | "scanning" | "results">("landing");
+  const [data, setData] = useState<Data | null>(null);
+  const [scanId, setScanId] = useState<string>("");
+  const [lockedCount, setLockedCount] = useState(0);
+  const [scanReady, setScanReady] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
-  const [error, setError] = useState("");
-  const [scanDone, setScanDone] = useState(false);
-  const tweaks = useTweaks();
-  const bootstrapped = useRef(false);
-  const runScanRef = useRef<((u: string) => Promise<void>) | null>(null);
+  const [sent, setSent] = useState(false);
+  const [email, setEmail] = useState("");
+  const [agree, setAgree] = useState(false);
+  const [landingError, setLandingError] = useState("");
+  const [gateError, setGateError] = useState("");
+  const [busy, setBusy] = useState(false);
 
-  useEffect(() => {
+  const setTheme = (v: string) => { setThemeState(v); applyTheme(v); localStorage.setItem("aeo-theme", v); };
+  useEffect(() => { applyTheme(theme); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { window.scrollTo(0, 0); }, [screen]);
+
+  const startScan = useCallback(async (raw: string) => {
+    const norm = normalizeUrl(raw);
+    if (!norm) { setLandingError("Enter a valid website URL (e.g. example.com)."); return; }
+    setLandingError(""); setBusy(true);
+    setData(null); setUnlocked(false); setSent(false); setScanReady(false); setLockedCount(0);
+    setScreen("scanning");
     try {
-      localStorage.setItem("aeo-theme", theme);
+      const r = await fetch("/api/aeo/scan", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ url: norm }) });
+      if (!r.ok) {
+        const j = await r.json().catch(() => ({}));
+        setLandingError(scanErrorMessage(j.error, r.status)); setScreen("landing"); setBusy(false); return;
+      }
+      const resp = await r.json();
+      setScanId(resp.scanId); setLockedCount(resp.lockedCount ?? 0);
+      setData(adapt(resp)); setScanReady(true); setBusy(false);
     } catch {
-      /* ignore */
+      setLandingError("Could not reach the analyzer. Please try again."); setScreen("landing"); setBusy(false);
     }
-  }, [theme]);
+  }, []);
 
-  // On load, restore a scan from ?scan=<id> and unlock if ?unlocked=1 + cookie.
+  // restore from a confirm-link deep-link: /?scan=<id>&unlocked=1
   useEffect(() => {
-    if (bootstrapped.current) return;
-    bootstrapped.current = true;
     const params = new URLSearchParams(window.location.search);
-    const scanId = params.get("scan");
+    const sid = params.get("scan");
+    if (!sid) return;
     const wantUnlock = params.get("unlocked") === "1";
-    if (params.get("aeo_error")) {
-      setError("That confirmation link is invalid or expired. Run the scan again.");
-    }
-    // Deep-link from marketing pages: /analyzer?url=<site> auto-runs a scan.
-    const presetUrl = params.get("url");
-    if (!scanId && presetUrl && presetUrl.trim()) {
-      void runScanRef.current?.(presetUrl.trim());
-      return;
-    }
-    if (!scanId) return;
     (async () => {
-      if (wantUnlock) {
-        const full = await apiGetScan(scanId, true);
-        if (full) {
-          setData(full);
-          setUnlocked(true);
-          setStage("results");
-          return;
+      try {
+        if (wantUnlock) {
+          const rf = await fetch(`/api/aeo/scan/${encodeURIComponent(sid)}/full`, { credentials: "include" });
+          if (rf.ok) { const full = await rf.json(); setScanId(sid); setData(adapt(full)); setLockedCount(0); setUnlocked(true); setScanReady(true); setScreen("results"); return; }
         }
-      }
-      const gated = await apiGetScan(scanId, false);
-      if (gated) {
-        setData(gated);
-        setStage("results");
-      }
+        const rg = await fetch(`/api/aeo/scan/${encodeURIComponent(sid)}`, { credentials: "include" });
+        if (rg.ok) { const g = await rg.json(); setScanId(sid); setData(adapt(g)); setLockedCount(g.lockedCount ?? 0); setScanReady(true); setScreen("results"); }
+      } catch { /* ignore — stay on landing */ }
     })();
   }, []);
 
-  const toggle = useCallback(() => setTheme((t) => (t === "dark" ? "light" : "dark")), []);
-
-  const runScan = useCallback(async (target: string) => {
-    setUrl(target);
-    setError("");
-    setScanDone(false);
-    setStage("scanning");
+  // attempt to unlock when results show / on focus (after confirming via email in another tab)
+  const tryUnlock = useCallback(async () => {
+    if (!scanId || unlocked) return;
     try {
-      const res = await apiScan(target);
-      setData(res);
-      setScanDone(true);
-      // brief beat so the final scan phase is visible, then show results
-      setTimeout(() => setStage("results"), 350);
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "SCAN_FAILED";
-      setError(friendlyError(msg));
-      setStage("landing");
-    }
-  }, []);
-  runScanRef.current = runScan;
+      const r = await fetch(`/api/aeo/scan/${encodeURIComponent(scanId)}/full`, { credentials: "include" });
+      if (r.ok) { const full = await r.json(); setData(adapt(full)); setLockedCount(0); setUnlocked(true); }
+    } catch { /* not confirmed yet */ }
+  }, [scanId, unlocked]);
+  useEffect(() => {
+    if (screen !== "results" || !sent || unlocked) return undefined;
+    const onFocus = () => tryUnlock();
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, [screen, sent, unlocked, tryUnlock]);
+
+  const submitGate = useCallback(async () => {
+    setGateError("");
+    try {
+      const r = await fetch("/api/aeo/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ email: email.trim(), scanId, consent: true }) });
+      if (!r.ok) { const j = await r.json().catch(() => ({})); setGateError(subscribeErrorMessage(j.error)); return; }
+      setSent(true);
+    } catch { setGateError("Could not send the confirmation email. Please try again."); }
+  }, [email, scanId]);
 
   return (
-    <div className="aeo-root aeo-app" data-theme={theme}>
-      <div className="topbar">
-        <div className="brand">
-          <span className="brand-dot">✦</span>
-          <span>AIPUSH · AEO Analyzer</span>
-        </div>
-        <button className="theme-btn" type="button" onClick={toggle} aria-label="Toggle light/dark theme">
-          {theme === "dark" ? "☀" : "☾"}
-        </button>
+    <div className="aeo-root">
+      <div style={{ position: "fixed", top: 16, right: 16, zIndex: 40 }}>
+        <ThemeToggle theme={theme} setTheme={setTheme} />
       </div>
 
-      {stage === "landing" && <Landing onAnalyze={runScan} error={error} />}
-      {stage === "scanning" && <Scanning url={url} done={scanDone} />}
-      {stage === "results" && data && (
-        <Results data={data} tweaks={tweaks} unlocked={unlocked} onSent={() => undefined} />
+      {screen === "landing" && <Landing onAnalyze={startScan} busy={busy} error={landingError} />}
+      {screen === "scanning" && <Scanning url={data?.url || ""} ready={scanReady} onDone={() => setScreen("results")} />}
+      {screen === "results" && data && (
+        <Results data={data} unlocked={unlocked} lockedCount={lockedCount} sent={sent}
+          gate={{ email, setEmail, agree, setAgree, onSubmit: submitGate, error: gateError }}
+          onScanAnother={() => { setScreen("landing"); setData(null); setLandingError(""); }} />
       )}
 
-      {(stage === "results" && (unlocked || data?.locked === false)) && (
-        <footer className="site-foot">
-          <a href="/privacy">Privacy</a>
-          <a href="/terms">Terms</a>
-          <span>© AIPUSH</span>
+      {(sent || unlocked) && screen === "results" && (
+        <footer style={{ padding: "22px 18px 30px", display: "flex", justifyContent: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 12.5, color: "var(--text-tertiary)" }}>
+            <a href="/privacy" style={{ color: "var(--text-tertiary)", textDecoration: "none" }}>Privacy</a>
+            <span style={{ width: 3, height: 3, borderRadius: 9, background: "var(--text-tertiary)" }} />
+            <a href="/terms" style={{ color: "var(--text-tertiary)", textDecoration: "none" }}>Terms</a>
+            <span style={{ width: 3, height: 3, borderRadius: 9, background: "var(--text-tertiary)" }} />
+            <span>© AIPUSH</span>
+          </div>
         </footer>
       )}
     </div>
   );
 }
 
-function friendlyError(code: string): string {
+function scanErrorMessage(code: string | undefined, status: number): string {
   switch (code) {
-    case "URL_REQUIRED":
-      return "Please enter a website URL.";
-    case "URL_INVALID":
-    case "TARGET_URL_INVALID":
-      return "That doesn't look like a valid URL.";
-    case "TARGET_URL_NOT_HTTPS":
-      return "Only https:// sites can be scanned.";
-    case "TARGET_URL_IP_LITERAL":
-    case "TARGET_URL_RESOLVES_PRIVATE":
-      return "That address can't be scanned.";
-    case "TARGET_URL_DNS_FAILED":
-      return "We couldn't resolve that domain. Check the URL and try again.";
-    default:
-      return "We couldn't scan that site. Please try again.";
+    case "URL_REQUIRED": return "Please enter a website URL.";
+    case "INVALID_URL": return "That doesn't look like a valid website URL.";
+    case "SCAN_PERSIST_FAILED": return "Something went wrong saving the scan. Please try again.";
+    default: return status === 429 ? "Too many scans — please wait a moment and try again." : "We couldn't analyze that site. Check the URL and try again.";
   }
 }
-
-export default AeoAnalyzer;
+function subscribeErrorMessage(code: string | undefined): string {
+  switch (code) {
+    case "EMAIL_INVALID": return "Enter a valid email address.";
+    case "CONSENT_REQUIRED": return "Please agree to receive emails to continue.";
+    case "SCAN_ID_REQUIRED": case "SCAN_NOT_FOUND": return "Please run a scan first.";
+    case "SERVER_MISCONFIGURED": return "Email isn't available right now. Please try again later.";
+    default: return "Could not send the confirmation email. Please try again.";
+  }
+}

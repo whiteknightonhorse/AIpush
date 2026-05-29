@@ -96,7 +96,7 @@ export function ShowUpInPerplexityAi() {
           <InlineSignup pageSlug={SLUG} ctaText={CTA_TEXT} ctaLocation="hero" onCtaFire={() => fireCta("hero")} variant="dark" />
           <p className="adlp-hero-social">Results in 7 days · 600 pages/mo · $2.67/day</p>
           <p className="adlp-hero-urgency">Free AI visibility audit &middot; No credit card &middot; Setup in 5 min</p>
-          <a href="/guide" className="adlp-hero-demo-link">See how it works &#8594;</a>
+          <a href="/" className="adlp-hero-demo-link">Try the free analyzer &#8594;</a>
         </div>
         <div className="adlp-hero-visual">
           <div className="adlp-mockup">
@@ -320,7 +320,7 @@ export function ShowUpInPerplexityAi() {
       </div>
       <div className="adlp-sticky">
         <span className="adlp-sticky-meta">Free AI Visibility Check &middot; No signup</span>
-        <button className="btn adlp-hero-cta" onClick={() => { fireCta("sticky"); window.location.href = "/audit"; }}>{CTA_TEXT}</button>
+        <button className="btn adlp-hero-cta" onClick={() => { fireCta("sticky"); window.location.href = "/"; }}>{CTA_TEXT}</button>
       </div>
     </div>
   );

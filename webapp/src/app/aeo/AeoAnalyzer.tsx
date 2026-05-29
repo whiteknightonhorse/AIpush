@@ -519,7 +519,7 @@ function ShareModal({ url, score, level, onClose }: { url: string; score: number
   };
   return (
     <div onClick={onClose} role="dialog" aria-modal="true" aria-label="Share results" style={{ position: "fixed", inset: 0, zIndex: 60, background: "color-mix(in oklab, var(--ctp-crust) 62%, transparent)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 18 }}>
-      <div onClick={(e) => e.stopPropagation()} style={{ width: "min(440px,100%)", display: "grid", gap: 16, padding: "22px 22px 24px", background: "var(--surface-card)", border: "1px solid var(--surface-border)", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-lg)" }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ width: "min(440px,100%)", display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: 16, padding: "22px 22px 24px", background: "var(--surface-card)", border: "1px solid var(--surface-border)", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-lg)" }}>
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
           <div>
             <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800 }}>Share your result</h3>
@@ -527,7 +527,7 @@ function ShareModal({ url, score, level, onClose }: { url: string; score: number
           </div>
           <button onClick={onClose} aria-label="Close" style={{ flex: "none", width: 34, height: 34, borderRadius: 999, display: "grid", placeItems: "center", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", color: "var(--text-secondary)", cursor: "pointer", fontSize: 16 }}><I.x /></button>
         </div>
-        <div style={{ display: "grid", gap: 8 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: 8 }}>
           {targets.map((t) => (
             <a key={t.label} href={t.href} target="_blank" rel="noopener noreferrer" onClick={onClose} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "12px 15px", fontSize: 14.5, fontWeight: 600, textDecoration: "none", color: "var(--text-primary)", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", borderRadius: "var(--radius-sm)" }}>
               <span>{t.label}</span>

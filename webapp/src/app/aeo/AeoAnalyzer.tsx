@@ -250,9 +250,9 @@ function LevelBadge({ level, score }: { level: Level; score: number }) {
 function MiniGauge({ score, label, passText, active, onClick }: { score: number; label: string; passText?: string; active?: boolean; onClick?: () => void }) {
   const r = 26, c = 2 * Math.PI * r, col = scoreColor(score);
   return (
-    <button onClick={onClick} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 9, padding: "14px 8px 12px", background: active ? "var(--surface-card-strong)" : "transparent", border: "1px solid", borderColor: active ? "var(--surface-border-strong)" : "transparent", borderRadius: "var(--radius-md)", cursor: "pointer", minWidth: 96, flex: "1 1 96px", transition: "background .15s,border-color .15s" }}>
+    <button onClick={onClick} aria-label={`${label}: score ${score} of 100${passText ? ` (${passText} passed)` : ""}`} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 9, padding: "14px 8px 12px", background: active ? "var(--surface-card-strong)" : "transparent", border: "1px solid", borderColor: active ? "var(--surface-border-strong)" : "transparent", borderRadius: "var(--radius-md)", cursor: "pointer", minWidth: 96, flex: "1 1 96px", transition: "background .15s,border-color .15s" }}>
       <div style={{ position: "relative", width: 64, height: 64 }}>
-        <svg viewBox="0 0 64 64" width="64" height="64" style={{ transform: "rotate(-90deg)" }}>
+        <svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true" style={{ transform: "rotate(-90deg)" }}>
           <circle cx="32" cy="32" r={r} fill="none" stroke="var(--surface-inset)" strokeWidth="6" />
           <circle cx="32" cy="32" r={r} fill="none" stroke={col} strokeWidth="6" strokeLinecap="round" strokeDasharray={`${(score / 100) * c} ${c}`} style={{ transition: "stroke-dasharray .6s ease" }} />
         </svg>
@@ -379,7 +379,7 @@ function GatePanel({ lockedCount, sent, email, setEmail, agree, setAgree, onSubm
     <div style={gateWrap}>
       <form onSubmit={submit} noValidate style={gateCard}>
         <span style={{ width: 48, height: 48, borderRadius: 999, display: "grid", placeItems: "center", margin: "0 auto", background: "var(--surface-card-strong)", color: "var(--accent)", border: "1px solid var(--surface-border)", fontSize: 22 }}><I.lock /></span>
-        <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800, textAlign: "center", letterSpacing: "-.01em" }}>Unlock all {lockedCount > 0 ? lockedCount + " " : ""}fixes</h3>
+        <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800, textAlign: "center", letterSpacing: "-.01em" }}>{lockedCount === 1 ? "Unlock the remaining fix" : `Unlock all ${lockedCount > 0 ? lockedCount + " " : ""}fixes`}</h3>
         <p style={{ margin: 0, fontSize: 14.5, color: "var(--text-secondary)", textAlign: "center", lineHeight: 1.5 }}>Get the full report + copy-ready instructions for your AI agent.</p>
         <div style={{ display: "grid", gap: 10, marginTop: 2 }}>
           <input type="email" value={email} onChange={(e) => { setEmail(e.target.value); setErr(""); }} placeholder="you@company.com" aria-label="Email address"
@@ -441,7 +441,22 @@ function CopyAllModal({ bundle, onClose }: { bundle: string; onClose: () => void
 function Landing({ onAnalyze, busy, error }: { onAnalyze: (u: string) => void; busy: boolean; error: string }) {
   const [url, setUrl] = useState("");
   const [custom, setCustom] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
   const submit = (e: React.FormEvent) => { e.preventDefault(); onAnalyze(url); };
+  // "What we check" overlay: dismiss on Escape or outside click (parity with the modals).
+  useEffect(() => {
+    if (!custom) return undefined;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setCustom(false); };
+    const onDown = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (panelRef.current?.contains(t) || toggleRef.current?.contains(t)) return;
+      setCustom(false);
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onDown);
+    return () => { document.removeEventListener("keydown", onKey); document.removeEventListener("mousedown", onDown); };
+  }, [custom]);
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "90px 20px 64px" }}>
       <div style={{ width: "min(620px,100%)", display: "grid", gap: 22, position: "relative" }}>
@@ -461,12 +476,12 @@ function Landing({ onAnalyze, busy, error }: { onAnalyze: (u: string) => void; b
         {error && <p style={{ margin: 0, textAlign: "center", fontSize: 13.5, color: "var(--status-danger)", fontWeight: 600 }}>{error}</p>}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }}>
           <span style={{ fontSize: 13, color: "var(--text-tertiary)" }}>Free · No account needed to start</span>
-          <button onClick={() => setCustom((c) => !c)} aria-expanded={custom} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 600, color: "var(--text-secondary)", background: "transparent", border: "none", cursor: "pointer" }}>
+          <button ref={toggleRef} onClick={() => setCustom((c) => !c)} aria-expanded={custom} aria-controls="aeo-what-we-check" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 600, color: "var(--text-secondary)", background: "transparent", border: "none", cursor: "pointer" }}>
             What we check <span style={{ fontSize: 14, display: "inline-flex", transform: custom ? "rotate(180deg)" : "none", transition: "transform .2s" }}><I.chevron /></span>
           </button>
         </div>
         {custom && (
-          <div style={{ position: "absolute", top: "calc(100% + 12px)", left: 0, right: 0, zIndex: 5, display: "grid", gap: 10, padding: "18px 20px", borderRadius: "var(--radius-md)", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-lg)" }}>
+          <div ref={panelRef} id="aeo-what-we-check" role="region" aria-label="What we check" style={{ position: "absolute", top: "calc(100% + 12px)", left: 0, right: 0, zIndex: 5, display: "grid", gap: 10, padding: "18px 20px", borderRadius: "var(--radius-md)", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-lg)" }}>
             {["Discoverability — robots, sitemaps, crawlability", "Agent access & content — readable, structured content", "Identity & auth — OAuth & agent identity discovery", "Content structure — schema, FAQ, answer-units", "Structured data — JSON-LD, metadata, machine-readable signals"].map((t) => (
               <div key={t} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, color: "var(--text-secondary)" }}>
                 <span style={{ color: "var(--accent)", fontSize: 13, display: "inline-flex" }}><I.check /></span>{t}
@@ -612,7 +627,7 @@ function Results({ data, unlocked, lockedCount, sent, gate, onScanAnother }: {
           <LevelBadge level={data.level} score={data.score} />
           <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center", marginTop: 2 }}>
             <button onClick={scrollToFindings} style={primaryBtn}>Improve your score <span style={{ fontSize: 15, display: "inline-flex" }}><I.arrow /></span></button>
-            <button onClick={() => setModal(true)} style={secondaryBtn}><span style={{ fontSize: 15, display: "inline-flex" }}><I.copy /></span> Copy all fixes</button>
+            <button onClick={() => setModal(true)} style={secondaryBtn}><span style={{ fontSize: 15, display: "inline-flex" }}><I.copy /></span> {!unlocked && lockedCount > 0 ? "Copy free fixes" : "Copy all fixes"}</button>
           </div>
         </div>
 
@@ -670,10 +685,17 @@ export function AeoAnalyzer() {
   const [landingError, setLandingError] = useState("");
   const [gateError, setGateError] = useState("");
   const [busy, setBusy] = useState(false);
+  const leadFired = useRef(false);
 
   const setTheme = (v: string) => { setThemeState(v); applyTheme(v); localStorage.setItem("aeo-theme", v); };
   useEffect(() => { applyTheme(theme); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { window.scrollTo(0, 0); }, [screen]);
+  // Fire the lead conversion exactly once, on the confirmed unlock (server-verified
+  // /full -> unlocked), not on the unconfirmed subscribe submit. This counts only
+  // double-opt-in-confirmed leads, matching the conversion's intent.
+  useEffect(() => {
+    if (unlocked && !leadFired.current) { leadFired.current = true; trackLeadConversion(); }
+  }, [unlocked]);
 
   const startScan = useCallback(async (raw: string) => {
     const norm = normalizeUrl(raw);
@@ -737,7 +759,6 @@ export function AeoAnalyzer() {
     try {
       const r = await fetch("/api/aeo/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ email: email.trim(), scanId, consent: true }) });
       if (!r.ok) { const j = await r.json().catch(() => ({})); setGateError(subscribeErrorMessage(j.error)); return; }
-      trackLeadConversion();
       setSent(true);
     } catch { setGateError("Could not send the confirmation email. Please try again."); }
   }, [email, scanId]);

@@ -504,10 +504,13 @@ function Scanning({ url, ready, onDone }: { url: string; ready: boolean; onDone:
   const [idx, setIdx] = useState(0);
   const reduce = useRef(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches).current;
   useEffect(() => {
-    const step = reduce ? 180 : 460;
+    // Once the server response is in (ready), race the remaining phases to the end
+    // so a fast scan doesn't keep the user staring at a multi-second animation after
+    // the result already arrived. While still waiting, advance at the normal pace.
+    const step = reduce ? 120 : ready ? 90 : 460;
     const t = setInterval(() => setIdx((i) => Math.min(i + 1, phases.length)), step);
     return () => clearInterval(t);
-  }, [phases.length, reduce]);
+  }, [phases.length, reduce, ready]);
   useEffect(() => {
     if (idx >= phases.length && ready) { const t = setTimeout(onDone, 380); return () => clearTimeout(t); }
     return undefined;

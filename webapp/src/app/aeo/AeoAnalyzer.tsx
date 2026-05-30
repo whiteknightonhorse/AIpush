@@ -214,7 +214,7 @@ function ScoreGauge({ score }: { score: number }) {
   const reduce = useRef(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches).current;
   useEffect(() => {
     if (reduce) { setShown(score); return; }
-    let raf = 0; let start = 0; const dur = 1100;
+    let raf = 0; let start = 0; const dur = 450;
     const step = (t: number) => { if (!start) start = t; const p = Math.min(1, (t - start) / dur); const e = 1 - Math.pow(1 - p, 3); setShown(Math.round(score * e)); if (p < 1) raf = requestAnimationFrame(step); };
     raf = requestAnimationFrame(step);
     const settle = setTimeout(() => setShown(score), dur + 200);

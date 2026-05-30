@@ -33,6 +33,12 @@ const SCAN_PHASES = [
   "Scoring agent-readiness",
 ];
 
+// If the scan response hasn't arrived this many ms after the request started, we
+// are almost certainly queued behind other scans (or waiting on a slow target) —
+// show the "you're in the queue" hint. Time-based so it's deterministic and does
+// not depend on the phase-animation length.
+const QUEUE_HINT_MS = 3500;
+
 /* ============================================================ helpers */
 function scoreColor(s: number): string {
   if (s < 40) return "var(--score-low)";
@@ -506,6 +512,16 @@ function Scanning({ url, ready, onDone }: { url: string; ready: boolean; onDone:
     if (idx >= phases.length && ready) { const t = setTimeout(onDone, 380); return () => clearTimeout(t); }
     return undefined;
   }, [idx, ready, phases.length, onDone]);
+  // Time-based queue hint: if the result hasn't arrived within QUEUE_HINT_MS we are
+  // queued behind other scans (or waiting on a slow site). Independent of the phase
+  // animation, so it fires reliably instead of only after the animation finishes.
+  const [waitedLong, setWaitedLong] = useState(false);
+  useEffect(() => {
+    if (ready) { setWaitedLong(false); return undefined; }
+    const t = setTimeout(() => setWaitedLong(true), QUEUE_HINT_MS);
+    return () => clearTimeout(t);
+  }, [ready]);
+  const waitingInQueue = waitedLong && !ready;
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "90px 20px 64px" }}>
       <div style={{ width: "min(560px,100%)", display: "grid", gap: 30, justifyItems: "center" }}>
@@ -526,6 +542,12 @@ function Scanning({ url, ready, onDone }: { url: string; ready: boolean; onDone:
             );
           })}
         </div>
+        {waitingInQueue && (
+          <div role="status" aria-live="polite" style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 4, padding: "12px 14px", borderRadius: "var(--radius-md)", background: "var(--surface-card)", border: "1px solid var(--surface-border)", color: "var(--text-secondary)", maxWidth: "min(420px,100%)" }}>
+            <Spinner sm />
+            <span style={{ fontSize: 13 }}>High demand right now — you're in the queue. Hang tight, this can take a little longer…</span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -797,7 +819,11 @@ function scanErrorMessage(code: string | undefined, status: number): string {
     case "URL_REQUIRED": return "Please enter a website URL.";
     case "INVALID_URL": return "That doesn't look like a valid website URL.";
     case "SCAN_PERSIST_FAILED": return "Something went wrong saving the scan. Please try again.";
-    default: return status === 429 ? "Too many scans — please wait a moment and try again." : "We couldn't analyze that site. Check the URL and try again.";
+    case "ANALYZER_BUSY": return "The analyzer is busy right now — please try again in a few seconds.";
+    default:
+      if (status === 429) return "Too many scans — please wait a moment and try again.";
+      if (status === 503) return "The analyzer is busy right now — please try again in a few seconds.";
+      return "We couldn't analyze that site. Check the URL and try again.";
   }
 }
 function subscribeErrorMessage(code: string | undefined): string {

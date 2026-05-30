@@ -94,6 +94,29 @@ function buildBundle(d: Data): string {
 }
 function skillUrl(slug: string): string { return `https://aipush.app/.well-known/agent-skills/${slug}/SKILL.md`; }
 
+/* Google Ads conversion send_to label for the email-gate lead, e.g.
+   "AW-18018973770/AbCdEfGh". Leave empty to send only the GA4 event (which can
+   still be imported into Ads as a conversion from the GA4 property). */
+const ADS_LEAD_SEND_TO = "";
+
+type Gtag = (command: string, action: string, params?: Record<string, unknown>) => void;
+
+/* Fire the lead conversion on a confirmed email-gate submission. The product is
+   free, so value is 0; consent-mode + the gtag loader are set up in index.html.
+   Fail-soft: never throws into the request flow. */
+function trackLeadConversion(): void {
+  try {
+    const gtag = (window as unknown as { gtag?: Gtag }).gtag;
+    if (typeof gtag !== "function") return;
+    // GA4 key-event (mark as conversion in the GA4 UI).
+    gtag("event", "generate_lead", { currency: "USD", value: 0, method: "aeo_email_gate" });
+    // Optional dedicated Google Ads conversion (only if a send_to label is set).
+    if (ADS_LEAD_SEND_TO) {
+      gtag("event", "conversion", { send_to: ADS_LEAD_SEND_TO, value: 0, currency: "USD" });
+    }
+  } catch { /* analytics must never break the signup */ }
+}
+
 /* ============================================================ icons */
 type IconFn = (p?: React.SVGProps<SVGSVGElement>) => React.ReactElement;
 const I: Record<string, IconFn> = {
@@ -714,6 +737,7 @@ export function AeoAnalyzer() {
     try {
       const r = await fetch("/api/aeo/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ email: email.trim(), scanId, consent: true }) });
       if (!r.ok) { const j = await r.json().catch(() => ({})); setGateError(subscribeErrorMessage(j.error)); return; }
+      trackLeadConversion();
       setSent(true);
     } catch { setGateError("Could not send the confirmation email. Please try again."); }
   }, [email, scanId]);

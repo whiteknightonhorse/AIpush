@@ -504,20 +504,24 @@ function Scanning({ url, ready, onDone }: { url: string; ready: boolean; onDone:
   const [idx, setIdx] = useState(0);
   const reduce = useRef(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches).current;
   useEffect(() => {
-    // Once the server response is in (ready), race the remaining phases to the end
-    // so a fast scan doesn't keep the user staring at a multi-second animation after
-    // the result already arrived. While still waiting, advance at the normal pace.
-    const step = reduce ? 120 : ready ? 90 : 460;
-    const t = setInterval(() => setIdx((i) => Math.min(i + 1, phases.length)), step);
+    // PRE-response only: advance phases on a timer purely as progress feedback while
+    // we wait. Stops the moment the response is in — the snap effect below takes over.
+    // We deliberately do NOT "race" phases with a faster interval after the response:
+    // background-tab timer throttling clamps any setInterval to ~1s, which silently
+    // re-introduces a multi-second tail. A direct jump (below) is immune to that.
+    if (ready || reduce) return undefined;
+    const t = setInterval(() => setIdx((i) => Math.min(i + 1, phases.length)), 380);
     return () => clearInterval(t);
-  }, [phases.length, reduce, ready]);
+  }, [phases.length, ready, reduce]);
   useEffect(() => {
-    // Final settle beat: just long enough for the last phase's checkmark to register
-    // before swapping to the results screen. Short (120ms) since the phases already
-    // raced to the end once ready; ~zero under reduced motion. Down from 380ms.
-    if (idx >= phases.length && ready) { const t = setTimeout(onDone, reduce ? 0 : 120); return () => clearTimeout(t); }
-    return undefined;
-  }, [idx, ready, phases.length, onDone, reduce]);
+    // Response is in → snap every remaining phase to done at once (no timer racing,
+    // so it's immune to tab throttling) and settle to results after a short beat
+    // (0ms under reduced motion). This is what actually removes the post-response hang.
+    if (!ready) return undefined;
+    setIdx(phases.length);
+    const t = setTimeout(onDone, reduce ? 0 : 120);
+    return () => clearTimeout(t);
+  }, [ready, phases.length, onDone, reduce]);
   // Time-based queue hint: if the result hasn't arrived within QUEUE_HINT_MS we are
   // queued behind other scans (or waiting on a slow site). Independent of the phase
   // animation, so it fires reliably instead of only after the animation finishes.

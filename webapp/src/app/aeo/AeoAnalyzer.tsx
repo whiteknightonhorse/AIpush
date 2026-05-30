@@ -421,7 +421,7 @@ function Landing({ onAnalyze, busy, error }: { onAnalyze: (u: string) => void; b
   const submit = (e: React.FormEvent) => { e.preventDefault(); onAnalyze(url); };
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "90px 20px 64px" }}>
-      <div style={{ width: "min(620px,100%)", display: "grid", gap: 22 }}>
+      <div style={{ width: "min(620px,100%)", display: "grid", gap: 22, position: "relative" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, justifySelf: "center", fontSize: 13, fontWeight: 700, color: "var(--text-tertiary)", letterSpacing: ".04em", textTransform: "uppercase" }}>
           <span style={{ color: "var(--accent)", fontSize: 15, display: "inline-flex" }}><I.spark /></span> AIPUSH · AEO Analyzer
         </div>
@@ -443,7 +443,7 @@ function Landing({ onAnalyze, busy, error }: { onAnalyze: (u: string) => void; b
           </button>
         </div>
         {custom && (
-          <div style={{ display: "grid", gap: 10, padding: "18px 20px", borderRadius: "var(--radius-md)", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)" }}>
+          <div style={{ position: "absolute", top: "calc(100% + 12px)", left: 0, right: 0, zIndex: 5, display: "grid", gap: 10, padding: "18px 20px", borderRadius: "var(--radius-md)", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-lg)" }}>
             {["Discoverability — robots, sitemaps, crawlability", "Agent access & content — readable, structured content", "Identity & auth — OAuth & agent identity discovery", "Content structure — schema, FAQ, answer-units", "Structured data — JSON-LD, metadata, machine-readable signals"].map((t) => (
               <div key={t} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, color: "var(--text-secondary)" }}>
                 <span style={{ color: "var(--accent)", fontSize: 13, display: "inline-flex" }}><I.check /></span>{t}

@@ -512,9 +512,12 @@ function Scanning({ url, ready, onDone }: { url: string; ready: boolean; onDone:
     return () => clearInterval(t);
   }, [phases.length, reduce, ready]);
   useEffect(() => {
-    if (idx >= phases.length && ready) { const t = setTimeout(onDone, 380); return () => clearTimeout(t); }
+    // Final settle beat: just long enough for the last phase's checkmark to register
+    // before swapping to the results screen. Short (120ms) since the phases already
+    // raced to the end once ready; ~zero under reduced motion. Down from 380ms.
+    if (idx >= phases.length && ready) { const t = setTimeout(onDone, reduce ? 0 : 120); return () => clearTimeout(t); }
     return undefined;
-  }, [idx, ready, phases.length, onDone]);
+  }, [idx, ready, phases.length, onDone, reduce]);
   // Time-based queue hint: if the result hasn't arrived within QUEUE_HINT_MS we are
   // queued behind other scans (or waiting on a slow site). Independent of the phase
   // animation, so it fires reliably instead of only after the animation finishes.

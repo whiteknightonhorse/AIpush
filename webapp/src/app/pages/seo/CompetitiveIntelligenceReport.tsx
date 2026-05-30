@@ -355,7 +355,7 @@ export function CompetitiveIntelligenceReport() {
             If you have not yet built a competitive intelligence report that measures AI citation frequency alongside traditional keyword coverage, you are missing the dimension that will define market positioning for the next five years. Start with AIPUSH — enter your URL, let our MIP pipeline discover your competitors, and receive a fully scored competitive intelligence report in minutes.
           </p>
 
-          <InlineSignup pageSlug="competitive-intelligence-report" ctaText="Get My Report — $29.99" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
+          <InlineSignup pageSlug="competitive-intelligence-report" ctaText="Analyze your site free" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
 
           <nav className="aipush-seo-related">
             <Link to="/competitor-analysis-report">Competitor Analysis Report</Link>

@@ -367,7 +367,7 @@ export function AiCompetitorAnalysisTool() {
             Ready to see where your competitors are outranking you? Start with AIPUSH and let our pipeline run a full competitive analysis on your domain in minutes.
           </p>
 
-          <InlineSignup pageSlug="ai-competitor-analysis-tool" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
+          <InlineSignup pageSlug="ai-competitor-analysis-tool" ctaText="Analyze your site free" ctaLocation="final" onCtaFire={() => {}} variant="theme" />
 
           <nav className="aipush-seo-related">
             <Link to="/competitor-analysis-report">Competitor Analysis Report</Link>

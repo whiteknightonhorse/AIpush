@@ -392,7 +392,9 @@ function GatePanel({ lockedCount, sent, email, setEmail, agree, setAgree, onSubm
             style={{ padding: "13px 15px", fontSize: 15, borderRadius: "var(--radius-sm)", width: "100%", background: "var(--surface-card-strong)", color: "var(--text-primary)", border: `1px solid ${err && !valid ? "var(--status-danger)" : "var(--surface-border)"}`, outline: "none" }} />
           <label style={{ display: "flex", gap: 9, alignItems: "flex-start", fontSize: 13, color: "var(--text-secondary)", cursor: "pointer", lineHeight: 1.45 }}>
             <input type="checkbox" checked={agree} onChange={(e) => { setAgree(e.target.checked); setErr(""); }} style={{ marginTop: 2, width: 17, height: 17, accentColor: "var(--accent)", flex: "none" }} />
-            <span>I agree to receive emails from AIPUSH. Unsubscribe anytime.</span>
+            {/* Keep equivalent to CONSENT_TEXT / CONSENT_VERSION in src/aeo/routes/aeo.ts —
+                that string is recorded verbatim per subscriber as the proof of consent. */}
+            <span>I agree to receive emails from AIPUSH. Unsubscribe anytime. See our <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)", textDecoration: "underline" }}>Privacy Policy</a>.</span>
           </label>
           {(err || error) && <span style={{ fontSize: 12.5, color: "var(--status-danger)", fontWeight: 600 }}>{err || error}</span>}
           <button type="submit" style={{ padding: "13px 18px", fontSize: 15, fontWeight: 700, cursor: "pointer", borderRadius: "var(--radius-sm)", color: "var(--on-accent)", background: "var(--accent)", border: "none", boxShadow: "var(--shadow-accent)", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }}>

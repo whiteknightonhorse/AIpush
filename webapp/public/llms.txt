@@ -1,11 +1,15 @@
 # AIPUSH
 
-> AI-Optimized Page Distribution for Traffic & Sales
+> Free AEO (Answer Engine Optimization) analyzer — score how ready a website is for AI agents and answer engines.
 
 ## About
 
-AIPUSH generates AI-optimized landing pages that help businesses get cited by AI agents (ChatGPT, Claude, Perplexity, Google AI). Each page follows AEO (AI Engine Optimization) best practices with structured semantic HTML, evidence-backed content, and full indexability.
+AIPUSH is a free analyzer at https://aipush.app. Enter a website URL and AIPUSH scans it for AI-agent and answer-engine readiness, then returns a 0-100 score, an AEO Level (1-5), five category gauges, and copy-ready fixes you can paste into an AI coding agent (Cursor, Claude Code, Copilot). The first fixes are free; the rest unlock after a free email confirmation.
+
+It checks five categories: Agent Discovery, Agent Interfaces, Identity & Auth, Content Structure, and Structured Data — covering signals such as robots.txt, sitemaps, llms.txt, `/.well-known/*` resources, structured data, and machine-readable content.
 
 ## Links
 
-- [AIPUSH App](https://aipush.app)
+- [AIPUSH analyzer](https://aipush.app)
+- [Agent skills catalog](https://aipush.app/.well-known/agent-skills/index.json)
+- [robots.txt](https://aipush.app/robots.txt)

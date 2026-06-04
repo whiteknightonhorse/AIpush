@@ -419,7 +419,7 @@ function LockedStack() {
     </div>
   );
 }
-function CopyAllModal({ bundle, onClose }: { bundle: string; onClose: () => void }) {
+function CopyAllModal({ bundle, gated, freeCount, totalCount, onClose }: { bundle: string; gated: boolean; freeCount: number; totalCount: number; onClose: () => void }) {
   useEffect(() => {
     const k = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", k);
@@ -431,13 +431,13 @@ function CopyAllModal({ bundle, onClose }: { bundle: string; onClose: () => void
       <div onClick={(e) => e.stopPropagation()} style={{ width: "min(680px,100%)", maxHeight: "86vh", display: "flex", flexDirection: "column", background: "var(--surface-card)", border: "1px solid var(--surface-border)", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-lg)", overflow: "hidden" }}>
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, padding: "20px 22px 14px" }}>
           <div>
-            <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800 }}>Copy all instructions</h3>
-            <p style={{ margin: "4px 0 0", fontSize: 13.5, color: "var(--text-tertiary)" }}>Paste into Cursor, Claude Code, Copilot, or send to your developer.</p>
+            <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800 }}>{gated ? "Copy free instructions" : "Copy all instructions"}</h3>
+            <p style={{ margin: "4px 0 0", fontSize: 13.5, color: "var(--text-tertiary)" }}>{gated ? `${freeCount} unlocked ${freeCount === 1 ? "fix" : "fixes"} — enter your email to get all ${totalCount}.` : "Paste into Cursor, Claude Code, Copilot, or send to your developer."}</p>
           </div>
           <button onClick={onClose} aria-label="Close" style={{ flex: "none", width: 44, height: 44, borderRadius: 999, display: "grid", placeItems: "center", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", color: "var(--text-secondary)", cursor: "pointer", fontSize: 16 }}><I.x /></button>
         </div>
         <pre className="scroll-thin" style={{ margin: "0 22px", flex: 1, overflow: "auto", padding: "16px 18px", fontSize: 12.5, lineHeight: 1.6, fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", color: "var(--text-secondary)", whiteSpace: "pre-wrap", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", borderRadius: "var(--radius-md)" }}>{bundle}</pre>
-        <div style={{ padding: "16px 22px 20px" }}><CopyButton text={bundle} label="Copy all instructions" primary full /></div>
+        <div style={{ padding: "16px 22px 20px" }}><CopyButton text={bundle} label={gated ? "Copy free instructions" : "Copy all instructions"} primary full /></div>
       </div>
     </div>
   );
@@ -563,14 +563,19 @@ function Scanning({ url, ready, onDone }: { url: string; ready: boolean; onDone:
   );
 }
 
-function ShareModal({ url, score, level, onClose }: { url: string; score: number; level: Level; onClose: () => void }) {
+function ShareModal({ url, shareId, score, level, onClose }: { url: string; shareId: string; score: number; level: Level; onClose: () => void }) {
   useEffect(() => {
     const k = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", k);
     document.body.style.overflow = "hidden";
     return () => { document.removeEventListener("keydown", k); document.body.style.overflow = ""; };
   }, [onClose]);
-  const pageUrl = `${location.origin}/?url=${encodeURIComponent(url)}`;
+  // Share a stable link to THIS scan (?scan=<id>) so the recipient sees the exact
+  // cached score the sharer saw, restored without a re-scan. A re-scan (?url=) could
+  // return a different number and break the social-proof claim in the share text.
+  const pageUrl = shareId
+    ? `${location.origin}/?scan=${encodeURIComponent(shareId)}`
+    : `${location.origin}/?url=${encodeURIComponent(url)}`;
   const text = `My site scored ${score}/100 (AEO Level ${level.n}${level.name ? " · " + level.name : ""}) on the AIPUSH AI-readiness analyzer. Check yours:`;
   const eu = encodeURIComponent(pageUrl);
   const et = encodeURIComponent(text);
@@ -619,8 +624,8 @@ function ShareModal({ url, score, level, onClose }: { url: string; score: number
 const primaryBtn: CSS = { display: "inline-flex", alignItems: "center", gap: 8, padding: "12px 20px", fontSize: 14.5, fontWeight: 700, cursor: "pointer", borderRadius: "var(--radius-md)", color: "var(--on-accent)", background: "var(--accent)", border: "none", boxShadow: "var(--shadow-accent)" };
 const secondaryBtn: CSS = { display: "inline-flex", alignItems: "center", gap: 7, padding: "12px 18px", fontSize: 14.5, fontWeight: 700, cursor: "pointer", borderRadius: "var(--radius-md)", color: "var(--text-primary)", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)" };
 
-function Results({ data, unlocked, lockedCount, sent, gate, onScanAnother }: {
-  data: Data; unlocked: boolean; lockedCount: number; sent: boolean;
+function Results({ data, scanId, unlocked, lockedCount, sent, gate, onScanAnother }: {
+  data: Data; scanId: string; unlocked: boolean; lockedCount: number; sent: boolean;
   gate: { email: string; setEmail: (v: string) => void; agree: boolean; setAgree: (v: boolean) => void; onSubmit: () => void; error: string };
   onScanAnother: () => void;
 }) {
@@ -696,8 +701,8 @@ function Results({ data, unlocked, lockedCount, sent, gate, onScanAnother }: {
           )}
         </div>
       </div>
-      {modal && <CopyAllModal bundle={bundle} onClose={() => setModal(false)} />}
-      {shareOpen && <ShareModal url={data.url} score={data.score} level={data.level} onClose={() => setShareOpen(false)} />}
+      {modal && <CopyAllModal bundle={bundle} gated={!unlocked && lockedCount > 0} freeCount={freeFixes.length} totalCount={lockedCount + freeFixes.length} onClose={() => setModal(false)} />}
+      {shareOpen && <ShareModal url={data.url} shareId={scanId} score={data.score} level={data.level} onClose={() => setShareOpen(false)} />}
     </div>
   );
 }
@@ -754,6 +759,16 @@ export function AeoAnalyzer() {
   //  - /?scan=<id>&unlocked=1 restores a confirmed report after the email click
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    // A failed/expired confirmation click lands here as /?aeo_error=... — without this
+    // the user saw a blank landing page and silently abandoned. Show why and how to retry.
+    const aeoError = params.get("aeo_error");
+    if (aeoError) {
+      setLandingError(aeoError === "expired"
+        ? "That confirmation link has expired. Re-enter your URL below to get a fresh one."
+        : "That confirmation link is invalid. Re-enter your URL below to get a fresh one.");
+      window.history.replaceState({}, "", window.location.pathname);
+      return;
+    }
     const urlParam = params.get("url");
     if (urlParam && urlParam.trim()) { startScan(urlParam.trim()); return; }
     const sid = params.get("scan");
@@ -804,7 +819,7 @@ export function AeoAnalyzer() {
       {screen === "landing" && <Landing onAnalyze={startScan} busy={busy} error={landingError} />}
       {screen === "scanning" && <Scanning url={data?.url || ""} ready={scanReady} onDone={() => setScreen("results")} />}
       {screen === "results" && data && (
-        <Results data={data} unlocked={unlocked} lockedCount={lockedCount} sent={sent}
+        <Results data={data} scanId={scanId} unlocked={unlocked} lockedCount={lockedCount} sent={sent}
           gate={{ email, setEmail, agree, setAgree, onSubmit: submitGate, error: gateError }}
           onScanAnother={() => { setScreen("landing"); setData(null); setLandingError(""); }} />
       )}

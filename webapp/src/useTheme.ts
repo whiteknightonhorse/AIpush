@@ -3,7 +3,10 @@ import { useEffect, useState } from "react";
 export type Theme = "light" | "dark";
 
 // NOTE: Theme preference is UI-only and does not contain client or business data.
-const STORAGE_KEY = "aipush-theme";
+// Single source of truth across the whole site (homepage, Shell pages, analysis
+// pages, and the index.html no-flash script all read/write "aeo-theme") — avoids
+// the dual-key desync that made the first toggle click look like a no-op.
+const STORAGE_KEY = "aeo-theme";
 
 function getSystemTheme(): Theme {
   return window.matchMedia("(prefers-color-scheme: dark)").matches

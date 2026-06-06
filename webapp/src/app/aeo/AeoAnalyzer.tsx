@@ -746,6 +746,9 @@ export function AeoAnalyzer() {
     if (!norm) { setLandingError("Enter a valid website URL (e.g. example.com)."); return; }
     setLandingError(""); setBusy(true);
     setData(null); setUnlocked(false); setSent(false); setScanReady(false); setLockedCount(0);
+    // Reset the email gate so a new scan starts with a clean form (no stale email,
+    // and fresh affirmative consent / feature opt-in per subscription).
+    setEmail(""); setAgree(false); setFeature(false); setGateError("");
     setScreen("scanning");
     try {
       const r = await fetch("/api/aeo/scan", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ url: norm }) });

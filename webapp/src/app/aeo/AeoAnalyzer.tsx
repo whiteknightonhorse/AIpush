@@ -360,7 +360,7 @@ function CommerceSection({ cat }: { cat: Category }) {
 /* ============================================================ gate */
 const gateWrap: CSS = { position: "absolute", inset: 0, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 54, zIndex: 3 };
 const gateCard: CSS = { width: "min(420px,92%)", display: "grid", gap: 13, padding: "28px 26px", background: "var(--surface-card)", border: "1px solid var(--surface-border)", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-lg)" };
-function GatePanel({ lockedCount, sent, email, setEmail, agree, setAgree, onSubmit, error }: { lockedCount: number; sent: boolean; email: string; setEmail: (v: string) => void; agree: boolean; setAgree: (v: boolean) => void; onSubmit: () => void; error: string }) {
+function GatePanel({ lockedCount, sent, email, setEmail, agree, setAgree, feature, setFeature, onSubmit, error }: { lockedCount: number; sent: boolean; email: string; setEmail: (v: string) => void; agree: boolean; setAgree: (v: boolean) => void; feature: boolean; setFeature: (v: boolean) => void; onSubmit: () => void; error: string }) {
   const [err, setErr] = useState("");
   const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const submit = (e: React.FormEvent) => {
@@ -395,6 +395,10 @@ function GatePanel({ lockedCount, sent, email, setEmail, agree, setAgree, onSubm
             {/* Keep equivalent to CONSENT_TEXT / CONSENT_VERSION in src/aeo/routes/aeo.ts —
                 that string is recorded verbatim per subscriber as the proof of consent. */}
             <span>I agree to receive emails from AIPUSH. Unsubscribe anytime. See our <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)", textDecoration: "underline" }}>Privacy Policy</a>.</span>
+          </label>
+          <label style={{ display: "flex", gap: 9, alignItems: "flex-start", fontSize: 13, color: "var(--text-secondary)", cursor: "pointer", lineHeight: 1.45 }}>
+            <input type="checkbox" checked={feature} onChange={(e) => setFeature(e.target.checked)} style={{ marginTop: 2, width: 17, height: 17, accentColor: "var(--accent)", flex: "none" }} />
+            <span>Want your website featured in a video? We pick sites to analyze on our channel.</span>
           </label>
           {(err || error) && <span style={{ fontSize: 12.5, color: "var(--status-danger)", fontWeight: 600 }}>{err || error}</span>}
           <button type="submit" style={{ padding: "13px 18px", fontSize: 15, fontWeight: 700, cursor: "pointer", borderRadius: "var(--radius-sm)", color: "var(--on-accent)", background: "var(--accent)", border: "none", boxShadow: "var(--shadow-accent)", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
@@ -628,7 +632,7 @@ const secondaryBtn: CSS = { display: "inline-flex", alignItems: "center", gap: 7
 
 function Results({ data, scanId, unlocked, lockedCount, sent, gate, onScanAnother }: {
   data: Data; scanId: string; unlocked: boolean; lockedCount: number; sent: boolean;
-  gate: { email: string; setEmail: (v: string) => void; agree: boolean; setAgree: (v: boolean) => void; onSubmit: () => void; error: string };
+  gate: { email: string; setEmail: (v: string) => void; agree: boolean; setAgree: (v: boolean) => void; feature: boolean; setFeature: (v: boolean) => void; onSubmit: () => void; error: string };
   onScanAnother: () => void;
 }) {
   const [modal, setModal] = useState(false);
@@ -696,7 +700,7 @@ function Results({ data, scanId, unlocked, lockedCount, sent, gate, onScanAnothe
                 <div style={{ position: "relative", minHeight: 430 }}>
                   <div style={{ position: "absolute", top: -6, left: "50%", transform: "translateX(-50%)", zIndex: 4, fontSize: 12.5, fontWeight: 700, color: "var(--text-secondary)", padding: "5px 13px", borderRadius: 999, background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-sm)" }}>+ {lockedCount} more fixes</div>
                   <div style={{ paddingTop: 18 }}><LockedStack /></div>
-                  <GatePanel lockedCount={lockedCount} sent={sent} email={gate.email} setEmail={gate.setEmail} agree={gate.agree} setAgree={gate.setAgree} onSubmit={gate.onSubmit} error={gate.error} />
+                  <GatePanel lockedCount={lockedCount} sent={sent} email={gate.email} setEmail={gate.setEmail} agree={gate.agree} setAgree={gate.setAgree} feature={gate.feature} setFeature={gate.setFeature} onSubmit={gate.onSubmit} error={gate.error} />
                 </div>
               )}
             </>
@@ -721,6 +725,7 @@ export function AeoAnalyzer() {
   const [sent, setSent] = useState(false);
   const [email, setEmail] = useState("");
   const [agree, setAgree] = useState(false);
+  const [feature, setFeature] = useState(false);
   const [landingError, setLandingError] = useState("");
   const [gateError, setGateError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -751,6 +756,9 @@ export function AeoAnalyzer() {
       const resp = await r.json();
       setScanId(resp.scanId); setLockedCount(resp.lockedCount ?? 0);
       setData(adapt(resp)); setScanReady(true); setBusy(false);
+      // A confirmed access cookie (e.g. the local video-capture automation) returns
+      // the full ungated report with unlocked:true → render every fix, no gate.
+      if (resp.unlocked) setUnlocked(true);
     } catch {
       setLandingError("Could not reach the analyzer. Please try again."); setScreen("landing"); setBusy(false);
     }
@@ -809,8 +817,12 @@ export function AeoAnalyzer() {
       const r = await fetch("/api/aeo/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ email: email.trim(), scanId, consent: true }) });
       if (!r.ok) { const j = await r.json().catch(() => ({})); setGateError(subscribeErrorMessage(j.error)); return; }
       setSent(true);
+      // Fire-and-forget: if they opted to be featured, register the site for the video pool.
+      if (feature) {
+        fetch("/api/aeo/feature", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ scanId, email: email.trim() }) }).catch(() => {});
+      }
     } catch { setGateError("Could not send the confirmation email. Please try again."); }
-  }, [email, scanId]);
+  }, [email, scanId, feature]);
 
   return (
     <div className="aeo-root">
@@ -822,7 +834,7 @@ export function AeoAnalyzer() {
       {screen === "scanning" && <Scanning url={data?.url || ""} ready={scanReady} onDone={() => setScreen("results")} />}
       {screen === "results" && data && (
         <Results data={data} scanId={scanId} unlocked={unlocked} lockedCount={lockedCount} sent={sent}
-          gate={{ email, setEmail, agree, setAgree, onSubmit: submitGate, error: gateError }}
+          gate={{ email, setEmail, agree, setAgree, feature, setFeature, onSubmit: submitGate, error: gateError }}
           onScanAnother={() => { setScreen("landing"); setData(null); setLandingError(""); }} />
       )}
 

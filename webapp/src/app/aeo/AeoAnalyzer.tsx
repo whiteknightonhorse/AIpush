@@ -834,6 +834,19 @@ export function AeoAnalyzer() {
       </div>
 
       {screen === "landing" && <Landing onAnalyze={startScan} busy={busy} error={landingError} />}
+      {screen === "landing" && (
+        <footer style={{ padding: "18px 18px 30px", display: "flex", justifyContent: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 13, fontSize: 12.5, color: "var(--text-tertiary)", flexWrap: "wrap", justifyContent: "center" }}>
+            <a href="/analysis" style={{ color: "var(--text-tertiary)", textDecoration: "none" }}>AEO Analysis</a>
+            <span style={{ width: 3, height: 3, borderRadius: 9, background: "var(--text-tertiary)" }} />
+            <a href="/privacy" style={{ color: "var(--text-tertiary)", textDecoration: "none" }}>Privacy</a>
+            <span style={{ width: 3, height: 3, borderRadius: 9, background: "var(--text-tertiary)" }} />
+            <a href="/terms" style={{ color: "var(--text-tertiary)", textDecoration: "none" }}>Terms</a>
+            <span style={{ width: 3, height: 3, borderRadius: 9, background: "var(--text-tertiary)" }} />
+            <span>© AIPUSH</span>
+          </div>
+        </footer>
+      )}
       {screen === "scanning" && <Scanning url={data?.url || ""} ready={scanReady} onDone={() => setScreen("results")} />}
       {screen === "results" && data && (
         <Results data={data} scanId={scanId} unlocked={unlocked} lockedCount={lockedCount} sent={sent}
@@ -844,6 +857,8 @@ export function AeoAnalyzer() {
       {(sent || unlocked) && screen === "results" && (
         <footer style={{ padding: "22px 18px 30px", display: "flex", justifyContent: "center" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 12.5, color: "var(--text-tertiary)" }}>
+            <a href="/analysis" style={{ color: "var(--text-tertiary)", textDecoration: "none" }}>AEO Analysis</a>
+            <span style={{ width: 3, height: 3, borderRadius: 9, background: "var(--text-tertiary)" }} />
             <a href="/privacy" style={{ color: "var(--text-tertiary)", textDecoration: "none" }}>Privacy</a>
             <span style={{ width: 3, height: 3, borderRadius: 9, background: "var(--text-tertiary)" }} />
             <a href="/terms" style={{ color: "var(--text-tertiary)", textDecoration: "none" }}>Terms</a>

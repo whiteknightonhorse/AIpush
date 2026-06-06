@@ -288,23 +288,19 @@ function Shell({ children }: { children: React.ReactNode }) {
         <div className="container header-row header-row--uxfix">
           {isAdPage || isDashboardPage || isClientPage ? (
             <span className="brand brand--uxfix" data-testid="shell-logo" style={{ pointerEvents: "none", cursor: "default" }}>
-              <img
-                src="/logo.png"
-                alt="AIPUSH logo"
+              <span
                 className="brand-logo"
-                width={24}
-                height={24}
+                aria-hidden="true"
+                style={{ display: "inline-block", width: 13, height: 13, background: "#df8e1d", borderRadius: 3, transform: "rotate(45deg)" }}
               />
               <span className="brand-title--uxfix">AIPUSH</span>
             </span>
           ) : (
             <Link to="/" className="brand brand--uxfix" data-testid="shell-logo">
-              <img
-                src="/logo.png"
-                alt="AIPUSH logo"
+              <span
                 className="brand-logo"
-                width={24}
-                height={24}
+                aria-hidden="true"
+                style={{ display: "inline-block", width: 13, height: 13, background: "#df8e1d", borderRadius: 3, transform: "rotate(45deg)" }}
               />
               <span className="brand-title--uxfix">AIPUSH</span>
             </Link>
@@ -315,24 +311,25 @@ function Shell({ children }: { children: React.ReactNode }) {
               analyzer + theme toggle, so no stale product info remains. */}
           {!isMinimalShell && (
             <nav className="header-actions header-actions--uxfix" aria-label="Main navigation">
-              <div className="header-nav--uxfix header-nav-desktop">
-                <Link className="btn header-cta--uxfix" to="/" data-testid="shell-nav-analyzer">
-                  Free analyzer
-                </Link>
-              </div>
-
-              {/* THEME TOGGLE */}
+              {/* THEME TOGGLE — new-design SVG sun/moon (no old-product nav) */}
               <button
                 type="button"
                 onClick={toggle}
-                className="theme-toggle theme-toggle--uxfix"
-                aria-label="Toggle theme"
+                aria-label="Toggle light or dark theme"
                 data-testid="shell-theme-toggle"
                 title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                style={{
+                  display: "inline-flex", alignItems: "center", justifyContent: "center",
+                  width: 40, height: 40, borderRadius: 999, cursor: "pointer",
+                  background: "transparent", border: "1px solid currentColor",
+                  color: "inherit", opacity: 0.85,
+                }}
               >
-                <span className="theme-toggle-icon" aria-hidden="true">
-                  {theme === "dark" ? "☀️" : "🌙"}
-                </span>
+                {theme === "dark" ? (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2" /><path d="M12 2v2.5M12 19.5V22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2 12h2.5M19.5 12H22M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" /></svg>
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>
+                )}
               </button>
             </nav>
           )}

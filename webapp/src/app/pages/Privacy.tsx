@@ -2,20 +2,20 @@ import React from "react";
 
 const SECTIONS = [
   { id: "overview", label: "Overview" },
-  { id: "controller", label: "Data Controller" },
+  { id: "controller", label: "Who We Are" },
   { id: "collect", label: "Data We Collect" },
   { id: "use", label: "How We Use Data" },
   { id: "legal-bases", label: "Legal Bases" },
+  { id: "cookies", label: "Cookies & Analytics" },
   { id: "sharing", label: "Sharing" },
-  { id: "oauth", label: "OAuth Compliance" },
   { id: "retention", label: "Data Retention" },
   { id: "security", label: "Security" },
   { id: "rights", label: "Your Rights" },
-  { id: "deletion", label: "Delete My Data" },
+  { id: "email", label: "Email & Unsubscribe" },
   { id: "transfers", label: "International Transfers" },
-  { id: "cookies", label: "Cookies" },
   { id: "children", label: "Children" },
   { id: "changes", label: "Changes" },
+  { id: "terms", label: "Terms of Service" },
 ];
 
 export function Privacy() {
@@ -29,13 +29,13 @@ export function Privacy() {
     } else {
       window.scrollTo(0, 0);
     }
-    document.title = "Privacy Policy — AIPUSH";
+    document.title = "Privacy Policy & Terms — AIPUSH";
     const mDesc = document.querySelector('meta[name="description"]');
     const prev = mDesc?.getAttribute("content") ?? "";
     if (mDesc)
       mDesc.setAttribute(
         "content",
-        "AIPUSH Privacy Policy — how we collect, use, store, and protect your data across our AI marketing automation platform."
+        "AIPUSH Privacy Policy & Terms of Service — how our free AEO analyzer collects, uses, and protects your data, and the terms for using the service."
       );
     return () => {
       if (mDesc) mDesc.setAttribute("content", prev);
@@ -45,15 +45,15 @@ export function Privacy() {
   return (
     <main className="aipush-seo-page">
       <section className="aipush-seo-hero">
-        <h1 className="aipush-seo-heroTitle">Privacy Policy</h1>
+        <h1 className="aipush-seo-heroTitle">Privacy Policy &amp; Terms</h1>
         <p className="aipush-seo-heroSub">
-          How AIPUSH collects, uses, and protects your information.
+          How AIPUSH collects, uses, and protects your information — and the terms for using our free AEO analyzer.
         </p>
       </section>
 
       <div className="aipush-privacy-meta">
-        <p>Effective Date: January 1, 2026</p>
-        <p>Last Updated: January 1, 2026</p>
+        <p>Effective Date: June 6, 2026</p>
+        <p>Last Updated: June 6, 2026</p>
       </div>
 
       <nav className="aipush-privacy-nav" aria-label="Policy sections">
@@ -65,393 +65,167 @@ export function Privacy() {
       </nav>
 
       <article className="aipush-seo-content aipush-privacy">
-        {/* 1. Overview */}
         <h2 id="overview">1. Overview</h2>
         <p>
-          AIPUSH (&ldquo;AIPUSH&rdquo;, &ldquo;we&rdquo;, &ldquo;our&rdquo;, or &ldquo;us&rdquo;) is an
-          AI-powered marketing and traffic automation platform designed to help businesses, creators, and operators
-          publish, manage, and optimize digital content across supported platforms.
-        </p>
-        <p>
-          This Privacy Policy explains how we collect, use, process, store, and protect information when you use
-          AIPUSH, connect third-party accounts (such as Facebook, Instagram, or TikTok), or interact with our
-          services at{" "}
-          <a href="https://aipush.app" target="_blank" rel="noopener noreferrer">
-            https://aipush.app
-          </a>
-          .
-        </p>
-        <p>By using AIPUSH, you agree to the practices described in this Privacy Policy.</p>
-
-        {/* 2. Data Controller */}
-        <h2 id="controller">2. Data Controller &amp; Contact Information</h2>
-        <ul className="aipush-privacy-list">
-          <li>
-            <strong>Service Name:</strong> AIPUSH
-          </li>
-          <li>
-            <strong>Website:</strong>{" "}
-            <a href="https://aipush.app" target="_blank" rel="noopener noreferrer">
-              https://aipush.app
-            </a>
-          </li>
-          <li>
-            <strong>Contact Email:</strong>{" "}
-            <a href="mailto:support@aipush.app">support@aipush.app</a>
-          </li>
-        </ul>
-        <p>
-          For privacy-related inquiries, data access requests, or deletion requests, please contact us at the email
-          above.
+          AIPUSH operates <strong>aipush.app</strong>, a free Answer Engine Optimization (AEO) analyzer.
+          You enter a website URL and we scan its public resources to measure how ready it is for AI agents
+          and answer engines, returning a 0–100 score and concrete fixes. We also publish daily analysis
+          articles at <strong>/analysis</strong>. This policy explains what data we collect, why, and your rights.
+          It applies to everyone who uses aipush.app. We follow a privacy-by-default, data-minimization approach.
         </p>
 
-        {/* 3. Data We Collect */}
+        <h2 id="controller">2. Who We Are &amp; Contact</h2>
+        <p>
+          AIPUSH is the data controller for personal data processed through aipush.app. For any privacy
+          request — access, correction, deletion, or questions — contact us at{" "}
+          <a href="mailto:support@aipush.app">support@aipush.app</a>. We respond to verified requests within 30 days.
+        </p>
+
         <h2 id="collect">3. Information We Collect</h2>
-
-        <h3>3.1 Account &amp; Identity Information</h3>
-        <p>When you create or use an AIPUSH account, we may collect:</p>
-        <ul className="aipush-privacy-list">
-          <li>Email address</li>
-          <li>Display name (if provided)</li>
-          <li>Internal user identifiers</li>
-          <li>Authentication metadata</li>
-        </ul>
-        <p>We do not collect passwords for third-party platforms connected via OAuth.</p>
-
-        <h3>3.2 Connected Social Platform Data</h3>
-        <p>When you connect third-party accounts through OAuth authorization, we may receive:</p>
-
-        <h4>Facebook / Instagram (Meta Platforms)</h4>
-        <ul className="aipush-privacy-list">
-          <li>Page ID</li>
-          <li>Instagram Business Account ID</li>
-          <li>Page name</li>
-          <li>Permissions granted</li>
-          <li>Access tokens</li>
-          <li>Token expiration metadata</li>
-        </ul>
-
-        <h4>TikTok</h4>
-        <ul className="aipush-privacy-list">
-          <li>TikTok Business account ID</li>
-          <li>Permissions granted</li>
-          <li>Access tokens</li>
-          <li>Token expiration metadata</li>
-        </ul>
-        <p>
-          Access tokens are stored securely and used solely for providing publishing and automation services. Users
-          may revoke access at any time directly in Facebook, Instagram, or TikTok account settings.
-        </p>
-
-        <h3>3.3 Content &amp; Publishing Data</h3>
-        <p>To operate the platform, we may process:</p>
-        <ul className="aipush-privacy-list">
-          <li>Post titles and captions</li>
-          <li>Publishing schedules</li>
-          <li>Video metadata</li>
-          <li>Status of publishing actions</li>
-          <li>System-generated content (if applicable)</li>
-        </ul>
-        <p>Media files may be temporarily processed to perform publishing or automation functions.</p>
-
-        <h3>3.4 Technical &amp; Log Information</h3>
-        <p>For security and operational purposes, we may collect:</p>
-        <ul className="aipush-privacy-list">
-          <li>IP address</li>
-          <li>Device type</li>
-          <li>Browser type</li>
-          <li>Access timestamps</li>
-          <li>Server logs</li>
-          <li>Error logs</li>
-          <li>System audit records</li>
-        </ul>
-        <p>
-          We use this information to maintain platform integrity, prevent abuse, detect fraud, and ensure compliance.
-        </p>
-
-        <h3>3.5 Payment Information</h3>
-        <p>If payment features are used:</p>
-        <ul className="aipush-privacy-list">
-          <li>We may store transaction identifiers and payment status.</li>
-          <li>We do not store full credit card numbers.</li>
-          <li>Payment processing may occur through third-party providers.</li>
+        <p>We collect only what the service needs to function:</p>
+        <ul>
           <li>
-            Cryptocurrency transactions (if applicable) are recorded as transaction references only.
+            <strong>URLs you analyze.</strong> The website address you submit to the analyzer, the scan result,
+            and the requester IP address (for rate-limiting and abuse prevention). We do not require an account to scan.
+          </li>
+          <li>
+            <strong>Email address (only if you choose to subscribe).</strong> To unlock the full report or receive
+            updates, you may submit your email with explicit consent. We record your email, the exact consent text and
+            version you agreed to, and the IP address and browser user-agent at sign-up and at confirmation — this is
+            our proof of consent for a double opt-in.
+          </li>
+          <li>
+            <strong>Technical &amp; usage data.</strong> Standard server logs, your light/dark theme preference,
+            and analytics events (see Cookies &amp; Analytics).
           </li>
         </ul>
+        <p>
+          We do <strong>not</strong> sell personal data, and we do not collect special-category (sensitive) data.
+          The websites we analyze are scanned via their <em>public</em> resources only (homepage, robots.txt,
+          sitemaps, and <code>/.well-known/*</code>); we do not log in to, modify, or alter any analyzed site.
+        </p>
 
-        {/* 4. How We Use Data */}
         <h2 id="use">4. How We Use Information</h2>
-        <p>We use collected data to:</p>
-        <ul className="aipush-privacy-list">
-          <li>Provide and operate AIPUSH services</li>
-          <li>Connect and manage third-party accounts via OAuth</li>
-          <li>Publish and automate content</li>
-          <li>Monitor performance and analytics</li>
-          <li>Improve platform functionality</li>
-          <li>Provide customer support</li>
-          <li>Prevent fraud and abuse</li>
-          <li>Enforce legal rights</li>
-          <li>Comply with applicable laws</li>
-        </ul>
-        <p>We do not sell personal data to third parties.</p>
-
-        {/* 5. Legal Bases */}
-        <h2 id="legal-bases">5. Legal Bases for Processing</h2>
-        <p>Depending on jurisdiction, we may process data under:</p>
-        <ul className="aipush-privacy-list">
-          <li>
-            <strong>Performance of a contract</strong> — to provide the services you have requested
-          </li>
-          <li>
-            <strong>Legitimate interests</strong> — service operation, security, and fraud prevention
-          </li>
-          <li>
-            <strong>User consent</strong> — where explicitly provided
-          </li>
-          <li>
-            <strong>Compliance with legal obligations</strong> — as required by applicable laws
-          </li>
+        <ul>
+          <li>Run the analyzer and return your AEO score, breakdown, and fixes.</li>
+          <li>With your consent: send the double opt-in confirmation, deliver the full report, and send occasional product updates.</li>
+          <li>Prevent abuse, rate-limit, debug, and keep the service secure and reliable.</li>
+          <li>Measure aggregate usage to improve the product.</li>
         </ul>
 
-        {/* 6. Sharing */}
-        <h2 id="sharing">6. Sharing of Information</h2>
-        <p>We may share limited data with:</p>
-        <ul className="aipush-privacy-list">
-          <li>
-            <strong>Meta Platforms</strong> — Facebook &amp; Instagram APIs, for publishing and account management
-          </li>
-          <li>
-            <strong>TikTok</strong> — Content Posting API, for publishing and account management
-          </li>
-          <li>
-            <strong>Email service providers</strong> — for transactional email delivery
-          </li>
-          <li>
-            <strong>Hosting and infrastructure providers</strong> — to operate the platform
-          </li>
-          <li>
-            <strong>Logging and monitoring providers</strong> — for operational reliability
-          </li>
+        <h2 id="legal-bases">5. Legal Bases for Processing (GDPR)</h2>
+        <ul>
+          <li><strong>Consent</strong> — email subscription, marketing email, and non-essential analytics/advertising cookies.</li>
+          <li><strong>Legitimate interests</strong> — running a scan you requested, securing the service, and preventing abuse.</li>
+          <li><strong>Legal obligation</strong> — retaining consent records where required.</li>
         </ul>
-        <p>We share only the minimum data necessary to deliver the service. We do not sell personal data.</p>
 
-        {/* 7. OAuth */}
-        <h2 id="oauth">7. OAuth &amp; Platform Compliance</h2>
-        <p>AIPUSH uses official OAuth mechanisms provided by supported platforms.</p>
-        <p>Users explicitly grant permissions during the connection process. Users may:</p>
-        <ul className="aipush-privacy-list">
-          <li>Revoke permissions in Facebook settings</li>
-          <li>Revoke permissions in TikTok settings</li>
-          <li>Disconnect accounts within AIPUSH</li>
+        <h2 id="cookies">6. Cookies &amp; Analytics</h2>
+        <p>We keep cookies minimal:</p>
+        <ul>
+          <li><strong>Essential:</strong> a confirmed-access cookie (<code>aeo_access</code>) that unlocks the full report after you confirm your email; your theme preference is stored locally in your browser.</li>
+          <li><strong>Analytics &amp; advertising (consent-based):</strong> Google Analytics 4 and Google Ads, and Microsoft Clarity, to understand usage. We use Google Consent Mode v2 — in the EU/EEA/UK these are <strong>denied by default</strong> until you consent. Analysis article pages also embed YouTube videos via the privacy-enhanced <code>youtube-nocookie.com</code> domain.</li>
         </ul>
-        <p>
-          We comply with platform policies, API rate limits, and developer terms. Publishing limits are
-          platform-defined and enforced by AIPUSH.
-        </p>
+        <p>You can control cookies through your browser and any on-site consent control.</p>
 
-        {/* 8. Retention */}
+        <h2 id="sharing">7. Sharing of Information (Processors)</h2>
+        <p>We share data only with service providers that help us operate, under data-processing terms:</p>
+        <ul>
+          <li><strong>Resend</strong> — sending confirmation and update emails.</li>
+          <li><strong>Google</strong> (Analytics, Ads) and <strong>Microsoft</strong> (Clarity) — analytics, subject to your consent.</li>
+          <li><strong>YouTube/Google</strong> — embedded videos on analysis pages (loaded only when you click play).</li>
+          <li>Infrastructure/hosting providers that run our servers.</li>
+        </ul>
+        <p>We may disclose data if required by law. We never sell your data.</p>
+
         <h2 id="retention">8. Data Retention</h2>
-        <p>We retain data:</p>
-        <ul className="aipush-privacy-list">
-          <li>As long as necessary to provide the service</li>
-          <li>Until the user disconnects third-party accounts</li>
-          <li>Until account deletion is requested</li>
-          <li>As required by legal or regulatory obligations</li>
+        <ul>
+          <li><strong>Scan records:</strong> retained to serve your results and shareable links; abuse/IP logs are kept for a limited period then purged.</li>
+          <li><strong>Subscriber data &amp; consent records:</strong> kept while you remain subscribed and for a reasonable period after unsubscribe to evidence consent and honor opt-outs, then deleted.</li>
+          <li><strong>Analytics:</strong> retained per the provider's standard windows in aggregated form.</li>
         </ul>
-        <p>
-          Access tokens are stored only while active and valid. Audit logs may be retained for security and
-          compliance purposes.
-        </p>
 
-        {/* 9. Security */}
         <h2 id="security">9. Data Security</h2>
-        <p>We implement appropriate technical and organizational measures including:</p>
-        <ul className="aipush-privacy-list">
-          <li>Encryption in transit (TLS)</li>
-          <li>Encryption at rest for sensitive credentials</li>
-          <li>Restricted internal access controls and least privilege</li>
-          <li>Secure secret storage</li>
-          <li>Audit logging</li>
-          <li>Infrastructure-level protections</li>
-          <li>Incident response procedures</li>
-        </ul>
         <p>
-          No system is completely immune to risk, but we take reasonable measures to protect your data.
+          We use HTTPS everywhere, restrict access on a need-to-know basis, hash sensitive tokens (e.g. access and
+          unsubscribe tokens), and follow fail-closed defaults. No method of transmission or storage is 100% secure,
+          but we work to protect your data and limit what we collect.
         </p>
 
-        {/* 10. User Rights */}
-        <h2 id="rights">10. User Rights</h2>
-        <p>Depending on jurisdiction, users may have the right to:</p>
-        <ul className="aipush-privacy-list">
-          <li>Request access to personal data</li>
-          <li>Request correction of inaccurate data</li>
-          <li>Request deletion of personal data</li>
-          <li>Request data portability (where applicable)</li>
-          <li>Object to certain processing</li>
-          <li>Withdraw consent at any time</li>
-          <li>Lodge a complaint with a supervisory authority</li>
+        <h2 id="rights">10. Your Rights</h2>
+        <p>Depending on your location (e.g. GDPR/UK GDPR, CCPA), you may have the right to:</p>
+        <ul>
+          <li>Access, correct, or delete your personal data.</li>
+          <li>Withdraw consent at any time (including unsubscribing from email).</li>
+          <li>Object to or restrict processing, and request data portability.</li>
+          <li>Lodge a complaint with your data protection authority.</li>
         </ul>
+        <p>To exercise any right, email <a href="mailto:support@aipush.app">support@aipush.app</a>.</p>
+
+        <h2 id="email">11. Email &amp; Unsubscribe</h2>
         <p>
-          Requests may be submitted to{" "}
+          Email is double opt-in: you confirm via a link before we send anything else. Every email includes a
+          one-click unsubscribe link and a <code>List-Unsubscribe</code> header. Unsubscribing stops all marketing
+          email and revokes report access tied to that subscription. You can also email{" "}
           <a href="mailto:support@aipush.app">support@aipush.app</a>.
         </p>
 
-        {/* 11. Data Deletion */}
-        <h2 id="deletion">11. Data Deletion Instructions</h2>
-        <p>To request deletion of your data:</p>
-        <ol className="aipush-privacy-list aipush-privacy-list--ordered">
+        <h2 id="transfers">12. International Transfers</h2>
+        <p>
+          Our providers may process data in countries outside your own, including the United States. Where required,
+          such transfers rely on appropriate safeguards (e.g. Standard Contractual Clauses).
+        </p>
+
+        <h2 id="children">13. Children</h2>
+        <p>
+          aipush.app is not directed to children under 16, and we do not knowingly collect their personal data.
+          If you believe a child provided us data, contact us and we will delete it.
+        </p>
+
+        <h2 id="changes">14. Changes to This Policy</h2>
+        <p>
+          We may update this policy as the product evolves. Material changes will be reflected by the "Last Updated"
+          date above. Continued use after an update means you accept the revised policy.
+        </p>
+
+        <h2 id="terms">15. Terms of Service</h2>
+        <p>
+          By using aipush.app you agree to these terms. If you do not agree, do not use the service.
+        </p>
+        <ul>
           <li>
-            Send an email to{" "}
-            <a href="mailto:support@aipush.app">support@aipush.app</a>
+            <strong>The service.</strong> AIPUSH provides a free, automated AEO analysis of publicly accessible
+            website resources, plus informational analysis articles. Results are automated estimates for
+            informational purposes and are provided "as is", without warranties of any kind.
           </li>
           <li>
-            Include:
-            <ul className="aipush-privacy-list">
-              <li>Your account email</li>
-              <li>Connected Page or Account ID (if applicable)</li>
-              <li>Description of your request</li>
-            </ul>
+            <strong>Third-party websites.</strong> Analyses and articles describe publicly available information
+            about third-party websites and may include screenshots of public pages. AIPUSH is not affiliated with,
+            endorsed by, or sponsored by those sites, and does not modify them. Brand names and trademarks belong to
+            their respective owners and are used descriptively (nominative fair use). If you own an analyzed site and
+            want a page removed, email <a href="mailto:support@aipush.app">support@aipush.app</a>.
           </li>
-        </ol>
-        <p>
-          We will process deletion requests within a reasonable timeframe, unless legal retention requirements apply.
-        </p>
-        <p>
-          Users may also revoke permissions directly from Facebook or TikTok account settings at any time.
-        </p>
-
-        {/* 12. International Transfers */}
-        <h2 id="transfers">12. International Data Transfers</h2>
-        <p>
-          AIPUSH may process data in multiple jurisdictions depending on infrastructure providers. We implement
-          appropriate safeguards to protect personal data in cross-border transfers, in accordance with applicable
-          data protection regulations.
-        </p>
-
-        {/* 13. Cookies */}
-        <h2 id="cookies">13. Cookies &amp; Local Storage</h2>
-        <p>We may use essential cookies and local storage for:</p>
-        <ul className="aipush-privacy-list">
-          <li>Authentication and session management</li>
-          <li>Security protections</li>
-          <li>Theme preferences (light/dark mode)</li>
-        </ul>
-        <p>
-          We do not use advertising tracking cookies. We do not use third-party analytics cookies.
-        </p>
-
-        {/* 14. Children */}
-        <h2 id="children">14. Children&apos;s Privacy</h2>
-        <p>
-          AIPUSH is not directed to children under 18. We do not knowingly collect personal data from minors. If we
-          become aware that we have collected data from a child, we will take steps to delete it promptly.
-        </p>
-
-        {/* 15. Changes */}
-        <h2 id="changes">15. Changes to This Policy</h2>
-        <p>
-          We may update this Privacy Policy periodically. The &ldquo;Last Updated&rdquo; date at the top of this
-          page reflects the most recent revision. Continued use of AIPUSH after updates constitutes acceptance of
-          changes.
-        </p>
-
-        <div className="aipush-privacy-contact">
-          <p>
-            If you have questions regarding this Privacy Policy, contact:{" "}
-            <a href="mailto:support@aipush.app">support@aipush.app</a>
-          </p>
-        </div>
-
-        <hr style={{margin: "3rem 0", borderColor: "var(--surface-border)"}} />
-
-        <h2 id="terms" style={{marginTop: "2rem", fontSize: "clamp(28px, 5vw, 44px)", fontWeight: 700}}>Terms of Service</h2>
-        <p className="aipush-privacy-date">Effective: March 24, 2026</p>
-
-        <h2>1. Service Description</h2>
-        <p>
-          AIPUSH provides an automated AI-optimized page generation and publishing service. We analyze your business,
-          generate structured content pages, verify them through automated audit gates, and publish them on your
-          designated subdomain. The service operates at aipush.app.
-        </p>
-
-        <h2>2. Account and Eligibility</h2>
-        <p>
-          You must be at least 18 years old to use AIPUSH. By creating an account, you confirm that the information
-          you provide is accurate. You are responsible for maintaining the security of your account credentials.
-          One account per person or business entity.
-        </p>
-
-        <h2>3. Subscription and Payment</h2>
-        <p>
-          AIPUSH is a paid subscription service at $79.99 per month. Payment is accepted exclusively in cryptocurrency
-          (USDT or USDC on Ethereum mainnet). Subscriptions renew monthly. There is no automatic billing — each
-          renewal requires a new payment transaction. A 30-day money-back guarantee applies to first-time subscribers.
-        </p>
-
-        <h2>4. Content and Publishing</h2>
-        <p>
-          AIPUSH generates content based on your business profile and publishes it on a subdomain you configure via
-          DNS. You retain ownership of your business data. Generated content is created for your use and published
-          on your domain. You are responsible for ensuring your business information is accurate. AIPUSH reserves
-          the right to refuse service to businesses in prohibited categories (illegal activities, controlled substances,
-          weapons, terrorism-related content, or content exploiting minors).
-        </p>
-
-        <h2>5. DNS and Domain Requirements</h2>
-        <p>
-          You must configure a CNAME DNS record pointing a subdomain (e.g., reference.yourdomain.com) to
-          cname.aipush.app. AIPUSH provisions SSL certificates automatically via Cloudflare. You must own or
-          have authorization to modify DNS for the domain you connect.
-        </p>
-
-        <h2>6. Service Availability</h2>
-        <p>
-          AIPUSH targets 20 pages per day per active subscription. Actual page count may vary based on AI provider
-          availability, content audit results, and system capacity. We do not guarantee specific traffic,
-          ranking, or citation outcomes — we provide the infrastructure and content, results depend on market
-          conditions and search engine behavior.
-        </p>
-
-        <h2>7. Prohibited Use</h2>
-        <ul className="aipush-privacy-list">
-          <li>Using AIPUSH to generate misleading, fraudulent, or deceptive content</li>
-          <li>Connecting domains you do not own or control</li>
-          <li>Attempting to circumvent billing, audit gates, or compliance checks</li>
-          <li>Reverse engineering, scraping, or extracting AIPUSH system components</li>
-          <li>Using the service for any illegal purpose</li>
+          <li>
+            <strong>Acceptable use.</strong> Do not abuse, overload, scrape at scale, reverse-engineer, or use the
+            service to break the law or analyze sites you are not permitted to test. We may rate-limit or block abuse.
+          </li>
+          <li>
+            <strong>Intellectual property.</strong> Our content, scores, and software are owned by AIPUSH. You may
+            use the fixes and reports for your own websites.
+          </li>
+          <li>
+            <strong>Limitation of liability.</strong> To the maximum extent permitted by law, AIPUSH is not liable
+            for any indirect, incidental, or consequential damages, or for decisions made based on the analysis.
+          </li>
+          <li>
+            <strong>Changes.</strong> We may modify or discontinue features at any time. These terms may be updated;
+            the "Last Updated" date reflects the current version.
+          </li>
         </ul>
 
-        <h2>8. Termination</h2>
-        <p>
-          Either party may terminate the subscription at any time. Upon cancellation, page generation stops
-          immediately. Previously published pages remain on your subdomain until you remove the DNS record.
-          AIPUSH may terminate accounts that violate these terms without notice.
+        <p style={{ marginTop: 28, opacity: 0.8 }}>
+          Questions about privacy or these terms? Contact <a href="mailto:support@aipush.app">support@aipush.app</a>.
         </p>
-
-        <h2>9. Limitation of Liability</h2>
-        <p>
-          AIPUSH is provided &ldquo;as is&rdquo; without warranties of any kind. We are not liable for indirect,
-          incidental, or consequential damages. Our total liability is limited to the amount you paid in the
-          preceding 12 months. We do not guarantee search engine rankings, AI citations, or traffic outcomes.
-        </p>
-
-        <h2>10. Changes to Terms</h2>
-        <p>
-          We may update these Terms of Service at any time. Continued use of AIPUSH after changes constitutes
-          acceptance. Material changes will be communicated via email to registered users.
-        </p>
-
-        <div className="aipush-privacy-contact">
-          <p>
-            Questions about these Terms? Contact:{" "}
-            <a href="mailto:support@aipush.app">support@aipush.app</a>
-          </p>
-          <p>
-            Follow us on X:{" "}
-            <a href="https://x.com/aipush_app" target="_blank" rel="noopener noreferrer">@aipush_app</a>
-          </p>
-        </div>
       </article>
     </main>
   );

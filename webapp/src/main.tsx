@@ -284,57 +284,32 @@ function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="app-root">
       <a href="#main-content" className="skip-nav">Skip to content</a>
-      <header className="header header--uxfix" data-testid="shell-header">
-        <div className="container header-row header-row--uxfix">
-          {isAdPage || isDashboardPage || isClientPage ? (
-            <span className="brand brand--uxfix" data-testid="shell-logo" style={{ pointerEvents: "none", cursor: "default" }}>
-              <span
-                className="brand-logo"
-                aria-hidden="true"
-                style={{ display: "inline-block", width: 13, height: 13, background: "#df8e1d", borderRadius: 3, transform: "rotate(45deg)" }}
-              />
-              <span className="brand-title--uxfix">AIPUSH</span>
-            </span>
+      {/* Unified site standard: fixed floating theme toggle top-right (same as the
+          homepage) — no header bar/wordmark, consistent across all pages. */}
+      {!isMinimalShell && (
+        <button
+          type="button"
+          onClick={toggle}
+          aria-label="Toggle light or dark theme"
+          data-testid="shell-theme-toggle"
+          title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          style={{
+            position: "fixed", top: 16, right: 16, zIndex: 40,
+            display: "grid", placeItems: "center", width: 40, height: 40,
+            borderRadius: 999, cursor: "pointer",
+            background: theme === "dark" ? "#1e1e2e" : "#ffffff",
+            border: `1px solid ${theme === "dark" ? "#313244" : "#ccd0da"}`,
+            color: theme === "dark" ? "#a6adc8" : "#6c6f85",
+            boxShadow: "0 1px 3px rgba(0,0,0,.12)",
+          }}
+        >
+          {theme === "dark" ? (
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2" /><path d="M12 2v2.5M12 19.5V22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2 12h2.5M19.5 12H22M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" /></svg>
           ) : (
-            <Link to="/" className="brand brand--uxfix" data-testid="shell-logo">
-              <span
-                className="brand-logo"
-                aria-hidden="true"
-                style={{ display: "inline-block", width: 13, height: 13, background: "#df8e1d", borderRadius: 3, transform: "rotate(45deg)" }}
-              />
-              <span className="brand-title--uxfix">AIPUSH</span>
-            </Link>
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>
           )}
-
-          {/* AEO pivot: old crypto-product nav (Audit/MIP/Login/Get-Started/Dashboard)
-              retired. Content pages keep only the brand + a single CTA to the
-              analyzer + theme toggle, so no stale product info remains. */}
-          {!isMinimalShell && (
-            <nav className="header-actions header-actions--uxfix" aria-label="Main navigation">
-              {/* THEME TOGGLE — new-design SVG sun/moon (no old-product nav) */}
-              <button
-                type="button"
-                onClick={toggle}
-                aria-label="Toggle light or dark theme"
-                data-testid="shell-theme-toggle"
-                title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-                style={{
-                  display: "inline-flex", alignItems: "center", justifyContent: "center",
-                  width: 40, height: 40, borderRadius: 999, cursor: "pointer",
-                  background: "transparent", border: "1px solid currentColor",
-                  color: "inherit", opacity: 0.85,
-                }}
-              >
-                {theme === "dark" ? (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2" /><path d="M12 2v2.5M12 19.5V22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2 12h2.5M19.5 12H22M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" /></svg>
-                ) : (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>
-                )}
-              </button>
-            </nav>
-          )}
-        </div>
-      </header>
+        </button>
+      )}
 
       <div className="app-content" id="main-content">{children}</div>
 

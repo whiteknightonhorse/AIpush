@@ -123,6 +123,19 @@ function trackLeadConversion(): void {
   } catch { /* analytics must never break the signup */ }
 }
 
+/* Lightweight funnel telemetry: the only conversion event previously emitted was
+   generate_lead (on confirmed unlock), leaving the scan -> gate steps invisible in
+   GA4. These intermediate events make the analyzer -> email-capture funnel
+   measurable. Fail-soft: never throws into the UI flow; respects consent mode via
+   the same gtag loader configured in index.html. */
+function trackFunnelEvent(name: string, params?: Record<string, unknown>): void {
+  try {
+    const gtag = (window as unknown as { gtag?: Gtag }).gtag;
+    if (typeof gtag !== "function") return;
+    gtag("event", name, params);
+  } catch { /* analytics must never break the funnel */ }
+}
+
 /* ============================================================ icons */
 type IconFn = (p?: React.SVGProps<SVGSVGElement>) => React.ReactElement;
 const I: Record<string, IconFn> = {
@@ -479,7 +492,7 @@ function Landing({ onAnalyze, busy, error }: { onAnalyze: (u: string) => void; b
         <p style={{ margin: "0 auto", maxWidth: 540, textAlign: "center", fontSize: 16, color: "var(--text-secondary)", lineHeight: 1.55 }}>Scan your site for AI-agent and answer-engine readiness — robots, sitemaps, MCP, structured data, and more.</p>
         <form onSubmit={submit} style={{ marginTop: 4 }}>
           <div className="url-row" style={{ display: "flex", gap: 10, padding: 6, borderRadius: "var(--radius-lg)", background: "var(--surface-card)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-md)" }}>
-            <input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://yourwebsite.com" inputMode="url" aria-label="Website URL" style={{ flex: 1, minWidth: 0, padding: "14px 14px", fontSize: 16, background: "transparent", border: "none", outline: "none", color: "var(--text-primary)" }} />
+            <input autoFocus value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://yourwebsite.com" inputMode="url" aria-label="Website URL" style={{ flex: 1, minWidth: 0, padding: "14px 14px", fontSize: 16, background: "transparent", border: "none", outline: "none", color: "var(--text-primary)" }} />
             <button type="submit" className="analyze-btn" disabled={busy} style={{ flex: "none", padding: "14px 24px", fontSize: 15.5, fontWeight: 700, cursor: busy ? "default" : "pointer", opacity: busy ? 0.7 : 1, borderRadius: "var(--radius-md)", color: "var(--on-accent)", background: "var(--accent)", border: "none", boxShadow: "var(--shadow-accent)", display: "inline-flex", alignItems: "center", gap: 8 }}>
               Analyze <span style={{ fontSize: 16, display: "inline-flex" }}><I.arrow /></span>
             </button>
@@ -750,15 +763,18 @@ export function AeoAnalyzer() {
     // and fresh affirmative consent / feature opt-in per subscription).
     setEmail(""); setAgree(false); setFeature(false); setGateError("");
     setScreen("scanning");
+    trackFunnelEvent("aeo_scan_started");
     try {
       const r = await fetch("/api/aeo/scan", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ url: norm }) });
       if (!r.ok) {
         const j = await r.json().catch(() => ({}));
+        trackFunnelEvent("aeo_scan_failed", { status: r.status });
         setLandingError(scanErrorMessage(j.error, r.status)); setScreen("landing"); setBusy(false); return;
       }
       const resp = await r.json();
       setScanId(resp.scanId); setLockedCount(resp.lockedCount ?? 0);
       setData(adapt(resp)); setScanReady(true); setBusy(false);
+      trackFunnelEvent("aeo_scan_completed", { score: resp.score, locked_count: resp.lockedCount ?? 0 });
       // A confirmed access cookie (e.g. the local video-capture automation) returns
       // the full ungated report with unlocked:true → render every fix, no gate.
       if (resp.unlocked) setUnlocked(true);
@@ -820,6 +836,7 @@ export function AeoAnalyzer() {
       const r = await fetch("/api/aeo/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ email: email.trim(), scanId, consent: true }) });
       if (!r.ok) { const j = await r.json().catch(() => ({})); setGateError(subscribeErrorMessage(j.error)); return; }
       setSent(true);
+      trackFunnelEvent("aeo_subscribe_submitted", { feature });
       // Fire-and-forget: if they opted to be featured, register the site for the video pool.
       if (feature) {
         fetch("/api/aeo/feature", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ scanId, email: email.trim() }) }).catch(() => {});

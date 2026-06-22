@@ -411,7 +411,7 @@ function GatePanel({ lockedCount, sent, email, setEmail, agree, setAgree, featur
           </label>
           <label style={{ display: "flex", gap: 9, alignItems: "flex-start", fontSize: 13, color: "var(--text-secondary)", cursor: "pointer", lineHeight: 1.45 }}>
             <input type="checkbox" checked={feature} onChange={(e) => setFeature(e.target.checked)} style={{ marginTop: 2, width: 17, height: 17, accentColor: "var(--accent)", flex: "none" }} />
-            <span>Want your website featured in a video? We pick sites to analyze on our channel.</span>
+            <span>Want your site featured in a short video on our YouTube channel? We showcase selected sites we analyze.</span>
           </label>
           {(err || error) && <span style={{ fontSize: 12.5, color: "var(--status-danger)", fontWeight: 600 }}>{err || error}</span>}
           <button type="submit" style={{ padding: "13px 18px", fontSize: 15, fontWeight: 700, cursor: "pointer", borderRadius: "var(--radius-sm)", color: "var(--on-accent)", background: "var(--accent)", border: "none", boxShadow: "var(--shadow-accent)", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
@@ -506,7 +506,7 @@ function Landing({ onAnalyze, busy, error }: { onAnalyze: (u: string) => void; b
           </button>
         </div>
         {custom && (
-          <div ref={panelRef} id="aeo-what-we-check" role="region" aria-label="What we check" style={{ position: "absolute", top: "calc(100% + 12px)", left: 0, right: 0, zIndex: 5, display: "grid", gap: 10, padding: "18px 20px", borderRadius: "var(--radius-md)", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-lg)" }}>
+          <div ref={panelRef} id="aeo-what-we-check" role="region" aria-label="What we check" className="scroll-thin" style={{ position: "absolute", top: "calc(100% + 12px)", left: 0, right: 0, zIndex: 5, display: "grid", gap: 10, padding: "18px 20px", borderRadius: "var(--radius-md)", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-lg)", maxHeight: "calc(100vh - 280px)", overflowY: "auto" }}>
             {["Discoverability — robots, sitemaps, crawlability", "Agent access & content — readable, structured content", "Identity & auth — OAuth & agent identity discovery", "Content structure — schema, FAQ, answer-units", "Structured data — JSON-LD, metadata, machine-readable signals"].map((t) => (
               <div key={t} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, color: "var(--text-secondary)" }}>
                 <span style={{ color: "var(--accent)", fontSize: 13, display: "inline-flex" }}><I.check /></span>{t}
@@ -846,6 +846,12 @@ export function AeoAnalyzer() {
 
   return (
     <div className="aeo-root">
+      {/* Screen-reader announcement: the flow swaps whole screens (landing → scanning →
+          results) with only window.scrollTo, so assistive tech otherwise gets no cue the
+          results have arrived. This polite live region fills that gap (WCAG 4.1.3). */}
+      <div aria-live="polite" role="status" style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap", border: 0 }}>
+        {screen === "results" && data ? `AEO scan complete. Your site scored ${data.score} out of 100.` : ""}
+      </div>
       <div style={{ position: "fixed", top: 16, right: 16, zIndex: 40 }}>
         <ThemeToggle theme={theme} setTheme={setTheme} />
       </div>

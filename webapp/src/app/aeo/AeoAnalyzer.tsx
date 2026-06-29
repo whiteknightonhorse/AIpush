@@ -373,7 +373,7 @@ function CommerceSection({ cat }: { cat: Category }) {
 /* ============================================================ gate */
 const gateWrap: CSS = { position: "absolute", inset: 0, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 54, zIndex: 3 };
 const gateCard: CSS = { width: "min(420px,92%)", display: "grid", gap: 13, padding: "28px 26px", background: "var(--surface-card)", border: "1px solid var(--surface-border)", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-lg)" };
-function GatePanel({ lockedCount, sent, email, setEmail, agree, setAgree, feature, setFeature, onSubmit, error }: { lockedCount: number; sent: boolean; email: string; setEmail: (v: string) => void; agree: boolean; setAgree: (v: boolean) => void; feature: boolean; setFeature: (v: boolean) => void; onSubmit: () => void; error: string }) {
+function GatePanel({ lockedCount, sent, email, setEmail, agree, setAgree, feature, setFeature, onSubmit, error, onTryUnlock }: { lockedCount: number; sent: boolean; email: string; setEmail: (v: string) => void; agree: boolean; setAgree: (v: boolean) => void; feature: boolean; setFeature: (v: boolean) => void; onSubmit: () => void; error: string; onTryUnlock?: () => void }) {
   const [err, setErr] = useState("");
   const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const submit = (e: React.FormEvent) => {
@@ -390,6 +390,12 @@ function GatePanel({ lockedCount, sent, email, setEmail, agree, setAgree, featur
           <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800 }}>Check your inbox</h3>
           <p style={{ margin: 0, fontSize: 14.5, color: "var(--text-secondary)", lineHeight: 1.55 }}>We sent a confirmation link to <strong style={{ color: "var(--text-primary)" }}>{email}</strong>. Click it to unlock all fixes.</p>
           <p style={{ margin: 0, fontSize: 12.5, color: "var(--text-tertiary)" }}>Didn't get it? Check spam, or wait a minute and try again.</p>
+          {onTryUnlock && (
+            <button type="button" onClick={onTryUnlock}
+              style={{ marginTop: 8, padding: "10px 18px", fontSize: 13.5, fontWeight: 700, cursor: "pointer", borderRadius: "var(--radius-sm)", color: "var(--text-secondary)", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)" }}>
+              I've confirmed my email — unlock now
+            </button>
+          )}
         </div>
       </div>
     );
@@ -398,7 +404,7 @@ function GatePanel({ lockedCount, sent, email, setEmail, agree, setAgree, featur
     <div style={gateWrap}>
       <form onSubmit={submit} noValidate style={gateCard}>
         <span style={{ width: 48, height: 48, borderRadius: 999, display: "grid", placeItems: "center", margin: "0 auto", background: "var(--surface-card-strong)", color: "var(--accent)", border: "1px solid var(--surface-border)", fontSize: 22 }}><I.lock /></span>
-        <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800, textAlign: "center", letterSpacing: "-.01em" }}>{lockedCount === 1 ? "Unlock the remaining fix" : `Unlock all ${lockedCount > 0 ? lockedCount + " " : ""}fixes`}</h3>
+        <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800, textAlign: "center", letterSpacing: "-.01em" }}>{lockedCount === 0 ? "Get your full AI readiness report" : lockedCount === 1 ? "Unlock the remaining fix" : `Unlock all ${lockedCount} fixes`}</h3>
         <p style={{ margin: 0, fontSize: 14.5, color: "var(--text-secondary)", textAlign: "center", lineHeight: 1.5 }}>Get the full report + copy-ready instructions for your AI agent.</p>
         <div style={{ display: "grid", gap: 10, marginTop: 2 }}>
           <input type="email" value={email} onChange={(e) => { setEmail(e.target.value); setErr(""); }} placeholder="you@company.com" aria-label="Email address"
@@ -645,7 +651,7 @@ const secondaryBtn: CSS = { display: "inline-flex", alignItems: "center", gap: 7
 
 function Results({ data, scanId, unlocked, lockedCount, sent, gate, onScanAnother }: {
   data: Data; scanId: string; unlocked: boolean; lockedCount: number; sent: boolean;
-  gate: { email: string; setEmail: (v: string) => void; agree: boolean; setAgree: (v: boolean) => void; feature: boolean; setFeature: (v: boolean) => void; onSubmit: () => void; error: string };
+  gate: { email: string; setEmail: (v: string) => void; agree: boolean; setAgree: (v: boolean) => void; feature: boolean; setFeature: (v: boolean) => void; onSubmit: () => void; error: string; onTryUnlock?: () => void };
   onScanAnother: () => void;
 }) {
   const [modal, setModal] = useState(false);
@@ -709,11 +715,15 @@ function Results({ data, scanId, unlocked, lockedCount, sent, gate, onScanAnothe
                 </div>
               </div>
               <div style={{ display: "grid", gap: 10 }}>{freeFixes.map((ch) => <FixCard key={ch.id} check={ch} defaultOpen />)}</div>
-              {lockedCount > 0 && (
-                <div style={{ position: "relative", minHeight: 430 }}>
-                  <div style={{ position: "absolute", top: -6, left: "50%", transform: "translateX(-50%)", zIndex: 4, fontSize: 12.5, fontWeight: 700, color: "var(--text-secondary)", padding: "5px 13px", borderRadius: 999, background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-sm)" }}>+ {lockedCount} more fixes</div>
-                  <div style={{ paddingTop: 18 }}><LockedStack /></div>
-                  <GatePanel lockedCount={lockedCount} sent={sent} email={gate.email} setEmail={gate.setEmail} agree={gate.agree} setAgree={gate.setAgree} feature={gate.feature} setFeature={gate.setFeature} onSubmit={gate.onSubmit} error={gate.error} />
+              {!unlocked && (
+                <div style={{ position: "relative", minHeight: lockedCount > 0 ? 430 : 220 }}>
+                  {lockedCount > 0 && (
+                    <>
+                      <div style={{ position: "absolute", top: -6, left: "50%", transform: "translateX(-50%)", zIndex: 4, fontSize: 12.5, fontWeight: 700, color: "var(--text-secondary)", padding: "5px 13px", borderRadius: 999, background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-sm)" }}>+ {lockedCount} more fixes</div>
+                      <div style={{ paddingTop: 18 }}><LockedStack /></div>
+                    </>
+                  )}
+                  <GatePanel lockedCount={lockedCount} sent={sent} email={gate.email} setEmail={gate.setEmail} agree={gate.agree} setAgree={gate.setAgree} feature={gate.feature} setFeature={gate.setFeature} onSubmit={gate.onSubmit} error={gate.error} onTryUnlock={gate.onTryUnlock} />
                 </div>
               )}
             </>
@@ -873,7 +883,7 @@ export function AeoAnalyzer() {
       {screen === "scanning" && <Scanning url={data?.url || ""} ready={scanReady} onDone={() => setScreen("results")} />}
       {screen === "results" && data && (
         <Results data={data} scanId={scanId} unlocked={unlocked} lockedCount={lockedCount} sent={sent}
-          gate={{ email, setEmail, agree, setAgree, feature, setFeature, onSubmit: submitGate, error: gateError }}
+          gate={{ email, setEmail, agree, setAgree, feature, setFeature, onSubmit: submitGate, error: gateError, onTryUnlock: tryUnlock }}
           onScanAnother={() => { setScreen("landing"); setData(null); setLandingError(""); }} />
       )}
 

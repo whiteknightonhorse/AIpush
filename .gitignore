@@ -87,3 +87,6 @@ tmp-*
 ._*
 .vscode/
 .claude/
+
+# provek.dev accountability declaration
+!provek.json

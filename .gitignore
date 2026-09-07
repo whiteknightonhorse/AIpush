@@ -16,6 +16,7 @@
 !package.json
 !tsconfig.json
 !playwright.config.ts
+!provek_shorts_map.json
 
 # ── Allow: webapp frontend (public marketing pages) ──
 !webapp/

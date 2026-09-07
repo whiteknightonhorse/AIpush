@@ -10,5 +10,11 @@
     "title": "A support agent that never sends the reply",
     "channel": "AtlasSees",
     "rendered_at": "2026-09-07T03:43:02.346Z"
+  },
+  "https://provek.dev/build/lead-generation-agent/": {
+    "video_id": "BStGeJgGHXI",
+    "title": "A lead-gen agent that never emails anyone",
+    "channel": "AtlasSees",
+    "rendered_at": "2026-09-07T04:33:57.143Z"
   }
 }

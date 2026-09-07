@@ -40,5 +40,11 @@
     "title": "A finance agent with no code to move money",
     "channel": "AtlasSees",
     "rendered_at": "2026-09-07T08:01:26.716Z"
+  },
+  "https://provek.dev/build/youtube-channel-operations-agent/": {
+    "video_id": "VF-dJj06PzQ",
+    "title": "This video was uploaded unlisted, on purpose",
+    "channel": "AtlasSees",
+    "rendered_at": "2026-09-07T08:56:18.677Z"
   }
 }

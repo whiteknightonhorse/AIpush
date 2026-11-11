@@ -42,6 +42,7 @@ import { AiCompetitorAnalysisTool } from "./app/pages/seo/AiCompetitorAnalysisTo
 import { AddMyBusinessToChatgpt } from "./app/pages/seo/AddMyBusinessToChatgpt";
 import { AgentApi } from "./app/pages/AgentApi";
 import { Privacy } from "./app/pages/Privacy";
+import { Methodology } from "./app/pages/Methodology";
 import { DashBro } from "./app/pages/DashBro";
 import { HowChatgptRecommendsBusiness } from "./app/pages/HowChatgptRecommendsBusiness";
 import { GetIndexedByAi } from "./app/pages/GetIndexedByAi";
@@ -2953,6 +2954,7 @@ function ShellRoutes() {
           <Route path="/get-indexed-by-ai" element={<GetIndexedByAi />} />
           <Route path="/agent-api" element={<AgentApi />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/methodology" element={<Methodology />} />
           <Route path="/terms" element={<Navigate to="/privacy#terms" replace />} />
           <Route path="/contact" element={<ContactRedirect />} />
           <Route path="/mcp" element={<Navigate to="/agent-api" replace />} />

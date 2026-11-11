@@ -10,19 +10,15 @@
      POST /api/aeo/subscribe       {email, scanId, consent}   -> {ok}
      GET  /api/aeo/confirm?token=  -> sets cookie, redirects /?scan=<id>&unlocked=1
      GET  /api/aeo/scan/:id/full   -> full findings (confirmed cookie; 403 otherwise)
-   Gated findings: failing fixes beyond the first 2 arrive as stubs (locked:true,
-   no fix text); only the first 2 fails carry copy/goal/how. */
+   Gated findings: failing fixes beyond the 3 highest-weight arrive as stubs (locked:true,
+   title + issue, no fix text); only those 3 fails carry copy/goal/how. */
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import "./aeo.css";
+import { adapt, freeFixes as pickFreeFixes, fixCountLine, type Check, type Category, type Data, type Level, type Status } from "./adapt";
 
 type CSS = React.CSSProperties;
 
 /* ============================================================ types */
-type Status = "pass" | "fail" | "info";
-interface Check { id: string; title: string; status: Status; goal: string; result: string; how: string; res: { t: string; u: string }[]; copy: string; skillSlug: string | null; }
-interface Category { id: string; label: string; blurb: string; score: number; checks: Check[]; }
-interface Level { n: number; name: string; }
-interface Data { url: string; score: number; level: Level; categories: Category[]; commerce: Category | null; markdown: string | null; }
 
 const SCAN_PHASES = [
   "Fetching homepage & response headers",
@@ -45,10 +41,6 @@ function scoreColor(s: number): string {
   if (s < 70) return "var(--score-mid)";
   return "var(--score-high)";
 }
-function countPass(checks: Check[]): { pass: number; total: number } {
-  const scored = checks.filter((c) => c.status !== "info");
-  return { pass: scored.filter((c) => c.status === "pass").length, total: scored.length };
-}
 
 function normalizeUrl(raw: string): string | null {
   let v = (raw || "").trim();
@@ -62,42 +54,6 @@ function normalizeUrl(raw: string): string | null {
   } catch { return null; }
 }
 
-/* adapt the API response (flat findings + categories) -> nested Data */
-function adapt(resp: any): Data {
-  const findings: any[] = Array.isArray(resp.findings) ? resp.findings : [];
-  const byCat: Record<string, Check[]> = {};
-  for (const f of findings) {
-    const ch: Check = {
-      id: f.id, title: f.title, status: f.status,
-      goal: f.goal ?? "", result: f.evidence ?? "", how: f.fix ?? "",
-      copy: (f.fixCode || f.fix) ?? "", skillSlug: f.skillSlug ?? null,
-      res: Array.isArray(f.resources) ? f.resources.map((r: any) => ({ t: r.label ?? r.title ?? "", u: r.url })) : [],
-    };
-    (byCat[f.category] ||= []).push(ch);
-  }
-  const cats: any[] = Array.isArray(resp.categories) ? resp.categories : [];
-  const categories: Category[] = cats
-    .filter((c) => c.id !== "commerce")
-    .map((c) => ({ id: c.id, label: c.label, blurb: c.blurb, score: c.score, checks: byCat[c.id] || [] }));
-  const commerceCat = cats.find((c) => c.id === "commerce");
-  const commerce: Category | null = commerceCat
-    ? { id: commerceCat.id, label: commerceCat.label, blurb: commerceCat.blurb, score: commerceCat.score, checks: byCat["commerce"] || [] }
-    : null;
-  return {
-    url: resp.url, score: resp.score,
-    level: { n: resp.level || 1, name: resp.levelLabel || "" },
-    categories, commerce, markdown: resp.markdown ?? null,
-  };
-}
-
-function buildBundle(d: Data): string {
-  if (d.markdown) return d.markdown;
-  const fails: { cat: string; ch: Check }[] = [];
-  d.categories.forEach((c) => c.checks.forEach((ch) => { if (ch.status === "fail" && ch.copy) fails.push({ cat: c.label, ch }); }));
-  let out = `# AEO fixes for ${d.url}\n# AIPUSH AEO Analyzer · score ${d.score}/100\n# ${fails.length} actionable fixes — paste into your AI coding agent.\n\n`;
-  fails.forEach((f, i) => { out += `## ${i + 1}. ${f.ch.title}  (${f.cat})\n${f.ch.goal}\n\n${f.ch.copy}\n\n`; });
-  return out.trim();
-}
 function skillUrl(slug: string): string { return `https://aipush.app/.well-known/agent-skills/${slug}/SKILL.md`; }
 
 /* Google Ads conversion send_to label for the email-gate lead, e.g.
@@ -123,6 +79,19 @@ function trackLeadConversion(): void {
   } catch { /* analytics must never break the signup */ }
 }
 
+/* Lightweight funnel telemetry: the only conversion event previously emitted was
+   generate_lead (on confirmed unlock), leaving the scan -> gate steps invisible in
+   GA4. These intermediate events make the analyzer -> email-capture funnel
+   measurable. Fail-soft: never throws into the UI flow; respects consent mode via
+   the same gtag loader configured in index.html. */
+function trackFunnelEvent(name: string, params?: Record<string, unknown>): void {
+  try {
+    const gtag = (window as unknown as { gtag?: Gtag }).gtag;
+    if (typeof gtag !== "function") return;
+    gtag("event", name, params);
+  } catch { /* analytics must never break the funnel */ }
+}
+
 /* ============================================================ icons */
 type IconFn = (p?: React.SVGProps<SVGSVGElement>) => React.ReactElement;
 const I: Record<string, IconFn> = {
@@ -139,12 +108,14 @@ const I: Record<string, IconFn> = {
   arrow: (p) => <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M5 12h14M13 6l6 6-6 6" /></svg>,
   ext: (p) => <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M14 5h5v5M19 5l-8 8M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" /></svg>,
   spark: (p) => <svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" {...p}><path d="M12 2l1.6 5.4L19 9l-5.4 1.6L12 16l-1.6-5.4L5 9l5.4-1.6L12 2z" /></svg>,
+  minus: (p) => <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M6 12h12" /></svg>,
   refresh: (p) => <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v4h-4" /></svg>,
 };
 
 const STATUS_META: Record<Status, { color: string; dim: string; bd: string; icon: IconFn }> = {
   pass: { color: "var(--status-success)", dim: "var(--status-success-dim)", bd: "var(--status-success-border)", icon: I.check },
   fail: { color: "var(--status-danger)", dim: "var(--status-danger-dim)", bd: "var(--status-danger-border)", icon: I.x },
+  skip: { color: "var(--text-tertiary)", dim: "var(--surface-inset)", bd: "var(--surface-border)", icon: I.minus },
   info: { color: "var(--text-tertiary)", dim: "var(--surface-inset)", bd: "var(--surface-border)", icon: I.info },
 };
 
@@ -171,7 +142,7 @@ function Spinner({ sm }: { sm?: boolean }) {
   return <span style={{ width: s, height: s, borderRadius: 999, border: "2px solid var(--surface-border)", borderTopColor: "var(--accent)", display: "inline-block", animation: "aeo-spin .7s linear infinite" }} />;
 }
 function StatusIcon({ status, size = 26 }: { status: Status; size?: number }) {
-  const m = STATUS_META[status];
+  const m = STATUS_META[status] ?? STATUS_META.info;
   const Ico = m.icon;
   return <span style={{ display: "inline-grid", placeItems: "center", flex: "none", width: size, height: size, borderRadius: 999, background: m.dim, color: m.color, border: `1px solid ${m.bd}`, fontSize: size * 0.62 }} aria-hidden="true"><Ico /></span>;
 }
@@ -253,19 +224,19 @@ function LevelBadge({ level, score }: { level: Level; score: number }) {
     </div>
   );
 }
-function MiniGauge({ score, label, passText, active, onClick }: { score: number; label: string; passText?: string; active?: boolean; onClick?: () => void }) {
+function MiniGauge({ score, label, passText, assessed = true, active, onClick }: { score: number; label: string; passText?: string; assessed?: boolean; active?: boolean; onClick?: () => void }) {
   const r = 26, c = 2 * Math.PI * r, col = scoreColor(score);
   return (
-    <button onClick={onClick} aria-label={`${label}: score ${score} of 100${passText ? ` (${passText} passed)` : ""}`} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 9, padding: "14px 8px 12px", background: active ? "var(--surface-card-strong)" : "transparent", border: "1px solid", borderColor: active ? "var(--surface-border-strong)" : "transparent", borderRadius: "var(--radius-md)", cursor: "pointer", minWidth: 96, flex: "1 1 96px", transition: "background .15s,border-color .15s" }}>
+    <button onClick={onClick} aria-label={assessed ? `${label}: score ${score} of 100${passText ? ` (${passText} passed)` : ""}` : `${label}: not assessed`} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 9, padding: "14px 8px 12px", background: active ? "var(--surface-card-strong)" : "transparent", border: "1px solid", borderColor: active ? "var(--surface-border-strong)" : "transparent", borderRadius: "var(--radius-md)", cursor: "pointer", minWidth: 96, flex: "1 1 96px", transition: "background .15s,border-color .15s" }}>
       <div style={{ position: "relative", width: 64, height: 64 }}>
         <svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true" style={{ transform: "rotate(-90deg)" }}>
           <circle cx="32" cy="32" r={r} fill="none" stroke="var(--surface-inset)" strokeWidth="6" />
-          <circle cx="32" cy="32" r={r} fill="none" stroke={col} strokeWidth="6" strokeLinecap="round" strokeDasharray={`${(score / 100) * c} ${c}`} style={{ transition: "stroke-dasharray .6s ease" }} />
+          {assessed && <circle cx="32" cy="32" r={r} fill="none" stroke={col} strokeWidth="6" strokeLinecap="round" strokeDasharray={`${(score / 100) * c} ${c}`} style={{ transition: "stroke-dasharray .6s ease" }} />}
         </svg>
-        <span style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", fontSize: 17, fontWeight: 800, color: "var(--text-primary)", fontVariantNumeric: "tabular-nums" }}>{score}</span>
+        <span style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", fontSize: 17, fontWeight: 800, color: "var(--text-primary)", fontVariantNumeric: "tabular-nums", ...(assessed ? {} : { fontSize: 14, fontWeight: 700, letterSpacing: ".02em", color: "var(--text-tertiary)" }) }}>{assessed ? score : "–"}</span>
       </div>
       <span style={{ fontSize: 12.5, fontWeight: 600, color: "var(--text-primary)", textAlign: "center", lineHeight: 1.25 }}>{label}</span>
-      {passText ? <span style={{ fontSize: 11.5, color: "var(--text-tertiary)", fontWeight: 600 }}>{passText}</span> : null}
+      {assessed ? (passText ? <span style={{ fontSize: 11.5, color: "var(--text-tertiary)", fontWeight: 600 }}>{passText}</span> : null) : <span style={{ fontSize: 11.5, color: "var(--text-tertiary)", fontWeight: 600 }}>n/a</span>}
     </button>
   );
 }
@@ -282,32 +253,41 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 function FixCard({ check, density = "comfy", defaultOpen }: { check: Check; density?: string; defaultOpen?: boolean }) {
   const failing = check.status === "fail";
   const [open, setOpen] = useState(defaultOpen != null ? defaultOpen : failing);
+  const tag = check.status === "skip" ? "Skipped" : check.status === "info" ? "Info" : check.status === "pass" && !check.scoring ? "Not scored" : "";
   const pad = density === "compact" ? "14px 16px" : "18px 20px";
-  const resultColor = check.status === "pass" ? "var(--status-success)" : check.status === "fail" ? "var(--status-danger)" : "var(--text-tertiary)";
+  const resultColor = check.status === "pass" ? "var(--status-success)" : failing ? "var(--status-danger)" : "var(--text-tertiary)";
   return (
-    <div style={{ position: "relative", borderRadius: "var(--radius-md)", overflow: "hidden", background: "var(--surface-card)", border: "1px solid var(--surface-border)", borderLeft: failing ? "3px solid var(--status-danger)" : "1px solid var(--surface-border)", boxShadow: open ? "var(--shadow-sm)" : "none", transition: "box-shadow .15s" }}>
+    <div data-check-id={check.id} style={{ position: "relative", borderRadius: "var(--radius-md)", overflow: "hidden", background: "var(--surface-card)", border: "1px solid var(--surface-border)", borderLeft: failing ? "3px solid var(--status-danger)" : "1px solid var(--surface-border)", boxShadow: open ? "var(--shadow-sm)" : "none", transition: "box-shadow .15s" }}>
       <button onClick={() => setOpen((o) => !o)} aria-expanded={open} style={{ display: "flex", alignItems: "center", gap: 13, width: "100%", textAlign: "left", padding: pad, background: "transparent", border: "none", cursor: "pointer" }}>
         <StatusIcon status={check.status} size={density === "compact" ? 24 : 28} />
         <span style={{ flex: 1, minWidth: 0 }}>
           <span style={{ display: "block", fontSize: density === "compact" ? 14.5 : 15.5, fontWeight: 700, color: "var(--text-primary)" }}>{check.title}</span>
           {!open && check.result && <span style={{ display: "block", fontSize: 13, color: resultColor, fontWeight: 500, marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{check.result}</span>}
         </span>
-        {check.status === "info" && <span style={{ fontSize: 11, fontWeight: 700, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: ".06em", flex: "none" }}>Info</span>}
+        {tag && <span style={{ fontSize: 11, fontWeight: 700, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: ".06em", flex: "none" }}>{tag}</span>}
         <span style={{ fontSize: 18, color: "var(--text-tertiary)", display: "inline-flex", transform: open ? "rotate(180deg)" : "none", transition: "transform .2s", flex: "none" }}><I.chevron /></span>
       </button>
       {open && (
         <div style={{ padding: `0 ${density === "compact" ? 16 : 20}px ${density === "compact" ? 16 : 20}px`, display: "grid", gap: 14 }}>
           <div style={{ height: 1, background: "var(--surface-border)" }} />
           {check.goal && <Field label="Goal"><span style={{ color: "var(--text-secondary)" }}>{check.goal}</span></Field>}
+          {check.why && <Field label="Why it matters"><span style={{ color: "var(--text-secondary)" }}>{check.why}</span></Field>}
           {check.result && (
-            <Field label={check.status === "pass" ? "Result" : "Issue"}>
+            <Field label={failing ? "Issue" : "Result"}>
               <span style={{ display: "inline-flex", alignItems: "center", gap: 7, color: resultColor, fontWeight: 600 }}>
-                <span style={{ fontSize: 14, display: "inline-flex" }}>{check.status === "pass" ? <I.check /> : check.status === "fail" ? <I.x /> : <I.info />}</span>
+                <span style={{ fontSize: 14, display: "inline-flex" }}>{check.status === "pass" ? <I.check /> : failing ? <I.x /> : check.status === "skip" ? <I.minus /> : <I.info />}</span>
                 {check.result}
               </span>
             </Field>
           )}
-          {check.how && <Field label="How to implement"><span style={{ color: "var(--text-secondary)" }}>{check.how}</span></Field>}
+          {(check.how || check.tech) && (
+            <Field label="How to implement">
+              <span style={{ display: "grid", gap: 8 }}>
+                {check.how && <span style={{ color: "var(--text-secondary)" }}>{check.how}</span>}
+                {check.tech && <pre style={{ margin: 0, padding: "10px 12px", borderRadius: "var(--radius-md)", background: "var(--surface-inset)", fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: 12.5, lineHeight: 1.5, overflowX: "auto", whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{check.tech}</pre>}
+              </span>
+            </Field>
+          )}
           {(check.res.length > 0 || check.skillSlug) && (
             <Field label="Resources">
               <span style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
@@ -316,9 +296,9 @@ function FixCard({ check, density = "comfy", defaultOpen }: { check: Check; dens
               </span>
             </Field>
           )}
-          {check.status === "fail" && check.copy && (
+          {check.status !== "pass" && check.copy && (
             <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: 2 }}>
-              <CopyButton text={check.copy} label="Copy fix for agent" primary />
+              <CopyButton text={check.copy} label={failing ? "Copy fix for agent" : "Copy instructions for agent"} primary />
             </div>
           )}
         </div>
@@ -326,8 +306,28 @@ function FixCard({ check, density = "comfy", defaultOpen }: { check: Check; dens
     </div>
   );
 }
-function CategorySection({ cat, idAttr }: { cat: Category; idAttr: string }) {
-  const { pass, total } = countPass(cat.checks);
+function LockedRow({ check, sent }: { check: Check; sent: boolean }) {
+  const unlock = () => {
+    const gate = document.getElementById("aeo-gate");
+    if (!gate) return;
+    window.scrollTo({ top: gate.getBoundingClientRect().top + window.scrollY - 16, behavior: "smooth" });
+    gate.querySelector<HTMLElement>("input, button")?.focus({ preventScroll: true });
+  };
+  return (
+    <button data-check-id={check.id} onClick={unlock} style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "6px 13px", width: "100%", minHeight: 44, textAlign: "left", padding: "14px 18px", cursor: "pointer", borderRadius: "var(--radius-md)", background: "var(--surface-card)", border: "1px solid var(--surface-border)", borderLeft: "3px solid var(--status-danger)" }}>
+      <StatusIcon status="fail" size={28} />
+      <span style={{ flex: "1 1 200px", minWidth: 0 }}>
+        <span style={{ display: "block", fontSize: 15.5, fontWeight: 700, color: "var(--text-primary)" }}>{check.title}</span>
+        {check.issue && <span style={{ display: "block", fontSize: 13.5, color: "var(--text-secondary)", marginTop: 2 }}>{check.issue}</span>}
+      </span>
+      <span style={{ flex: "none", display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12.5, fontWeight: 700, color: "var(--text-tertiary)" }}>
+        <span style={{ fontSize: 14, display: "inline-flex" }}><I.lock /></span>{sent ? "Confirm your email to unlock" : "Unlock the fix"}
+      </span>
+    </button>
+  );
+}
+function CategorySection({ cat, idAttr, anon }: { cat: Category; idAttr: string; anon?: { sent: boolean } }) {
+  const { passed, total, assessed, skipped, notScored } = cat;
   return (
     <section id={idAttr} style={{ scrollMarginTop: 24, display: "grid", gap: 12 }}>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, marginTop: 6 }}>
@@ -335,32 +335,56 @@ function CategorySection({ cat, idAttr }: { cat: Category; idAttr: string }) {
           <h3 style={{ margin: 0, fontSize: 17, fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-.01em" }}>{cat.label}</h3>
           <p style={{ margin: "3px 0 0", fontSize: 13.5, color: "var(--text-tertiary)" }}>{cat.blurb}</p>
         </div>
-        <span style={{ flex: "none", fontSize: 13, fontWeight: 700, color: pass === total ? "var(--status-success)" : "var(--text-secondary)", padding: "5px 11px", borderRadius: 999, background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", whiteSpace: "nowrap" }}>{pass}/{total} passed</span>
+        <span style={{ flex: "none", fontSize: 13, fontWeight: 700, color: assessed && passed === total ? "var(--status-success)" : "var(--text-secondary)", padding: "5px 11px", borderRadius: 999, background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", whiteSpace: "nowrap" }}>{assessed ? `${passed}/${total} passed` : "Not assessed"}{skipped > 0 && <span style={{ color: "var(--text-tertiary)", fontWeight: 600 }}> · {skipped} skipped</span>}{notScored > 0 && <span style={{ color: "var(--text-tertiary)", fontWeight: 600 }}> · {notScored} not scored</span>}</span>
       </div>
-      <div style={{ display: "grid", gap: 10 }}>{cat.checks.map((c) => <FixCard key={c.id} check={c} />)}</div>
+      {!assessed && (
+        <div data-note="not-assessed" style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "10px 14px", borderRadius: "var(--radius-md)", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", fontSize: 14, lineHeight: 1.5, fontWeight: 500, color: "var(--text-secondary)" }}>
+          <span style={{ marginTop: 1, flex: "none", display: "inline-flex" }}><StatusIcon status="skip" size={20} /></span>
+          <span>No scored check in this section could run on this page. Open a skipped row to see why.</span>
+        </div>
+      )}
+      <div style={{ display: "grid", gap: 10 }}>{cat.checks.map((c) => c.locked && anon ? <LockedRow key={c.id} check={c} sent={anon.sent} /> : <FixCard key={c.id} check={c} defaultOpen={anon ? false : undefined} />)}</div>
     </section>
   );
 }
 function CommerceSection({ cat }: { cat: Category }) {
   const [open, setOpen] = useState(false);
+  const allSkipped = cat.checks.every((c) => c.status === "skip");
   return (
-    <section style={{ display: "grid", gap: 12 }}>
-      <button onClick={() => setOpen((o) => !o)} aria-expanded={open} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "16px 18px", borderRadius: "var(--radius-md)", background: "var(--surface-card-strong)", border: "1px dashed var(--surface-border-strong)", cursor: "pointer", textAlign: "left" }}>
-        <span>
-          <span style={{ display: "block", fontSize: 15.5, fontWeight: 700, color: "var(--text-primary)" }}>{cat.label} <span style={{ fontSize: 11, fontWeight: 700, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: ".06em" }}>· informational</span></span>
-          <span style={{ display: "block", fontSize: 13.5, color: "var(--text-tertiary)", marginTop: 2 }}>{cat.blurb}</span>
-        </span>
-        <span style={{ fontSize: 18, color: "var(--text-tertiary)", display: "inline-flex", transform: open ? "rotate(180deg)" : "none", transition: "transform .2s", flex: "none" }}><I.chevron /></span>
-      </button>
-      {open && <div style={{ display: "grid", gap: 10 }}>{cat.checks.map((c) => <FixCard key={c.id} check={c} />)}</div>}
+    <section id="cat-commerce" style={{ scrollMarginTop: 24, display: "grid", gap: 12 }}>
+      <div style={{ marginTop: 6 }}>
+        <h3 style={{ margin: 0, fontSize: 17, fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-.01em" }}>Commerce — not scored</h3>
+        {cat.blurb && <p style={{ margin: "3px 0 0", fontSize: 13.5, color: "var(--text-tertiary)" }}>{cat.blurb}</p>}
+        {allSkipped && <p style={{ margin: "3px 0 0", fontSize: 13.5, color: "var(--text-tertiary)" }}>No storefront or payment signals detected</p>}
+        {allSkipped && (
+          <button onClick={() => setOpen((o) => !o)} aria-expanded={open} style={{ minHeight: 44, padding: "0 4px", fontSize: 13.5, fontWeight: 600, color: "var(--text-secondary)", background: "transparent", border: "none", cursor: "pointer", textAlign: "left" }}>
+            {open ? "Hide implementation guides" : "I sell online — show how to implement"}
+          </button>
+        )}
+      </div>
+      <div style={{ display: "grid", gap: 10 }}>
+        {cat.checks.map((c) => allSkipped && !open ? <CommerceSkipRow key={c.id} check={c} /> : <FixCard key={c.id} check={c} defaultOpen={allSkipped ? false : undefined} />)}
+      </div>
     </section>
+  );
+}
+function CommerceSkipRow({ check }: { check: Check }) {
+  return (
+    <div data-check-id={check.id} style={{ display: "flex", alignItems: "center", gap: 13, padding: "14px 18px", borderRadius: "var(--radius-md)", background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
+      <StatusIcon status="skip" size={28} />
+      <span style={{ flex: 1, minWidth: 0 }}>
+        <span style={{ display: "block", fontSize: 15.5, fontWeight: 700, color: "var(--text-primary)" }}>{check.title}</span>
+        {check.goal && <span style={{ display: "block", fontSize: 13, color: "var(--text-tertiary)", marginTop: 2 }}>{check.goal}</span>}
+      </span>
+      <span style={{ fontSize: 11, fontWeight: 700, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: ".06em", flex: "none" }}>Skipped</span>
+    </div>
   );
 }
 
 /* ============================================================ gate */
-const gateWrap: CSS = { position: "absolute", inset: 0, display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: 54, zIndex: 3 };
-const gateCard: CSS = { width: "min(420px,92%)", display: "grid", gap: 13, padding: "28px 26px", background: "var(--surface-card)", border: "1px solid var(--surface-border)", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-lg)" };
-function GatePanel({ lockedCount, sent, email, setEmail, agree, setAgree, feature, setFeature, onSubmit, error }: { lockedCount: number; sent: boolean; email: string; setEmail: (v: string) => void; agree: boolean; setAgree: (v: boolean) => void; feature: boolean; setFeature: (v: boolean) => void; onSubmit: () => void; error: string }) {
+const gateWrap: CSS = { scrollMarginTop: 16 };
+const gateCard: CSS = { display: "grid", gap: 13, padding: "28px 26px", background: "var(--surface-card)", border: "1px solid var(--surface-border)", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-lg)" };
+function GatePanel({ lockedCount, sent, email, setEmail, agree, setAgree, feature, setFeature, onSubmit, error, onTryUnlock, notUnlocked, onResend }: { lockedCount: number; sent: boolean; email: string; setEmail: (v: string) => void; agree: boolean; setAgree: (v: boolean) => void; feature: boolean; setFeature: (v: boolean) => void; onSubmit: () => void; error: string; onTryUnlock?: () => void; notUnlocked?: boolean; onResend?: () => void }) {
   const [err, setErr] = useState("");
   const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const submit = (e: React.FormEvent) => {
@@ -371,21 +395,39 @@ function GatePanel({ lockedCount, sent, email, setEmail, agree, setAgree, featur
   };
   if (sent) {
     return (
-      <div style={gateWrap}>
+      <div id="aeo-gate" style={gateWrap}>
         <div style={{ ...gateCard, textAlign: "center" }}>
           <span style={{ width: 56, height: 56, borderRadius: 999, display: "grid", placeItems: "center", margin: "0 auto 4px", background: "var(--status-info-dim)", color: "var(--status-info)", border: "1px solid var(--status-info-border)", fontSize: 26 }}><I.mail /></span>
           <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800 }}>Check your inbox</h3>
           <p style={{ margin: 0, fontSize: 14.5, color: "var(--text-secondary)", lineHeight: 1.55 }}>We sent a confirmation link to <strong style={{ color: "var(--text-primary)" }}>{email}</strong>. Click it to unlock all fixes.</p>
+          <p style={{ margin: 0, fontSize: 13.5, color: "var(--text-secondary)", lineHeight: 1.5 }}>Open the link in this browser — it works once and unlocks the browser it opens in.</p>
           <p style={{ margin: 0, fontSize: 12.5, color: "var(--text-tertiary)" }}>Didn't get it? Check spam, or wait a minute and try again.</p>
+          {onTryUnlock && (
+            <button type="button" onClick={onTryUnlock}
+              style={{ marginTop: 8, padding: "10px 18px", fontSize: 13.5, fontWeight: 700, cursor: "pointer", borderRadius: "var(--radius-sm)", color: "var(--text-secondary)", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)" }}>
+              I've confirmed my email — unlock now
+            </button>
+          )}
+          {notUnlocked && (
+            <>
+              <p role="status" style={{ margin: 0, fontSize: 13, color: "var(--status-danger)", fontWeight: 600, lineHeight: 1.45 }}>This browser is not unlocked yet. If the link opened in another browser, send a new one and open it here.</p>
+              {onResend && (
+                <button type="button" onClick={onResend}
+                  style={{ padding: "10px 18px", fontSize: 13.5, fontWeight: 700, cursor: "pointer", borderRadius: "var(--radius-sm)", color: "var(--on-accent)", background: "var(--accent)", border: "none" }}>
+                  Send a new link
+                </button>
+              )}
+            </>
+          )}
         </div>
       </div>
     );
   }
   return (
-    <div style={gateWrap}>
+    <div id="aeo-gate" style={gateWrap}>
       <form onSubmit={submit} noValidate style={gateCard}>
         <span style={{ width: 48, height: 48, borderRadius: 999, display: "grid", placeItems: "center", margin: "0 auto", background: "var(--surface-card-strong)", color: "var(--accent)", border: "1px solid var(--surface-border)", fontSize: 22 }}><I.lock /></span>
-        <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800, textAlign: "center", letterSpacing: "-.01em" }}>{lockedCount === 1 ? "Unlock the remaining fix" : `Unlock all ${lockedCount > 0 ? lockedCount + " " : ""}fixes`}</h3>
+        <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800, textAlign: "center", letterSpacing: "-.01em" }}>{lockedCount === 1 ? "Unlock the remaining fix" : `Unlock all ${lockedCount} fixes`}</h3>
         <p style={{ margin: 0, fontSize: 14.5, color: "var(--text-secondary)", textAlign: "center", lineHeight: 1.5 }}>Get the full report + copy-ready instructions for your AI agent.</p>
         <div style={{ display: "grid", gap: 10, marginTop: 2 }}>
           <input type="email" value={email} onChange={(e) => { setEmail(e.target.value); setErr(""); }} placeholder="you@company.com" aria-label="Email address"
@@ -398,7 +440,7 @@ function GatePanel({ lockedCount, sent, email, setEmail, agree, setAgree, featur
           </label>
           <label style={{ display: "flex", gap: 9, alignItems: "flex-start", fontSize: 13, color: "var(--text-secondary)", cursor: "pointer", lineHeight: 1.45 }}>
             <input type="checkbox" checked={feature} onChange={(e) => setFeature(e.target.checked)} style={{ marginTop: 2, width: 17, height: 17, accentColor: "var(--accent)", flex: "none" }} />
-            <span>Want your website featured in a video? We pick sites to analyze on our channel.</span>
+            <span>Want your site featured in a short video on our YouTube channel? We showcase selected sites we analyze.</span>
           </label>
           {(err || error) && <span style={{ fontSize: 12.5, color: "var(--status-danger)", fontWeight: 600 }}>{err || error}</span>}
           <button type="submit" style={{ padding: "13px 18px", fontSize: 15, fontWeight: 700, cursor: "pointer", borderRadius: "var(--radius-sm)", color: "var(--on-accent)", background: "var(--accent)", border: "none", boxShadow: "var(--shadow-accent)", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
@@ -406,22 +448,8 @@ function GatePanel({ lockedCount, sent, email, setEmail, agree, setAgree, featur
           </button>
         </div>
         <p style={{ margin: 0, fontSize: 12, color: "var(--text-tertiary)", textAlign: "center" }}>Double opt-in — confirm via the link we email you.</p>
+        <p style={{ margin: 0, fontSize: 12, color: "var(--text-tertiary)", textAlign: "center" }}>Already confirmed in another browser? Enter the same email — the new link unlocks this browser too.</p>
       </form>
-    </div>
-  );
-}
-function LockedStack() {
-  return (
-    <div aria-hidden="true" style={{ position: "relative", filter: "blur(5px) saturate(.6)", opacity: 0.55, pointerEvents: "none", userSelect: "none", display: "grid", gap: 10 }}>
-      {[0, 1, 2].map((i) => (
-        <div key={i} style={{ height: 70 - i * 4, borderRadius: "var(--radius-md)", background: "var(--surface-card)", border: "1px solid var(--surface-border)", borderLeft: "3px solid var(--status-danger)", display: "flex", alignItems: "center", gap: 13, padding: "0 20px" }}>
-          <span style={{ width: 26, height: 26, borderRadius: 999, background: "var(--surface-inset)", flex: "none" }} />
-          <span style={{ display: "grid", gap: 7, flex: 1 }}>
-            <span style={{ height: 11, width: `${55 - i * 8}%`, background: "var(--surface-inset)", borderRadius: 6 }} />
-            <span style={{ height: 9, width: `${72 - i * 6}%`, background: "var(--surface-inset)", borderRadius: 6 }} />
-          </span>
-        </div>
-      ))}
     </div>
   );
 }
@@ -477,9 +505,9 @@ function Landing({ onAnalyze, busy, error }: { onAnalyze: (u: string) => void; b
         </div>
         <h1 style={{ margin: 0, textAlign: "center", fontSize: "clamp(30px,6vw,44px)", fontWeight: 800, lineHeight: 1.08, letterSpacing: "-.025em" }}>Is your site ready for AI agents?</h1>
         <p style={{ margin: "0 auto", maxWidth: 540, textAlign: "center", fontSize: 16, color: "var(--text-secondary)", lineHeight: 1.55 }}>Scan your site for AI-agent and answer-engine readiness — robots, sitemaps, MCP, structured data, and more.</p>
-        <form onSubmit={submit} style={{ marginTop: 4 }}>
+        <form onSubmit={submit} style={{ marginTop: 4 }} {...{ toolname: "scan_site", tooldescription: "Scan a website URL for AI-agent readiness" }}>
           <div className="url-row" style={{ display: "flex", gap: 10, padding: 6, borderRadius: "var(--radius-lg)", background: "var(--surface-card)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-md)" }}>
-            <input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://yourwebsite.com" inputMode="url" aria-label="Website URL" style={{ flex: 1, minWidth: 0, padding: "14px 14px", fontSize: 16, background: "transparent", border: "none", outline: "none", color: "var(--text-primary)" }} />
+            <input autoFocus value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://yourwebsite.com" inputMode="url" aria-label="Website URL" style={{ flex: 1, minWidth: 0, padding: "14px 14px", fontSize: 16, background: "transparent", border: "none", outline: "none", color: "var(--text-primary)" }} />
             <button type="submit" className="analyze-btn" disabled={busy} style={{ flex: "none", padding: "14px 24px", fontSize: 15.5, fontWeight: 700, cursor: busy ? "default" : "pointer", opacity: busy ? 0.7 : 1, borderRadius: "var(--radius-md)", color: "var(--on-accent)", background: "var(--accent)", border: "none", boxShadow: "var(--shadow-accent)", display: "inline-flex", alignItems: "center", gap: 8 }}>
               Analyze <span style={{ fontSize: 16, display: "inline-flex" }}><I.arrow /></span>
             </button>
@@ -493,12 +521,13 @@ function Landing({ onAnalyze, busy, error }: { onAnalyze: (u: string) => void; b
           </button>
         </div>
         {custom && (
-          <div ref={panelRef} id="aeo-what-we-check" role="region" aria-label="What we check" style={{ position: "absolute", top: "calc(100% + 12px)", left: 0, right: 0, zIndex: 5, display: "grid", gap: 10, padding: "18px 20px", borderRadius: "var(--radius-md)", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-lg)" }}>
+          <div ref={panelRef} id="aeo-what-we-check" role="region" aria-label="What we check" className="scroll-thin" style={{ position: "absolute", top: "calc(100% + 12px)", left: 0, right: 0, zIndex: 5, display: "grid", gap: 10, padding: "18px 20px", borderRadius: "var(--radius-md)", background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-lg)", maxHeight: "calc(100vh - 280px)", overflowY: "auto" }}>
             {["Discoverability — robots, sitemaps, crawlability", "Agent access & content — readable, structured content", "Identity & auth — OAuth & agent identity discovery", "Content structure — schema, FAQ, answer-units", "Structured data — JSON-LD, metadata, machine-readable signals"].map((t) => (
               <div key={t} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, color: "var(--text-secondary)" }}>
                 <span style={{ color: "var(--accent)", fontSize: 13, display: "inline-flex" }}><I.check /></span>{t}
               </div>
             ))}
+            <a href="/methodology" style={{ fontSize: 14, fontWeight: 600, color: "var(--accent)" }}>Methodology</a>
           </div>
         )}
       </div>
@@ -632,7 +661,7 @@ const secondaryBtn: CSS = { display: "inline-flex", alignItems: "center", gap: 7
 
 function Results({ data, scanId, unlocked, lockedCount, sent, gate, onScanAnother }: {
   data: Data; scanId: string; unlocked: boolean; lockedCount: number; sent: boolean;
-  gate: { email: string; setEmail: (v: string) => void; agree: boolean; setAgree: (v: boolean) => void; feature: boolean; setFeature: (v: boolean) => void; onSubmit: () => void; error: string };
+  gate: { email: string; setEmail: (v: string) => void; agree: boolean; setAgree: (v: boolean) => void; feature: boolean; setFeature: (v: boolean) => void; onSubmit: () => void; error: string; onTryUnlock?: () => void; notUnlocked?: boolean; onResend?: () => void };
   onScanAnother: () => void;
 }) {
   const [modal, setModal] = useState(false);
@@ -642,12 +671,9 @@ function Results({ data, scanId, unlocked, lockedCount, sent, gate, onScanAnothe
   // avoids the OS native share sheet opening alongside it (the two-windows bug).
   const onShare = () => setShareOpen(true);
   const findingsRef = useRef<HTMLDivElement>(null);
-  const bundle = useMemo(() => buildBundle(data), [data]);
-  const freeFixes = useMemo(() => {
-    const arr: Check[] = [];
-    data.categories.forEach((c) => c.checks.forEach((ch) => { if (ch.status === "fail" && ch.copy) arr.push(ch); }));
-    return arr.slice(0, 2);
-  }, [data]);
+  const freeFixes = useMemo(() => pickFreeFixes(data), [data]);
+  const fixCount = lockedCount + freeFixes.length;
+  const totalChecks = data.categories.reduce((n, c) => n + c.checks.length, data.commerce?.checks.length ?? 0);
   const scrollToFindings = () => { const el = findingsRef.current; if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 16, behavior: "smooth" }); };
   const scrollToCat = (id: string) => { const el = document.getElementById("cat-" + id); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 16, behavior: "smooth" }); };
 
@@ -668,16 +694,26 @@ function Results({ data, scanId, unlocked, lockedCount, sent, gate, onScanAnothe
         <div style={{ display: "grid", gap: 18, padding: "30px 24px 26px", borderRadius: "var(--radius-xl)", background: "var(--surface-card)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-md)", justifyItems: "center" }}>
           <ScoreGauge score={data.score} />
           <LevelBadge level={data.level} score={data.score} />
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center", marginTop: 2 }}>
-            <button onClick={scrollToFindings} style={primaryBtn}>Improve your score <span style={{ fontSize: 15, display: "inline-flex" }}><I.arrow /></span></button>
-            <button onClick={() => setModal(true)} style={secondaryBtn}><span style={{ fontSize: 15, display: "inline-flex" }}><I.copy /></span> {!unlocked && lockedCount > 0 ? "Copy free fixes" : "Copy all fixes"}</button>
-          </div>
+          {fixCount > 0 ? (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center", marginTop: 2 }}>
+              <button onClick={scrollToFindings} style={primaryBtn}>Improve your score <span style={{ fontSize: 15, display: "inline-flex" }}><I.arrow /></span></button>
+              <button onClick={() => setModal(true)} style={secondaryBtn}><span style={{ fontSize: 15, display: "inline-flex" }}><I.copy /></span> {!unlocked && lockedCount > 0 ? "Copy free fixes" : "Copy all fixes"}</button>
+            </div>
+          ) : (
+            <p data-no-fixes style={{ margin: 0, fontSize: 14, lineHeight: 1.5, fontWeight: 500, color: "var(--text-secondary)", textAlign: "center" }}>Nothing to fix — every scored check that ran on this page passed.</p>
+          )}
         </div>
+
+        {(data.catalogVersion < 2 || data.ladderLevel != null) && (
+          <div style={{ display: "grid", gap: 4, fontSize: 13, color: "var(--text-tertiary)", textAlign: "center" }}>
+            {data.catalogVersion < 2 && <span>Scored with an earlier catalog version — re-scan for the current catalog</span>}
+            {data.ladderLevel != null && <span data-ladder style={{ fontSize: 14, color: "var(--text-secondary)", textWrap: "pretty" }}>Readiness ladder: step {data.ladderLevel} of 5 — separate from the score. <a href="/methodology#levels" style={{ color: "var(--text-primary)", fontWeight: 600, textDecoration: "underline", textUnderlineOffset: 3 }}>How the ladder works</a></span>}
+          </div>
+        )}
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: 4, padding: 8, borderRadius: "var(--radius-lg)", background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
           {data.categories.map((c) => {
-            const { pass, total } = countPass(c.checks);
-            return <MiniGauge key={c.id} score={c.score} label={c.label} passText={unlocked ? `${pass}/${total}` : undefined} active={activeCat === c.id} onClick={() => { setActiveCat(c.id); scrollToCat(c.id); }} />;
+            return <MiniGauge key={c.id} score={c.score} label={c.label} passText={`${c.passed}/${c.total}`} assessed={c.assessed} active={activeCat === c.id} onClick={() => { setActiveCat(c.id); scrollToCat(c.id); }} />;
           })}
         </div>
 
@@ -689,28 +725,55 @@ function Results({ data, scanId, unlocked, lockedCount, sent, gate, onScanAnothe
             </>
           ) : (
             <>
-              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12 }}>
-                <div>
-                  <h3 style={{ margin: 0, fontSize: 17, fontWeight: 800 }}>Recommended fixes</h3>
-                  <p style={{ margin: "3px 0 0", fontSize: 13.5, color: "var(--text-tertiary)" }}>{lockedCount + freeFixes.length} fixes found · {freeFixes.length} unlocked free</p>
+              {fixCount > 0 && (
+                <>
+                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12 }}>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: 17, fontWeight: 800 }}>Recommended fixes</h3>
+                    <p style={{ margin: "3px 0 0", fontSize: 13.5, color: "var(--text-tertiary)" }}>{fixCountLine(fixCount, freeFixes.length)}</p>
+                  </div>
                 </div>
-              </div>
-              <div style={{ display: "grid", gap: 10 }}>{freeFixes.map((ch) => <FixCard key={ch.id} check={ch} defaultOpen />)}</div>
-              {lockedCount > 0 && (
-                <div style={{ position: "relative", minHeight: 430 }}>
-                  <div style={{ position: "absolute", top: -6, left: "50%", transform: "translateX(-50%)", zIndex: 4, fontSize: 12.5, fontWeight: 700, color: "var(--text-secondary)", padding: "5px 13px", borderRadius: 999, background: "var(--surface-card-strong)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-sm)" }}>+ {lockedCount} more fixes</div>
-                  <div style={{ paddingTop: 18 }}><LockedStack /></div>
-                  <GatePanel lockedCount={lockedCount} sent={sent} email={gate.email} setEmail={gate.setEmail} agree={gate.agree} setAgree={gate.setAgree} feature={gate.feature} setFeature={gate.setFeature} onSubmit={gate.onSubmit} error={gate.error} />
-                </div>
+                <div style={{ display: "grid", gap: 10 }}>{freeFixes.map((ch) => <FixCard key={ch.id} check={ch} defaultOpen />)}</div>
+                </>
               )}
+              {lockedCount > 0 && <GatePanel lockedCount={lockedCount} sent={sent} email={gate.email} setEmail={gate.setEmail} agree={gate.agree} setAgree={gate.setAgree} feature={gate.feature} setFeature={gate.setFeature} onSubmit={gate.onSubmit} error={gate.error} onTryUnlock={gate.onTryUnlock} notUnlocked={gate.notUnlocked} onResend={gate.onResend} />}
+              <div>
+                <h3 style={{ margin: 0, fontSize: 17, fontWeight: 800 }}>All {totalChecks} checks</h3>
+                <p style={{ margin: "3px 0 0", fontSize: 13.5, color: "var(--text-tertiary)" }}>Every result is free.{lockedCount > 0 && ` ${lockedCount} ${lockedCount === 1 ? "fix unlocks" : "fixes unlock"} with your email.`}</p>
+              </div>
+              {data.categories.map((c) => <CategorySection key={c.id} cat={c} idAttr={"cat-" + c.id} anon={{ sent }} />)}
+              {data.commerce && <CommerceSection cat={data.commerce} />}
             </>
           )}
+          <a href="/methodology" style={{ justifySelf: "start", fontSize: 13.5, fontWeight: 600, color: "var(--accent)" }}>How this score is calculated</a>
         </div>
       </div>
-      {modal && <CopyAllModal bundle={bundle} gated={!unlocked && lockedCount > 0} freeCount={freeFixes.length} totalCount={lockedCount + freeFixes.length} onClose={() => setModal(false)} />}
+      {modal && <CopyAllModal bundle={data.markdown} gated={!unlocked && lockedCount > 0} freeCount={freeFixes.length} totalCount={lockedCount + freeFixes.length} onClose={() => setModal(false)} />}
       {shareOpen && <ShareModal url={data.url} shareId={scanId} score={data.score} level={data.level} onClose={() => setShareOpen(false)} />}
     </div>
   );
+}
+
+class ResultsBoundary extends React.Component<{ data: Data | null; onScanAnother: () => void; children: React.ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  componentDidCatch(err: unknown) { trackFunnelEvent("aeo_render_failed", { message: err instanceof Error ? err.message.slice(0, 100) : "unknown" }); }
+  render() {
+    if (!this.state.failed) return this.props.children;
+    const rows = this.props.data ? [...this.props.data.categories, ...(this.props.data.commerce ? [this.props.data.commerce] : [])].flatMap((c) => c.checks) : [];
+    return (
+      <div style={{ minHeight: "100vh", padding: "74px 18px 80px" }}>
+        <div style={{ width: "min(720px,100%)", margin: "0 auto", display: "grid", gap: 16 }}>
+          <h3 style={{ margin: 0, fontSize: 21, fontWeight: 800 }}>Could not render this result</h3>
+          <p style={{ margin: 0, fontSize: 14.5, color: "var(--text-secondary)", lineHeight: 1.55 }}>Your scan finished, but this page failed to draw it. Reload the page, or run the scan again.</p>
+          <ul style={{ margin: 0, paddingLeft: 20, fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.6 }}>
+            {rows.map((c) => <li key={c.id}>{c.title} — {String(c.status)}</li>)}
+          </ul>
+          <div><GhostBtn icon={<I.refresh />} label="Scan another" onClick={this.props.onScanAnother} /></div>
+        </div>
+      </div>
+    );
+  }
 }
 
 /* ============================================================ root */
@@ -723,6 +786,7 @@ export function AeoAnalyzer() {
   const [scanReady, setScanReady] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
   const [sent, setSent] = useState(false);
+  const [notUnlocked, setNotUnlocked] = useState(false);
   const [email, setEmail] = useState("");
   const [agree, setAgree] = useState(false);
   const [feature, setFeature] = useState(false);
@@ -750,15 +814,18 @@ export function AeoAnalyzer() {
     // and fresh affirmative consent / feature opt-in per subscription).
     setEmail(""); setAgree(false); setFeature(false); setGateError("");
     setScreen("scanning");
+    trackFunnelEvent("aeo_scan_started");
     try {
       const r = await fetch("/api/aeo/scan", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ url: norm }) });
       if (!r.ok) {
         const j = await r.json().catch(() => ({}));
+        trackFunnelEvent("aeo_scan_failed", { status: r.status });
         setLandingError(scanErrorMessage(j.error, r.status)); setScreen("landing"); setBusy(false); return;
       }
       const resp = await r.json();
       setScanId(resp.scanId); setLockedCount(resp.lockedCount ?? 0);
       setData(adapt(resp)); setScanReady(true); setBusy(false);
+      trackFunnelEvent("aeo_scan_completed", { score: resp.score, locked_count: resp.lockedCount ?? 0 });
       // A confirmed access cookie (e.g. the local video-capture automation) returns
       // the full ungated report with unlocked:true → render every fix, no gate.
       if (resp.unlocked) setUnlocked(true);
@@ -769,7 +836,7 @@ export function AeoAnalyzer() {
 
   // deep-link handling:
   //  - /?url=<site> auto-starts a scan (the Share-modal links use this format)
-  //  - /?scan=<id>&unlocked=1 restores a confirmed report after the email click
+  //  - /?scan=<id> restores a stored report; a confirmed browser gets it unlocked
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     // A failed/expired confirmation click lands here as /?aeo_error=... — without this
@@ -777,7 +844,7 @@ export function AeoAnalyzer() {
     const aeoError = params.get("aeo_error");
     if (aeoError) {
       setLandingError(aeoError === "expired"
-        ? "That confirmation link has expired. Re-enter your URL below to get a fresh one."
+        ? "That confirmation link was already used or has expired. Scan your site again and enter the same email to get a new link."
         : "That confirmation link is invalid. Re-enter your URL below to get a fresh one.");
       window.history.replaceState({}, "", window.location.pathname);
       return;
@@ -786,26 +853,27 @@ export function AeoAnalyzer() {
     if (urlParam && urlParam.trim()) { startScan(urlParam.trim()); return; }
     const sid = params.get("scan");
     if (!sid) return;
-    const wantUnlock = params.get("unlocked") === "1";
     (async () => {
       try {
-        if (wantUnlock) {
-          const rf = await fetch(`/api/aeo/scan/${encodeURIComponent(sid)}/full`, { credentials: "include" });
-          if (rf.ok) { const full = await rf.json(); setScanId(sid); setData(adapt(full)); setLockedCount(0); setUnlocked(true); setScanReady(true); setScreen("results"); return; }
-        }
         const rg = await fetch(`/api/aeo/scan/${encodeURIComponent(sid)}`, { credentials: "include" });
-        if (rg.ok) { const g = await rg.json(); setScanId(sid); setData(adapt(g)); setLockedCount(g.lockedCount ?? 0); setScanReady(true); setScreen("results"); }
+        if (rg.ok) {
+          const g = await rg.json();
+          setScanId(sid); setData(adapt(g)); setLockedCount(g.unlocked ? 0 : g.lockedCount ?? 0);
+          if (g.unlocked) setUnlocked(true);
+          setScanReady(true); setScreen("results");
+        }
       } catch { /* ignore — stay on landing */ }
     })();
   }, []);
 
   // attempt to unlock when results show / on focus (after confirming via email in another tab)
-  const tryUnlock = useCallback(async () => {
+  const tryUnlock = useCallback(async (announce = false) => {
     if (!scanId || unlocked) return;
     try {
       const r = await fetch(`/api/aeo/scan/${encodeURIComponent(scanId)}/full`, { credentials: "include" });
-      if (r.ok) { const full = await r.json(); setData(adapt(full)); setLockedCount(0); setUnlocked(true); }
-    } catch { /* not confirmed yet */ }
+      if (r.ok) { const full = await r.json(); setData(adapt(full)); setLockedCount(0); setUnlocked(true); setNotUnlocked(false); }
+      else if (announce) setNotUnlocked(true);
+    } catch { if (announce) setNotUnlocked(true); }
   }, [scanId, unlocked]);
   useEffect(() => {
     if (screen !== "results" || !sent || unlocked) return undefined;
@@ -815,11 +883,12 @@ export function AeoAnalyzer() {
   }, [screen, sent, unlocked, tryUnlock]);
 
   const submitGate = useCallback(async () => {
-    setGateError("");
+    setGateError(""); setNotUnlocked(false);
     try {
       const r = await fetch("/api/aeo/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ email: email.trim(), scanId, consent: true }) });
       if (!r.ok) { const j = await r.json().catch(() => ({})); setGateError(subscribeErrorMessage(j.error)); return; }
       setSent(true);
+      trackFunnelEvent("aeo_subscribe_submitted", { feature });
       // Fire-and-forget: if they opted to be featured, register the site for the video pool.
       if (feature) {
         fetch("/api/aeo/feature", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ scanId, email: email.trim() }) }).catch(() => {});
@@ -829,6 +898,12 @@ export function AeoAnalyzer() {
 
   return (
     <div className="aeo-root">
+      {/* Screen-reader announcement: the flow swaps whole screens (landing → scanning →
+          results) with only window.scrollTo, so assistive tech otherwise gets no cue the
+          results have arrived. This polite live region fills that gap (WCAG 4.1.3). */}
+      <div aria-live="polite" role="status" style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap", border: 0 }}>
+        {screen === "results" && data ? `AEO scan complete. Your site scored ${data.score} out of 100.` : ""}
+      </div>
       <div style={{ position: "fixed", top: 16, right: 16, zIndex: 40 }}>
         <ThemeToggle theme={theme} setTheme={setTheme} />
       </div>
@@ -849,9 +924,11 @@ export function AeoAnalyzer() {
       )}
       {screen === "scanning" && <Scanning url={data?.url || ""} ready={scanReady} onDone={() => setScreen("results")} />}
       {screen === "results" && data && (
+        <ResultsBoundary key={scanId + (unlocked ? ":u" : "")} data={data} onScanAnother={() => { setScreen("landing"); setData(null); setLandingError(""); }}>
         <Results data={data} scanId={scanId} unlocked={unlocked} lockedCount={lockedCount} sent={sent}
-          gate={{ email, setEmail, agree, setAgree, feature, setFeature, onSubmit: submitGate, error: gateError }}
+          gate={{ email, setEmail, agree, setAgree, feature, setFeature, onSubmit: submitGate, error: gateError, onTryUnlock: () => tryUnlock(true), notUnlocked, onResend: () => { setNotUnlocked(false); setSent(false); } }}
           onScanAnother={() => { setScreen("landing"); setData(null); setLandingError(""); }} />
+        </ResultsBoundary>
       )}
 
       {(sent || unlocked) && screen === "results" && (

@@ -1,0 +1,31 @@
+# AIPUSH
+
+> Free AEO (Answer Engine Optimization) analyzer — score how ready a website is for AI agents and answer engines.
+
+AIPUSH is a free analyzer at https://aipush.app. Enter a website URL and AIPUSH scans it (files, headers, markup) for AI-agent and answer-engine readiness, then returns a 0-100 score, an AEO Level (1-5), five category gauges, and copy-ready fixes you can paste into an AI coding agent. AIPUSH does not sign up, buy or submit forms on the scanned site. Payment protocols (x402, MPP) are read from what your site declares: the homepage response, /openapi.json and /.well-known/x402. AIPUSH never calls a paid route.
+
+## Result fields
+
+- `score`: 0-100 weighted score over the scored checks.
+- `findings[].status`: pass, fail, skip or info. skip means the check could not run or is not applicable (evidence starts with "Not applicable:"); skipped checks are left out of the score.
+- `level`: AEO Level 1-5.
+- `ladderLevel`: readiness ladder step 0-5, a separate sequential checklist; it does not change the score or the level.
+- `categories[]`: `score`, `passed`, `total` per category. `total` = 0 means no scored check ran there: read it as not assessed, not as a score of 0.
+- `catalogVersion`: version of the check catalog that produced the result.
+- `markdown`: copy-ready bundle of the fixes this caller may see.
+- `findings[].copyMarkdown`: one self-contained instruction block per check (site URL, issue, steps, snippet, skill and docs links, how to verify).
+
+## Access model
+
+Every check result and its one-line issue are free. The three highest-weight fixes are free. The remaining copy-ready fixes and the markdown bundle unlock after a free email confirmation. Access is a cookie set by the confirmation link, per browser; repeat the email step in another browser to unlock it there. A report with three or fewer failed scored checks has nothing locked: every fix is shown and no email is asked for.
+
+## Machine-readable surfaces
+
+- [llms.txt](https://aipush.app/llms.txt): short index with the check ids.
+- [Methodology](https://aipush.app/methodology): every check, its weight and its goal. Markdown twin: https://aipush.app/methodology.md
+- [AI catalog (ARD)](https://aipush.app/.well-known/ai-catalog.json): entries for the analyzer API, the agent-skills index and llms.txt.
+- [API catalog](https://aipush.app/.well-known/api-catalog): RFC 9727 linkset for the Agent API.
+- [OpenAPI](https://aipush.app/openapi.json): Agent API description.
+- [Agent skills index](https://aipush.app/.well-known/agent-skills/index.json)
+- [robots.txt](https://aipush.app/robots.txt): AI crawlers allowed; Content-Signal ai-train=no, search=yes, ai-input=yes.
+- [security.txt](https://aipush.app/.well-known/security.txt)

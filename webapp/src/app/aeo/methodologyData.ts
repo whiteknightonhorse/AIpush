@@ -1,0 +1,60 @@
+/* Static copy of the AEO catalog for the public /methodology page. The webapp
+   cannot import src/aeo/*; tests/aeo/methodology.test.ts fails when this file
+   and the catalog diverge. */
+
+export const CATEGORY_BLURBS: Record<string, string> = {
+  agent_discovery: "Can AI agents find your site and learn what it offers?",
+  agent_interfaces: "Can agents act on your site through machine-readable interfaces, not just read it?",
+  identity_auth: "Can agents prove who they are and get access safely?",
+  content_structure: "Is your content laid out so models can extract clean answers?",
+  structured_data: "Does your markup state the facts in a form machines can trust?",
+  commerce: "Can agents discover prices and pay on a customer's behalf?",
+};
+
+export interface MethodologyCheck { id: string; title: string; category: string; weight: number; goal: string; }
+
+export const METHODOLOGY_CHECKS: MethodologyCheck[] = [
+  { id: "robots_present", title: "robots.txt", category: "agent_discovery", weight: 5, goal: "Publish a valid /robots.txt with clear crawl rules." },
+  { id: "robots_ai_bots", title: "AI crawler rules in robots.txt", category: "agent_discovery", weight: 5, goal: "Declare explicit rules for AI crawlers in robots.txt." },
+  { id: "robots_content_signals", title: "Content Signals in robots.txt", category: "agent_discovery", weight: 3, goal: "Declare AI content usage preferences with Content Signals in robots.txt." },
+  { id: "sitemap_present", title: "Sitemap", category: "agent_discovery", weight: 5, goal: "Publish a sitemap.xml and reference it from robots.txt." },
+  { id: "sitemap_referenced", title: "Sitemap referenced from robots.txt", category: "agent_discovery", weight: 2, goal: "Reference your sitemap from robots.txt." },
+  { id: "llms_txt", title: "llms.txt", category: "agent_discovery", weight: 3, goal: "Publish a valid /llms.txt that points LLMs to your key pages." },
+  { id: "llms_full_txt", title: "llms-full.txt", category: "agent_discovery", weight: 0, goal: "Publish /llms-full.txt with the full text of your key pages." },
+  { id: "ard_manifest", title: "ARD AI catalog manifest", category: "agent_discovery", weight: 2, goal: "Publish an ARD AI catalog manifest." },
+  { id: "dns_aid", title: "DNS-AID agent records", category: "agent_discovery", weight: 0, goal: "Advertise your agents in DNS (DNS-AID) with DNSSEC." },
+  { id: "agent_ua_parity", title: "AI user-agent parity", category: "agent_discovery", weight: 4, goal: "Serve AI crawlers the same homepage as other visitors." },
+  { id: "captcha_gate", title: "CAPTCHA on the homepage", category: "agent_discovery", weight: 0, goal: "Know whether a CAPTCHA stands between agents and your site." },
+  { id: "link_headers", title: "Link response headers", category: "agent_interfaces", weight: 4, goal: "Include Link response headers for agent discovery (RFC 8288)." },
+  { id: "markdown_negotiation", title: "Markdown for Agents", category: "agent_interfaces", weight: 4, goal: "Return HTML responses as Markdown when agents request it." },
+  { id: "markdown_twin", title: "Markdown twin page", category: "agent_interfaces", weight: 2, goal: "Serve a Markdown twin of your homepage." },
+  { id: "api_catalog", title: "API Catalog", category: "agent_interfaces", weight: 4, goal: "Publish an API catalog for automated discovery (RFC 9727)." },
+  { id: "openapi_discoverable", title: "OpenAPI document", category: "agent_interfaces", weight: 2, goal: "Publish an OpenAPI document at /openapi.json." },
+  { id: "mcp_server_card", title: "MCP Server Card", category: "agent_interfaces", weight: 4, goal: "Publish an MCP Server Card for agent discovery." },
+  { id: "a2a_agent_card", title: "A2A Agent Card", category: "agent_interfaces", weight: 2, goal: "Publish an A2A Agent Card." },
+  { id: "agent_skills_index", title: "Agent Skills index", category: "agent_interfaces", weight: 4, goal: "Publish an agent skills discovery index." },
+  { id: "webmcp", title: "WebMCP", category: "agent_interfaces", weight: 2, goal: "Expose site tools to agents via WebMCP." },
+  { id: "web_bot_auth", title: "Web Bot Auth request signing", category: "agent_interfaces", weight: 0, goal: "Identify your bot with Web Bot Auth request signing." },
+  { id: "oidc_discovery", title: "OAuth / OIDC discovery", category: "identity_auth", weight: 5, goal: "Publish OAuth/OIDC discovery metadata." },
+  { id: "oauth_protected_resource", title: "OAuth Protected Resource", category: "identity_auth", weight: 5, goal: "Publish OAuth Protected Resource Metadata (RFC 9728)." },
+  { id: "auth_md", title: "auth.md", category: "identity_auth", weight: 2, goal: "Publish /auth.md describing how agents authenticate." },
+  { id: "security_txt", title: "security.txt", category: "identity_auth", weight: 2, goal: "Publish /.well-known/security.txt." },
+  { id: "poppy_manifest", title: "Personal Agent Protocol manifest", category: "identity_auth", weight: 0, goal: "Publish a Personal Agent Protocol manifest." },
+  { id: "h1_quality", title: "Single H1 heading", category: "content_structure", weight: 6, goal: "Use exactly one clear H1 on each page." },
+  { id: "title_meta", title: "Title & meta description", category: "content_structure", weight: 6, goal: "Provide a title and a well-sized meta description." },
+  { id: "canonical", title: "Canonical URL", category: "content_structure", weight: 4, goal: "Declare an absolute canonical URL." },
+  { id: "viewport_lang", title: "Viewport & language", category: "content_structure", weight: 4, goal: "Set the viewport meta and the html lang attribute." },
+  { id: "ssr_content", title: "Server-rendered content", category: "content_structure", weight: 5, goal: "Serve your homepage content as server-rendered HTML." },
+  { id: "freshness_dates", title: "Publish and modified dates", category: "content_structure", weight: 3, goal: "Expose machine-readable publish and modified dates." },
+  { id: "hidden_text_injection", title: "Hidden text injection", category: "content_structure", weight: 0, goal: "Keep hidden text and invisible characters out of your pages." },
+  { id: "jsonld_schema", title: "JSON-LD structured data", category: "structured_data", weight: 8, goal: "Add JSON-LD structured data." },
+  { id: "faq_schema", title: "FAQ schema", category: "structured_data", weight: 4, goal: "Mark up FAQs with FAQPage schema." },
+  { id: "opengraph", title: "Open Graph tags", category: "structured_data", weight: 4, goal: "Add Open Graph tags." },
+  { id: "answer_units", title: "Answer units", category: "structured_data", weight: 4, goal: "Structure content as answer units." },
+  { id: "org_entity", title: "Organization entity", category: "structured_data", weight: 3, goal: "Declare your organization as a JSON-LD entity." },
+  { id: "commerce_x402", title: "x402 Protocol", category: "commerce", weight: 0, goal: "Support x402 for agent-native HTTP payments." },
+  { id: "commerce_mpp", title: "MPP (Machine Payment Protocol)", category: "commerce", weight: 0, goal: "Support MPP (Machine Payment Protocol)." },
+  { id: "commerce_ucp", title: "Universal Commerce Protocol", category: "commerce", weight: 0, goal: "Enable content payments via Universal Commerce Protocol." },
+  { id: "commerce_acp", title: "ACP (Agentic Commerce Protocol)", category: "commerce", weight: 0, goal: "Publish ACP (Agentic Commerce Protocol) discovery." },
+  { id: "commerce_ap2", title: "AP2 (Agent Payments Protocol)", category: "commerce", weight: 0, goal: "Declare the AP2 extension on your A2A Agent Card." },
+];

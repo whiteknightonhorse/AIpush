@@ -4,12 +4,28 @@
 
 ## About
 
-AIPUSH is a free analyzer at https://aipush.app. Enter a website URL and AIPUSH scans it for AI-agent and answer-engine readiness, then returns a 0-100 score, an AEO Level (1-5), five category gauges, and copy-ready fixes you can paste into an AI coding agent (Cursor, Claude Code, Copilot). The first fixes are free; the rest unlock after a free email confirmation.
+AIPUSH is a free analyzer at https://aipush.app. Enter a website URL and AIPUSH scans it for AI-agent and answer-engine readiness, then returns a 0-100 score, an AEO Level (1-5), five category gauges, and copy-ready fixes you can paste into an AI coding agent (Cursor, Claude Code, Copilot). Every check result and its one-line issue are free; the three highest-weight fixes are free; the remaining copy-ready fixes and the markdown bundle unlock after a free email confirmation. Each scan result also carries `catalogVersion` (the check-catalog version that produced it; results stored before versioning report 1) and `ladderLevel`, a sequential agent-readiness ladder from 0 to 5 that is independent of the score: 1 = at least two of robots.txt, sitemap and Link headers; 2 = plus AI-bot and content-signal rules in robots.txt; 3 = plus Markdown content negotiation; 4 = plus at least one agent interface (MCP server card, A2A agent card, agent-skills index or API catalog); 5 = plus any two of Web Bot Auth, three or more agent interfaces, and OIDC, OAuth protected-resource or auth.md discovery.
 
-It checks five categories: Agent Discovery, Agent Interfaces, Identity & Auth, Content Structure, and Structured Data — covering signals such as robots.txt, sitemaps, llms.txt, `/.well-known/*` resources, structured data, and machine-readable content.
+AIPUSH reads your site (files, headers, markup); it does not sign up, buy or submit forms on it.
+
+The catalog (version 2) has 43 checks in six categories; 32 are scored and the rest are informational. Check ids:
+
+- Agent Discovery: `robots_present`, `robots_ai_bots`, `robots_content_signals`, `sitemap_present`, `sitemap_referenced`, `llms_txt`, `llms_full_txt`, `ard_manifest`, `dns_aid`, `agent_ua_parity`, `captcha_gate`
+- Agent Interfaces: `link_headers`, `markdown_negotiation`, `markdown_twin`, `api_catalog`, `openapi_discoverable`, `mcp_server_card`, `a2a_agent_card`, `agent_skills_index`, `webmcp`, `web_bot_auth`
+- Identity & Auth: `oidc_discovery`, `oauth_protected_resource`, `auth_md`, `security_txt`, `poppy_manifest`
+- Content Structure: `h1_quality`, `title_meta`, `canonical`, `viewport_lang`, `ssr_content`, `freshness_dates`, `hidden_text_injection`
+- Structured Data: `jsonld_schema`, `faq_schema`, `opengraph`, `answer_units`, `org_entity`
+- Commerce (informational): `commerce_x402`, `commerce_mpp`, `commerce_ucp`, `commerce_acp`, `commerce_ap2`
 
 ## Links
 
 - [AIPUSH analyzer](https://aipush.app)
+- [Analyses of real websites](https://aipush.app/analysis)
+- [Home as Markdown](https://aipush.app/index.md): every page has a Markdown twin (`.md`) and answers `Accept: text/markdown`
 - [Agent skills catalog](https://aipush.app/.well-known/agent-skills/index.json)
 - [robots.txt](https://aipush.app/robots.txt)
+- [llms-full.txt](https://aipush.app/llms-full.txt)
+- [Methodology](https://aipush.app/methodology): every check, its weight and its goal.
+- [AI catalog (ARD)](https://aipush.app/.well-known/ai-catalog.json)
+- [API catalog](https://aipush.app/.well-known/api-catalog)
+- [security.txt](https://aipush.app/.well-known/security.txt)

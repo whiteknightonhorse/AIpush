@@ -19,6 +19,12 @@
     <changefreq>yearly</changefreq>
   </url>
   <url>
+    <loc>https://aipush.app/methodology</loc>
+    <priority>0.6</priority>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
     <loc>https://aipush.app/agent-api</loc>
     <priority>0.7</priority>
     <lastmod>2026-05-30</lastmod>

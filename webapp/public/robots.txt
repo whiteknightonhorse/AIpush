@@ -1,4 +1,5 @@
 User-agent: *
+Content-Signal: ai-train=no, search=yes, ai-input=yes
 Allow: /
 
 # AI crawlers — allow reading and citing public content
@@ -26,8 +27,8 @@ Allow: /
 User-agent: PerplexityBot
 Allow: /
 
-# AI content usage preferences (Content Signals)
-Content-Signal: ai-train=no, search=yes, ai-input=yes
+User-agent: Applebot-Extended
+Allow: /
 
 Sitemap: https://aipush.app/sitemap.xml
 Sitemap: https://aipush.app/sitemap-analysis.xml

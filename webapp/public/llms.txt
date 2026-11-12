@@ -17,6 +17,8 @@ The catalog (version 2) has 43 checks in six categories; 32 are scored and the r
 - Structured Data: `jsonld_schema`, `faq_schema`, `opengraph`, `answer_units`, `org_entity`
 - Commerce (informational): `commerce_x402`, `commerce_mpp`, `commerce_ucp`, `commerce_acp`, `commerce_ap2`
 
+Crawler access has two layers (https://aipush.app/methodology#crawler-access): robots.txt rules are one fact; the answer of the site's firewall or CDN to our own request with an AI bot user-agent is another, reported and never scored.
+
 ## Links
 
 - [AIPUSH analyzer](https://aipush.app)

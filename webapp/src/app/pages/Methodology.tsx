@@ -60,6 +60,28 @@ export function Methodology() {
           The readiness ladder (steps 0–5) is a separate, sequential checklist; it does not change the score or the AEO Level. Each step requires all lower ones: 1 = at least two of robots.txt, sitemap and Link headers; 2 = plus AI-bot rules and Content Signals in robots.txt; 3 = plus Markdown content negotiation; 4 = plus at least one agent interface (MCP server card, A2A agent card, agent-skills index or API catalog); 5 = plus any two of Web Bot Auth, three or more agent interfaces, and OIDC, OAuth protected-resource or auth.md discovery.
         </p>
 
+        <h2 id="where-to-see-ai-use">Where to see whether AI answers use your site</h2>
+        <p>
+          The AIPUSH score measures readiness. It does not measure citations or visits. To see those, look here (checked 12 November 2026):
+        </p>
+        <ul>
+          <li>
+            Google AI Overviews and AI Mode: counted inside the Performance report of Google Search Console, within the "Web" search type. <a href="https://developers.google.com/search/docs/appearance/ai-features" rel="noopener">Google's documentation</a>.
+          </li>
+          <li>
+            Microsoft Copilot and Bing AI answers: the AI Performance report in Bing Webmaster Tools (public preview at the time of checking). <a href="https://blogs.bing.com/webmaster/2026/2/Introducing-AI-Performance-in-Bing-Webmaster-Tools-Public-Preview/" rel="noopener">Microsoft's announcement</a>.
+          </li>
+          <li>Other assistants: no console. Your server logs show their crawlers by user-agent.</li>
+          <li>
+            One public 190-day test found no trace of Gemini, Perplexity or Grok in either console (M. Landwehr, 2026-11, <a href="https://x.com/MalteLandwehr/status/2119924404813512953" rel="noopener">post on X</a>). It is one test, not a rule.
+          </li>
+        </ul>
+
+        <h2 id="crawler-access">Crawler access has two layers</h2>
+        <p>
+          robots.txt says whether a crawler may read your site. A firewall or CDN rule decides what a request actually receives, and that can differ from robots.txt. AIPUSH reports the two as separate facts for each AI bot. For a disallowed bot the statement is: "robots.txt disallows GPTBot." For the edge, when robots.txt allows the bot but our request with its user-agent received a challenge page: "robots.txt allows GPTBot, but our request with the GPTBot user-agent received a challenge page (HTTP 403, marker). A firewall or CDN rule decides this, not robots.txt. We sent the request from our own server; the real GPTBot comes from its operator's addresses and may be treated differently. Check your firewall or CDN bot settings and your server logs." A challenge or refusal is reported only when the same page, fetched in the same scan with the analyzer's normal user-agent, was returned; if the normal request is challenged too, the report says "Our scanner itself was challenged; no statement about AI bots." A challenged or refused spoofed request is reported and not scored.
+        </p>
+
         {CATEGORIES.map((cat) => (
           <section key={cat.id} id={cat.id}>
             <h2>{cat.label}</h2>

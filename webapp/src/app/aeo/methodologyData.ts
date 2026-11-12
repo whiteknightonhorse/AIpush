@@ -23,7 +23,7 @@ export const METHODOLOGY_CHECKS: MethodologyCheck[] = [
   { id: "llms_full_txt", title: "llms-full.txt", category: "agent_discovery", weight: 0, goal: "Publish /llms-full.txt with the full text of your key pages." },
   { id: "ard_manifest", title: "ARD AI catalog manifest", category: "agent_discovery", weight: 2, goal: "Publish an ARD AI catalog manifest." },
   { id: "dns_aid", title: "DNS-AID agent records", category: "agent_discovery", weight: 0, goal: "Advertise your agents in DNS (DNS-AID) with DNSSEC." },
-  { id: "agent_ua_parity", title: "AI user-agent parity", category: "agent_discovery", weight: 4, goal: "Serve AI crawlers the same homepage as other visitors." },
+  { id: "agent_ua_parity", title: "AI user-agent parity", category: "agent_discovery", weight: 4, goal: "Serve AI crawlers the same homepage as other visitors. A challenged or refused spoofed request is reported and not scored." },
   { id: "captcha_gate", title: "CAPTCHA on the homepage", category: "agent_discovery", weight: 0, goal: "Know whether a CAPTCHA stands between agents and your site." },
   { id: "link_headers", title: "Link response headers", category: "agent_interfaces", weight: 4, goal: "Include Link response headers for agent discovery (RFC 8288)." },
   { id: "markdown_negotiation", title: "Markdown for Agents", category: "agent_interfaces", weight: 4, goal: "Return HTML responses as Markdown when agents request it." },

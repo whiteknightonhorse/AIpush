@@ -3,12 +3,12 @@
    and the catalog diverge. */
 
 export const CATEGORY_BLURBS: Record<string, string> = {
-  agent_discovery: "Can AI agents find your site and learn what it offers?",
-  agent_interfaces: "Can agents act on your site through machine-readable interfaces, not just read it?",
-  identity_auth: "Can agents prove who they are and get access safely?",
-  content_structure: "Is your content laid out so models can extract clean answers?",
-  structured_data: "Does your markup state the facts in a form machines can trust?",
-  commerce: "Can agents discover prices and pay on a customer's behalf?",
+  agent_discovery: "How well AI agents can find your site and learn what it offers.",
+  agent_interfaces: "Whether agents can act on your site through machine-readable interfaces, not just read it.",
+  identity_auth: "Whether agents can prove who they are and get access safely.",
+  content_structure: "How well your content is laid out for models to extract clean answers.",
+  structured_data: "How well your markup states the facts in a form machines can trust.",
+  commerce: "Whether agents can discover prices and pay on a customer's behalf.",
 };
 
 export interface MethodologyCheck { id: string; title: string; category: string; weight: number; goal: string; }

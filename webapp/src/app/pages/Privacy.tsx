@@ -77,7 +77,7 @@ export function Privacy() {
         <h2 id="controller">2. Who We Are &amp; Contact</h2>
         <p>
           AIPUSH is the data controller for personal data processed through aipush.app. For any privacy
-          request — access, correction, deletion, or questions — contact us at{" "}
+          request (access, correction, deletion, or questions), contact us at{" "}
           <a href="mailto:support@aipush.app">support@aipush.app</a>. We respond to verified requests within 30 days.
         </p>
 

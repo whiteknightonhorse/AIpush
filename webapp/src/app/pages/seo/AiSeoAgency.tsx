@@ -158,7 +158,7 @@ export function AiSeoAgency() {
             An AI SEO agency optimizes for statement-level extraction rather than page-level ranking. Traditional SEO targets Google&rsquo;s algorithm, which ranks URLs by backlinks, domain authority, and keyword relevance. AI search engines extract specific claims, data points, and recommendations from source pages and weave them into synthesized answers. The optimization target is entirely different &mdash; and most traditional agencies have not retooled for it.
           </p>
           <p>
-            The practical differences are significant. A traditional agency might spend months building backlinks to move a page from position 8 to position 3 on Google. An AI SEO agency instead focuses on content structure: are your headings phrased as questions users actually ask? Does each section open with a direct, extractable answer? Is the page rendered as static HTML that AI crawlers can parse, or hidden behind JavaScript? These factors determine whether your content becomes a cited source in AI answers.
+            The practical differences are significant. A traditional agency might spend months building backlinks to move a page from position 8 to position 3 on Google. An AI SEO agency instead focuses on content structure: are your headings phrased as questions users ask? Does each section open with a direct, extractable answer? Is the page rendered as static HTML that AI crawlers can parse, or hidden behind JavaScript? These factors determine whether your content becomes a cited source in AI answers.
           </p>
 
           <div className="aipush-seo-table-wrap">
@@ -201,7 +201,7 @@ export function AiSeoAgency() {
 
           <h2>How Do You Evaluate and Choose an AI SEO Agency?</h2>
           <p>
-            Evaluate an AI SEO agency by examining their measurement methodology, their publishing infrastructure, and their ability to demonstrate real AI citation results for existing clients. Demand specifics &mdash; visibility scores, citation counts, before-and-after data &mdash; not vague promises about &ldquo;AI-optimized content.&rdquo;
+            Evaluate an AI SEO agency by examining their measurement methodology, their publishing infrastructure, and their ability to demonstrate real AI citation results for existing clients. Demand specifics (visibility scores, citation counts, before-and-after data), not vague promises about &ldquo;AI-optimized content.&rdquo;
           </p>
 
           <ol>
@@ -225,7 +225,7 @@ export function AiSeoAgency() {
             </div>
             <div className="aipush-seo-timeline-step">
               <div className="aipush-seo-timeline-badge">2</div>
-              <h3 className="aipush-seo-timeline-title">Competitive Landscape Mapping</h3>
+              <h3 className="aipush-seo-timeline-title">Competitive Market Mapping</h3>
               <p className="aipush-seo-timeline-text">Discover which competitors AI models already cite for your target queries. Analyze their content architecture and identify coverage gaps where your domain can establish authority.</p>
             </div>
             <div className="aipush-seo-timeline-step">
@@ -255,7 +255,7 @@ export function AiSeoAgency() {
             AI SEO agency pricing ranges from $1,500 to $15,000 per month depending on team size, content volume, and service scope. Boutique agencies with dedicated strategists sit at the high end. Mid-tier agencies offering templated AI SEO packages fall in the $2,000-$5,000 range. Automated platforms like AIPUSH deliver equivalent or greater output for $79.99 per month because the pipeline is software, not headcount.
           </p>
           <p>
-            The cost disparity is not about quality &mdash; it is about delivery model. Agencies bill for human hours: writers researching topics, editors reviewing drafts, account managers scheduling calls. Automated systems replace those hours with deterministic pipelines that generate, audit, and publish without human intervention. Our platform processes AI-optimized pages daily across clients on a single infrastructure &mdash; marginal cost per additional client approaches zero.
+            The cost disparity is not about quality; it is about delivery model. Agencies bill for human hours: writers researching topics, editors reviewing drafts, account managers scheduling calls. Automated systems replace those hours with deterministic pipelines that generate, audit, and publish without human intervention. Our platform processes AI-optimized pages daily across clients on a single infrastructure, so marginal cost per additional client approaches zero.
           </p>
 
           <div className="aipush-seo-bars">
@@ -316,7 +316,7 @@ export function AiSeoAgency() {
             Hire an AI SEO agency when you need custom competitive strategy across a complex vertical, bespoke content that requires deep domain expertise, or integration with broader marketing campaigns. Use automation when you need consistent daily publishing volume, predictable costs, and a system that scales without adding headcount or scheduling calls.
           </p>
           <p>
-            For the majority of small and mid-size businesses, the bottleneck is execution, not strategy. You already know your products, your customers, and your competitive landscape. What you lack is a system that converts that knowledge into hundreds of AI-readable, structured, compliance-verified pages published on your domain every month. That is the core problem <Link to="/llm-seo">LLM SEO automation</Link> solves &mdash; and it solves it at a fraction of the cost of a human agency.
+            For the majority of small and mid-size businesses, the bottleneck is execution, not strategy. You already know your products, your customers, and your competitive market. What you lack is a system that converts that knowledge into hundreds of AI-readable, structured, compliance-verified pages published on your domain every month. That is the core problem <Link to="/llm-seo">LLM SEO automation</Link> solves &mdash; and it solves it at a fraction of the cost of a human agency.
           </p>
           <p>
             The hybrid approach also works: use an automated platform for volume publishing and bring in an <Link to="/ai-seo-consultant">AI SEO consultant</Link> for quarterly strategy reviews. You get the execution speed of software with the strategic oversight of a human expert, at a combined cost lower than a single agency retainer.
@@ -341,7 +341,7 @@ export function AiSeoAgency() {
 
             <h3>Is an AI SEO agency worth it for a small business with a limited budget?</h3>
             <p>
-              At agency retainer rates ($2,000-$15,000/month), AI SEO is a significant investment for small businesses. This is precisely why automated platforms exist. AIPUSH delivers the same core output &mdash; daily AI-optimized page publishing on your domain &mdash; for $79.99/month. For most small businesses, automation provides better ROI than agency services.
+              At agency retainer rates ($2,000-$15,000/month), AI SEO is a significant investment for small businesses. This is precisely why automated platforms exist. AIPUSH delivers the same core output (daily AI-optimized page publishing on your domain) for $79.99/month. For most small businesses, automation provides better ROI than agency services.
             </p>
 
             <h3>What is the difference between an AI SEO agency, an AI SEO company, and an AI SEO consultant?</h3>
@@ -355,7 +355,7 @@ export function AiSeoAgency() {
             An AI SEO agency can accelerate your visibility in AI-powered search, but only if their methodology matches how AI models actually select sources. Evaluate any agency on three criteria: can they measure your current AI visibility, do they publish on your domain, and can they demonstrate real citation improvements for existing clients. For businesses that need volume, consistency, and predictable costs, automated platforms deliver superior results at a fraction of the price.
           </p>
           <p>
-            Ready to automate your AI visibility? <Link to="/login">Start with AIPUSH</Link> and let our system generate 20 AI-optimized pages per day on your domain &mdash; fully automated, audit-verified, and built for how AI search actually works.
+            Ready to automate your AI visibility? <Link to="/login">Start with AIPUSH</Link> and let our system generate 20 AI-optimized pages per day on your domain &mdash; fully automated, audit-verified, and built for how AI search works.
           </p>
 
           <InlineSignup pageSlug="ai-seo-agency" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />

@@ -114,7 +114,7 @@ export function AiSeoConsultant() {
         <section className="aipush-seo-hero">
           <h1 className="aipush-seo-heroTitle">AI SEO Consultant</h1>
           <p className="aipush-seo-heroSub">
-            AI-powered search is rewriting the rules of discoverability. An AI SEO consultant helps businesses navigate the shift from keyword rankings to AI source selection.
+            AI-powered search is rewriting the rules of discoverability. An AI SEO consultant helps businesses handle the shift from keyword rankings to AI source selection.
           </p>
           <p className="aipush-seo-updated">
             Last updated: <time dateTime="2026-03-17">{dateDisplay}</time>
@@ -300,13 +300,13 @@ export function AiSeoConsultant() {
             <p>AI SEO consulting rates typically range from $150-$400 per hour for experienced practitioners, or $3,000-$10,000 per month for retainer engagements. The cost reflects the specialized knowledge required. However, many businesses find that automated AI optimization platforms deliver comparable results at a fraction of the cost, particularly for content production and schema implementation at scale.</p>
 
             <h3>Can I do AI SEO myself without a consultant?</h3>
-            <p>Yes, if you are willing to invest time in learning the discipline. The core principles — server-rendered HTML, answer-first content, structured data, topic clustering, and consistent publishing — are documented and actionable. Platforms like AIPUSH automate the most labor-intensive aspects. A consultant adds value primarily in strategy, technical audits, and custom implementations that automated tools do not cover.</p>
+            <p>Yes, if you are willing to invest time in learning the discipline. The core principles (server-rendered HTML, answer-first content, structured data, topic clustering, and consistent publishing) are documented and actionable. Platforms like AIPUSH automate the most labor-intensive aspects. A consultant adds value primarily in strategy, technical audits, and custom implementations that automated tools do not cover.</p>
 
             <h3>How long does it take to see results from AI SEO consulting?</h3>
             <p>Most businesses see initial AI citations within 4-8 weeks of implementing structured, answer-first content. Retrieval-augmented systems can surface new content within days. The compounding effect of topical authority means citation frequency increases over time. A good AI SEO consultant sets realistic timelines and provides citation monitoring to track progress objectively.</p>
 
             <h3>Do I still need traditional SEO if I hire an AI SEO consultant?</h3>
-            <p>Yes. Traditional SEO and AI SEO are complementary channels, not replacements. Google still drives the majority of web traffic, and traditional SEO fundamentals remain important. Many AI SEO improvements — clear headings, structured data, fast sites — also boost Google rankings. The best approach combines both disciplines, which is why many AI SEO consultants also maintain traditional SEO competency.</p>
+            <p>Yes. Traditional SEO and AI SEO are complementary channels, not replacements. Google still drives the majority of web traffic, and traditional SEO fundamentals remain important. Many AI SEO improvements (clear headings, structured data, fast sites) also boost Google rankings. The best approach combines both disciplines, which is why many AI SEO consultants also maintain traditional SEO competency.</p>
 
             <h3>What is the difference between an AI SEO consultant and an AI SEO tool?</h3>
             <p>A consultant provides strategy, audits, and custom recommendations tailored to your specific business. An AI SEO tool automates execution: content generation, schema deployment, and publishing at scale. The two work best together — a consultant defines the strategy, and a tool like AIPUSH executes it at a cadence no manual process can sustain. For businesses with straightforward needs, an automated platform alone may be sufficient.</p>

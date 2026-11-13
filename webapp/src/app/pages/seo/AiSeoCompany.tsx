@@ -200,7 +200,7 @@ export function AiSeoCompany() {
           {/* Section 4 */}
           <h2>How Do You Evaluate an AI SEO Company?</h2>
           <p>
-            Evaluate an AI SEO company by examining three things: their methodology for measuring AI visibility, their content publishing infrastructure, and their track record with real client domains. Ask for specific metrics &mdash; AI citation counts, source selection rates, and before/after visibility scores &mdash; not vague traffic improvement claims.
+            Evaluate an AI SEO company by examining three things: their methodology for measuring AI visibility, their content publishing infrastructure, and their track record with real client domains. Ask for specific metrics (AI citation counts, source selection rates, and before/after visibility scores), not vague traffic improvement claims.
           </p>
 
           <ol>
@@ -258,7 +258,7 @@ export function AiSeoCompany() {
           {/* Section 6 */}
           <h2>What Does the AI SEO Company Workflow Look Like?</h2>
           <p>
-            A professional AI SEO engagement follows a structured pipeline: profile your business, map the competitive landscape, generate optimized content, audit every page before publishing, and monitor citation performance continuously. Whether performed by humans or software, these stages are non-negotiable.
+            A professional AI SEO engagement follows a structured pipeline: profile your business, map the competitive market, generate optimized content, audit every page before publishing, and monitor citation performance continuously. Whether performed by humans or software, these stages are non-negotiable.
           </p>
 
           <div className="aipush-seo-timeline">
@@ -269,7 +269,7 @@ export function AiSeoCompany() {
             </div>
             <div className="aipush-seo-timeline-step">
               <div className="aipush-seo-timeline-badge">2</div>
-              <h3 className="aipush-seo-timeline-title">Competitive Landscape Analysis</h3>
+              <h3 className="aipush-seo-timeline-title">Competitive Market Analysis</h3>
               <p className="aipush-seo-timeline-text">Discover which competitors already appear in AI answers for your target queries. Analyze their content structure, identify coverage gaps, and map opportunities where your domain can become the preferred source.</p>
             </div>
             <div className="aipush-seo-timeline-step">
@@ -356,7 +356,7 @@ export function AiSeoCompany() {
             An AI SEO company can accelerate your visibility in AI-powered search &mdash; but only if their methodology matches the actual mechanics of how AI models select sources. Evaluate vendors on their ability to audit AI visibility, publish structured content on your domain, and measure citation performance over time. For most businesses, the highest-ROI path is automated publishing that runs daily without human bottlenecks.
           </p>
           <p>
-            Ready to automate your AI visibility? <Link to="/login">Start with AIPUSH</Link> and let our system generate 20 optimized pages per day on your domain &mdash; fully automated, audit-verified, and built for how AI search actually works.
+            Ready to automate your AI visibility? <Link to="/login">Start with AIPUSH</Link> and let our system generate 20 optimized pages per day on your domain &mdash; fully automated, audit-verified, and built for how AI search works.
           </p>
 
           <InlineSignup pageSlug="ai-seo-company" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />

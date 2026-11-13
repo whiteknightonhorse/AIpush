@@ -127,10 +127,10 @@ export function AiSearchOptimization() {
         <article className="aipush-seo-content">
           <h2>What Is AI Search Optimization?</h2>
           <p>
-            AI search optimization is the practice of structuring your business content so that AI-powered search engines and assistants — including ChatGPT, Perplexity, Google AI Overviews, and Copilot — can discover, retrieve, and cite your pages when generating answers to user queries. It extends traditional SEO into the AI-generated answer layer where source selection replaces page ranking.
+            AI search optimization is the practice of structuring your business content so that AI-powered search engines and assistants (including ChatGPT, Perplexity, Google AI Overviews, and Copilot) can discover, retrieve, and cite your pages when generating answers to user queries. It extends traditional SEO into the AI-generated answer layer where source selection replaces page ranking.
           </p>
           <p>
-            The search landscape has fundamentally split. Traditional search engines serve ranked lists of links. AI-powered tools generate direct answers by selecting, synthesizing, and attributing information from multiple sources. Users increasingly rely on these AI tools for product research, service recommendations, and decision-making queries. If your business is not among the selected sources, you are invisible to this entire channel. At AIPUSH, our automated pipeline generates AI-optimized pages across businesses, and our data shows that businesses actively practicing AI search optimization see citation rates 3-5x higher than those relying on traditional SEO alone.
+            Search has fundamentally split. Traditional search engines serve ranked lists of links. AI-powered tools generate direct answers by selecting, synthesizing, and attributing information from multiple sources. Users increasingly rely on these AI tools for product research, service recommendations, and decision-making queries. If your business is not among the selected sources, you are invisible to this entire channel. At AIPUSH, our automated pipeline generates AI-optimized pages across businesses, and our data shows that businesses actively practicing AI search optimization see citation rates 3-5x higher than those relying on traditional SEO alone.
           </p>
 
           <div className="aipush-seo-stats">

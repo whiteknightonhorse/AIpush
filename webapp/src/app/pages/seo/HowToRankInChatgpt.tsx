@@ -275,7 +275,7 @@ export function HowToRankInChatgpt() {
 
           <h2>Is Ranking in ChatGPT Worth the Investment?</h2>
           <p>
-            Ranking in ChatGPT is one of the highest-leverage investments a business can make in 2026. As AI assistants become the default interface for product research, service recommendations, and decision-making queries, businesses absent from these responses lose a growing share of their addressable market. The structural improvements required to rank in ChatGPT, including clear content, structured data, and consistent publishing, also strengthen traditional search performance, making this a dual-benefit strategy.
+            Ranking in ChatGPT is one of the highest-return investments a business can make in 2026. As AI assistants become the default interface for product research, service recommendations, and decision-making queries, businesses absent from these responses lose a growing share of their addressable market. The structural improvements required to rank in ChatGPT, including clear content, structured data, and consistent publishing, also strengthen traditional search performance, making this a dual-benefit strategy.
           </p>
           <p>
             Ready to automate your AI visibility? <Link to="/login">Start with AIPUSH</Link> and let our system generate optimized pages for your business automatically. Explore how <Link to="/chatgpt-indexing">ChatGPT discovers and indexes content</Link> to understand the full picture of AI-driven discoverability.

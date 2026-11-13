@@ -89,7 +89,7 @@ export function Privacy() {
             and the requester IP address (for rate-limiting and abuse prevention). We do not require an account to scan.
           </li>
           <li>
-            <strong>Email address (only if you choose to subscribe).</strong> To unlock the full report or receive
+            <strong>Email address (only if you choose to subscribe).</strong> To open the full report or receive
             updates, you may submit your email with explicit consent. We record your email, the exact consent text and
             version you agreed to, and the IP address and browser user-agent at sign-up and at confirmation — this is
             our proof of consent for a double opt-in.
@@ -123,7 +123,7 @@ export function Privacy() {
         <h2 id="cookies">6. Cookies &amp; Analytics</h2>
         <p>We keep cookies minimal:</p>
         <ul>
-          <li><strong>Essential:</strong> a confirmed-access cookie (<code>aeo_access</code>) that unlocks the full report after you confirm your email; your theme preference is stored locally in your browser.</li>
+          <li><strong>Essential:</strong> a confirmed-access cookie (<code>aeo_access</code>) that opens the full report after you confirm your email; your theme preference is stored locally in your browser.</li>
           <li><strong>Analytics &amp; advertising (consent-based):</strong> Google Analytics 4 and Google Ads, and Microsoft Clarity, to understand usage. We use Google Consent Mode v2 — in the EU/EEA/UK these are <strong>denied by default</strong> until you consent. Analysis article pages also embed YouTube videos via the privacy-enhanced <code>youtube-nocookie.com</code> domain.</li>
         </ul>
         <p>You can control cookies through your browser and any on-site consent control.</p>

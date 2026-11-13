@@ -259,7 +259,7 @@ export function OptimizeWebsiteForAi() {
           <h2>Frequently Asked Questions</h2>
           <div className="aipush-seo-faq">
             <h3>Does optimizing for AI hurt my Google rankings?</h3>
-            <p>No. The structural improvements required to optimize a website for AI — clear headings, explicit facts, structured data, fast response times — also improve Google rankings. Google's own AI Overviews use similar content signals. You are optimizing for both channels simultaneously.</p>
+            <p>No. The structural improvements required to optimize a website for AI (clear headings, explicit facts, structured data, fast response times) also improve Google rankings. Google's own AI Overviews use similar content signals. You are optimizing for both channels simultaneously.</p>
 
             <h3>Do I need to rebuild my entire website?</h3>
             <p>Not necessarily. Many sites need only targeted changes: implementing server-side rendering for key pages, adding structured data, and restructuring content to use answer-first formatting. Start with your highest-value pages and expand from there. A phased approach delivers results while minimizing disruption.</p>

@@ -161,7 +161,7 @@ export function CompetitiveIntelligenceReport() {
             A complete competitive intelligence report should include six core sections: competitor identification, content and keyword analysis, market positioning scores, AI visibility measurement, gap analysis, and a prioritized action plan. Each section builds on the previous one, moving from raw data to strategic recommendation.
           </p>
           <p>
-            The most overlooked section is AI visibility measurement. As <Link to="/generative-engine-optimization">generative engine optimization</Link> becomes central to digital strategy, knowing which competitors AI assistants cite — and why — is often more actionable than traditional ranking data.
+            The most overlooked section is AI visibility measurement. As <Link to="/generative-engine-optimization">generative engine optimization</Link> becomes central to digital strategy, knowing which competitors AI assistants cite, and why, is often more actionable than traditional ranking data.
           </p>
 
           <div className="aipush-seo-table-wrap">

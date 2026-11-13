@@ -128,7 +128,7 @@ export function AiVisibilityTracking() {
 
           <h2>What Is AI Visibility Tracking?</h2>
           <p>
-            AI visibility tracking is the practice of systematically monitoring whether AI assistants — ChatGPT, Perplexity, Google AI Overviews, Gemini, and Copilot — mention, recommend, or cite your business when users ask relevant questions. It replaces guesswork with data by running structured probe queries against live AI models and recording whether your brand appears in the generated answers.
+            AI visibility tracking is the practice of systematically monitoring whether AI assistants (ChatGPT, Perplexity, Google AI Overviews, Gemini, and Copilot) mention, recommend, or cite your business when users ask relevant questions. It replaces guesswork with data by running structured probe queries against live AI models and recording whether your brand appears in the generated answers.
           </p>
           <p>
             Traditional SEO gives you rank positions. You know you are #4 for a keyword. AI-generated answers have no ranks — your business is either cited or invisible. There is no "page two" in a ChatGPT response. This binary nature makes tracking essential: without it, you have no way to know if your AI optimization work is producing results or if a competitor just displaced you. At AIPUSH, we run automated AI visibility checks across 5 distinct prompts per client, comparing results week over week, and our data across businesses shows that 68% of companies have zero AI presence for their primary service keywords before optimization begins.
@@ -216,7 +216,7 @@ export function AiVisibilityTracking() {
               </thead>
               <tbody>
                 <tr><td>Citation presence</td><td>Whether your business appears in the AI response at all</td><td>Binary visibility — the most fundamental metric</td></tr>
-                <tr><td>Citation position</td><td>Whether you are the primary recommendation or an alternative</td><td>Primary citations receive 4-5x more user action than alternatives</td></tr>
+                <tr><td>Citation position</td><td>Shows if you are the primary recommendation or an alternative</td><td>Primary citations receive 4-5x more user action than alternatives</td></tr>
                 <tr><td>Citation sentiment</td><td>How the AI frames your business (enthusiastic, neutral, cautionary)</td><td>Negative framing can be worse than no mention at all</td></tr>
                 <tr><td>Citation trend</td><td>Week-over-week direction of visibility changes</td><td>Early detection of displacement by competitors</td></tr>
                 <tr><td>Competitor citations</td><td>Which competitors appear for the same queries</td><td>Identifies who you are competing against in the AI layer</td></tr>
@@ -311,13 +311,13 @@ export function AiVisibilityTracking() {
             <p>Yes, and you should. ChatGPT, Perplexity, Google AI Overviews, Gemini, and Copilot each use different models, different knowledge cutoffs, and different retrieval mechanisms. A business can be highly visible in Perplexity (which searches the live web) while being absent from ChatGPT (which relies more on training data). Tracking all major platforms gives you the full picture.</p>
 
             <h3>Does AI visibility tracking work for local businesses?</h3>
-            <p>Absolutely. Local businesses often benefit most from AI visibility tracking because location-based recommendation queries ("best dentist in Portland") are among the highest-converting question types. AI assistants increasingly include local business recommendations, and tracking helps you see whether your business appears alongside — or instead of — your local competitors.</p>
+            <p>Absolutely. Local businesses often benefit most from AI visibility tracking because location-based recommendation queries ("best dentist in Portland") are among the highest-converting question types. AI assistants increasingly include local business recommendations, and tracking helps you see whether your business appears alongside, or instead of, your local competitors.</p>
 
             <h3>What should I do if my AI visibility drops?</h3>
             <p>First, check whether competitors published new structured content that may have displaced you. Second, verify your existing pages are still accessible and indexed. Third, review whether the AI model recently updated its knowledge base. Then focus on publishing fresh, <Link to="/optimize-website-for-ai">AI-optimized content</Link> that directly addresses the queries where you lost visibility. AIPUSH automates this recovery by continuously generating and publishing authority pages on your domain.</p>
 
             <h3>Is AI visibility tracking the same as AI SEO?</h3>
-            <p>No. AI visibility tracking is the measurement component — it tells you where you stand. <Link to="/llm-seo">LLM SEO</Link> and AI search optimization are the action components — they improve your standing. Tracking without optimization gives you data but no improvement. Optimization without tracking gives you effort but no way to measure results. Both are required for a complete AI presence strategy.</p>
+            <p>No. AI visibility tracking is the measurement component: it tells you where you stand. <Link to="/llm-seo">LLM SEO</Link> and AI search optimization are the action components — they improve your standing. Tracking without optimization gives you data but no improvement. Optimization without tracking gives you effort but no way to measure results. Both are required for a complete AI presence strategy.</p>
           </div>
 
           <h2>Is AI Visibility Tracking Worth the Investment?</h2>
@@ -325,7 +325,7 @@ export function AiVisibilityTracking() {
             AI visibility tracking is essential for any business that depends on being discovered by potential customers. The cost of tracking is minimal compared to the revenue risk of being invisible in the fastest-growing discovery channel. Businesses that establish tracking early gain a structural advantage: they see shifts before competitors, they build historical data that reveals trends, and they can attribute new customer acquisition to AI-driven discovery with confidence.
           </p>
           <p>
-            The businesses that will dominate AI-era customer acquisition are the ones measuring their AI presence today — not the ones who will start measuring after they realize their phone stopped ringing. <Link to="/login">Start with AIPUSH</Link> and get automated AI visibility tracking, weekly diff reports, and 20 optimized pages published daily on your domain — all on autopilot.
+            The businesses that will dominate AI-era customer acquisition are the ones measuring their AI presence today, not the ones who will start measuring after they realize their phone stopped ringing. <Link to="/login">Start with AIPUSH</Link> and get automated AI visibility tracking, weekly diff reports, and 20 optimized pages published daily on your domain, all on autopilot.
           </p>
 
           <InlineSignup pageSlug="ai-visibility-tracking" ctaText="Start Free — $79.99/mo" ctaLocation="final" onCtaFire={() => {}} variant="theme" />

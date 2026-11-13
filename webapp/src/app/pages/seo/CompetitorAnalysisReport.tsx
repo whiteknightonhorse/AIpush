@@ -252,7 +252,7 @@ export function CompetitorAnalysisReport() {
 
           <h2>How Often Should You Update Your Competitor Analysis Report?</h2>
           <p>
-            Competitive analysis reports should be refreshed quarterly at minimum, with monthly updates recommended for businesses in fast-moving markets like SaaS, e-commerce, and <Link to="/how-to-rank-in-chatgpt">AI-driven search</Link>. The competitive landscape shifts as new players enter, existing competitors pivot their positioning, and search algorithms evolve. A report from six months ago may describe a market that no longer exists.
+            Competitive analysis reports should be refreshed quarterly at minimum, with monthly updates recommended for businesses in fast-moving markets like SaaS, e-commerce, and <Link to="/how-to-rank-in-chatgpt">AI-driven search</Link>. The competitive market shifts as new players enter, existing competitors pivot their positioning, and search algorithms evolve. A report from six months ago may describe a market that no longer exists.
           </p>
           <p>
             The practical challenge has always been cost — refreshing a $5,000 agency report quarterly means $20,000 per year on competitive intelligence alone. AI-powered reports at $29.99 make monthly refreshes financially viable for any business. Run a <Link to="/mip">Market Intelligence Report</Link> whenever you launch a new product, enter a new market, or notice shifts in your search rankings.

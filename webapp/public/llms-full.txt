@@ -17,7 +17,7 @@ AIPUSH is a free analyzer at https://aipush.app. Enter a website URL and AIPUSH 
 
 ## Access model
 
-Every check result and its one-line issue are free. The three highest-weight fixes are free. The remaining copy-ready fixes and the markdown bundle unlock after a free email confirmation. Access is a cookie set by the confirmation link, per browser; repeat the email step in another browser to unlock it there. A report with three or fewer failed scored checks has nothing locked: every fix is shown and no email is asked for.
+Every check result and its one-line issue are free. The three highest-weight fixes are free. The remaining copy-ready fixes and the markdown bundle become available after a free email confirmation. Access is a cookie set by the confirmation link, per browser; repeat the email step in another browser to get access there. A report with three or fewer failed scored checks has nothing locked: every fix is shown and no email is asked for.
 
 ## Machine-readable surfaces
 

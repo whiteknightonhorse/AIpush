@@ -31,6 +31,8 @@ export function Methodology() {
 
   const n = METHODOLOGY_CHECKS.length;
   const scored = METHODOLOGY_CHECKS.filter((c) => c.weight > 0).length;
+  const totalWeight = METHODOLOGY_CHECKS.reduce((sum, c) => sum + c.weight, 0);
+  const llmsWeight = METHODOLOGY_CHECKS.find((c) => c.id === "llms_txt")?.weight;
 
   return (
     <main className="aipush-seo-page">
@@ -79,7 +81,20 @@ export function Methodology() {
 
         <h2 id="crawler-access">Crawler access has two layers</h2>
         <p>
-          robots.txt says whether a crawler may read your site. A firewall or CDN rule decides what a request actually receives, and that can differ from robots.txt. AIPUSH reports the two as separate facts for each AI bot. For a disallowed bot the statement is: "robots.txt disallows GPTBot." For the edge, when robots.txt allows the bot but our request with its user-agent received a challenge page: "robots.txt allows GPTBot, but our request with the GPTBot user-agent received a challenge page (HTTP 403, marker). A firewall or CDN rule decides this, not robots.txt. We sent the request from our own server; the real GPTBot comes from its operator's addresses and may be treated differently. Check your firewall or CDN bot settings and your server logs." A challenge or refusal is reported only when the same page, fetched in the same scan with the analyzer's normal user-agent, was returned; if the normal request is challenged too, the report says "Our scanner itself was challenged; no statement about AI bots." A challenged or refused spoofed request is reported and not scored.
+          robots.txt says whether a crawler may read your site. A firewall or CDN rule decides what a request actually receives, and that can differ from robots.txt. AIPUSH reports the two as separate facts for each AI bot. For a disallowed bot the statement is: "robots.txt disallows GPTBot." For the edge, when robots.txt allows the bot but our request with its user-agent received a challenge page: "robots.txt allows GPTBot, but our request with the GPTBot user-agent received a challenge page (HTTP 403, marker). A firewall or CDN rule decides this, not robots.txt. We sent the request from our own server; the real GPTBot comes from its operator's addresses and may be treated differently. Check your firewall or CDN bot settings and your server logs." A challenge or refusal is reported only when the same page, fetched in the same scan with the analyzer's normal user-agent, was returned; if the normal request is challenged too, the report says "Our scanner itself was challenged; no statement about AI bots." When the bot request was challenged or refused, one more request per scan, to the same URL with our own user-agent "AIPUSH-Probe/1.0 (+https://aipush.app/methodology)", tells a rule keyed to the bot name from general bot protection. That user-agent is honest, is not a browser and is on no verified-bot list. Per bot the cause is ai_named when the bot request was refused and the control request and a browser user-agent received the page: "Our request with the GPTBot user-agent was refused (HTTP 403, marker). The same request under an unlisted user-agent and under a browser user-agent received the page. A rule keyed to the GPTBot name decides this. It may be a deliberate AI-bot block, or a rule that refuses the GPTBot name when it comes from outside its operator's addresses. Look for AI-bot or user-agent rules in your firewall or CDN, and search your server logs for GPTBot." The cause is generic_bot when the bot request and the control request were both refused and a browser user-agent received the page: "Our requests with the GPTBot user-agent and with an unlisted user-agent were both refused (HTTP 403, marker); a browser user-agent received the page. This is general bot protection, not a rule against AI bots. Verified AI crawlers may still pass: the verified-bots setting of your firewall or CDN decides that, and only your server logs show it." generic_bot is a note, not a failed finding; when the control request fails for a network reason the cause is unknown, and when the browser request is refused the scan is blocked and no cause is stated. A challenged or refused spoofed request is reported and not scored.
+        </p>
+
+        <h2 id="scanner-refused">When our scanner is refused</h2>
+        <p>
+          {"Our scanner could not read <host> on <date>: our request received HTTP <status> (<marker>). This is not a score. Verified AI crawlers come from their operators' addresses and may be treated differently. If this is your site, check your firewall or CDN bot settings and your server logs, then scan again."} This text replaces the result when our request for the home page, sent with a browser user-agent, ends in HTTP 401, 403, 429, 451 or 503 or in a challenge page, also after one retry 10 seconds later. The scan then has access "blocked": score, level, ladder and category scores are null, every check is "not measured", and no fixes are made.
+        </p>
+
+        <h2 id="llms-txt-check">What the llms.txt check means</h2>
+        <p>
+          This check passes when the file exists and parses. It does not show that AI crawlers fetch it or that it changes citations. Weight: {llmsWeight} of {totalWeight}.
+        </p>
+        <p>
+          Ahrefs' study reports: "Of the ~38,000 domains with a valid file, 97% saw no requests for it whatsoever in May" (<a href="https://ahrefs.com/blog/llmstxt-study/" rel="noopener">Ahrefs, 15 June 2026</a>). Google's documentation says: "You don't need to create new machine readable files, AI text files, markup, or Markdown to appear in Google Search (including its generative AI capabilities), as Google Search itself doesn't use them" (<a href="https://developers.google.com/search/docs/fundamentals/ai-optimization-guide" rel="noopener">Google Search Central, updated 10 July 2026</a>).
         </p>
 
         {CATEGORIES.map((cat) => (

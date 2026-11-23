@@ -7,7 +7,7 @@ export type Status = "pass" | "fail" | "skip" | "info";
 export interface Check { id: string; title: string; status: Status; goal: string; result: string; how: string; res: { t: string; u: string }[]; copy: string; why: string; tech: string; skillSlug: string | null; scoring: boolean; locked?: boolean; issue?: string; }
 export interface Category { id: string; label: string; blurb: string; score: number; passed: number; total: number; assessed: boolean; skipped: number; notScored: number; checks: Check[]; }
 export interface Level { n: number; name: string; }
-export interface Data { url: string; score: number; catalogVersion: number; ladderLevel: number | null; level: Level; categories: Category[]; commerce: Category | null; markdown: string; }
+export interface Data { url: string; access: "ok" | "blocked"; accessText: string; score: number | null; catalogVersion: number; ladderLevel: number | null; level: Level | null; categories: Category[]; commerce: Category | null; markdown: string; }
 
 export function docLabel(u: string): string {
   try {
@@ -36,7 +36,9 @@ export function adapt(resp: any): Data {
     };
     (byCat[f.category] ||= []).push(ch);
   }
-  const cats: any[] = Array.isArray(resp.categories) ? resp.categories : [];
+  // A scan our request was refused on measured nothing: no score, no rows, no fixes.
+  const blocked = resp.access === "blocked";
+  const cats: any[] = !blocked && Array.isArray(resp.categories) ? resp.categories : [];
   const categories: Category[] = cats
     .filter((c) => c.id !== "commerce")
     .map((c) => {
@@ -50,15 +52,16 @@ export function adapt(resp: any): Data {
       };
     });
   // The API scores five categories only; commerce rows come from the findings.
-  const commerceChecks = (byCat["commerce"] || []).filter((c) => !c.locked);
+  const commerceChecks = blocked ? [] : (byCat["commerce"] || []).filter((c) => !c.locked);
   const commerce: Category | null = commerceChecks.length
     ? { id: "commerce", label: "Commerce", blurb: CATEGORY_BLURBS.commerce ?? "", score: 0, passed: 0, total: 0, assessed: true, skipped: 0, notScored: 0, checks: commerceChecks }
     : null;
   return {
-    url: resp.url, score: resp.score,
+    url: resp.url, access: blocked ? "blocked" : "ok", accessText: typeof resp.accessText === "string" ? resp.accessText : "",
+    score: typeof resp.score === "number" ? resp.score : null,
     catalogVersion: typeof resp.catalogVersion === "number" ? resp.catalogVersion : 1,
     ladderLevel: typeof resp.ladderLevel === "number" ? resp.ladderLevel : null,
-    level: { n: resp.level || 1, name: resp.levelLabel || "" },
+    level: blocked ? null : { n: resp.level || 1, name: resp.levelLabel || "" },
     categories, commerce, markdown: resp.markdown ?? "",
   };
 }

@@ -677,6 +677,20 @@ function Results({ data, scanId, unlocked, lockedCount, sent, gate, onScanAnothe
   const scrollToFindings = () => { const el = findingsRef.current; if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 16, behavior: "smooth" }); };
   const scrollToCat = (id: string) => { const el = document.getElementById("cat-" + id); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 16, behavior: "smooth" }); };
 
+  if (data.access === "blocked" || data.score === null || data.level === null) {
+    return (
+      <div style={{ minHeight: "100vh", padding: "74px 18px 80px" }}>
+        <div style={{ width: "min(720px,100%)", margin: "0 auto", display: "grid", gap: 18 }}>
+          <div style={{ display: "grid", gap: 14, padding: "30px 24px 26px", borderRadius: "var(--radius-xl)", background: "var(--surface-card)", border: "1px solid var(--surface-border)", boxShadow: "var(--shadow-md)" }}>
+            <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800 }}>Not measured</h2>
+            <p data-access-blocked style={{ margin: 0, fontSize: 15, lineHeight: 1.55, color: "var(--text-secondary)", textWrap: "pretty" }}>{data.accessText}</p>
+            <div><GhostBtn icon={<I.refresh />} label="Scan again" onClick={onScanAnother} /></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ minHeight: "100vh", padding: "74px 18px 80px" }}>
       <div style={{ width: "min(720px,100%)", margin: "0 auto", display: "grid", gap: 18 }}>
@@ -902,7 +916,7 @@ export function AeoAnalyzer() {
           results) with only window.scrollTo, so assistive tech otherwise gets no cue the
           results have arrived. This polite live region fills that gap (WCAG 4.1.3). */}
       <div aria-live="polite" role="status" style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap", border: 0 }}>
-        {screen === "results" && data ? `AEO scan complete. Your site scored ${data.score} out of 100.` : ""}
+        {screen === "results" && data ? (data.score === null ? "AEO scan complete. Our scanner was refused, so nothing was measured." : `AEO scan complete. Your site scored ${data.score} out of 100.`) : ""}
       </div>
       <div style={{ position: "fixed", top: 16, right: 16, zIndex: 40 }}>
         <ThemeToggle theme={theme} setTheme={setTheme} />

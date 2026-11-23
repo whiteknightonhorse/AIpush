@@ -4,9 +4,11 @@
 
 ## About
 
-AIPUSH is a free analyzer at https://aipush.app. Enter a website URL and AIPUSH scans it for AI-agent and answer-engine readiness, then returns a 0-100 score, an AEO Level (1-5), five category gauges, and copy-ready fixes you can paste into an AI coding agent (Cursor, Claude Code, Copilot). Every check result and its one-line issue are free; the three highest-weight fixes are free; the remaining copy-ready fixes and the markdown bundle become available after a free email confirmation. Each scan result also carries `catalogVersion` (the check-catalog version that produced it; results stored before versioning report 1) and `ladderLevel`, a sequential agent-readiness ladder from 0 to 5 that is independent of the score: 1 = at least two of robots.txt, sitemap and Link headers; 2 = plus AI-bot and content-signal rules in robots.txt; 3 = plus Markdown content negotiation; 4 = plus at least one agent interface (MCP server card, A2A agent card, agent-skills index or API catalog); 5 = plus any two of Web Bot Auth, three or more agent interfaces, and OIDC, OAuth protected-resource or auth.md discovery.
+AIPUSH is a free analyzer at https://aipush.app. Enter a website URL and AIPUSH scans it for AI-agent and answer-engine readiness, then returns a 0-100 score, an AEO Level (1-5), five category gauges (the sixth category, Commerce, is informational and has no gauge), and copy-ready fixes you can paste into an AI coding agent (Cursor, Claude Code, Copilot). Every check result and its one-line issue are free; the three highest-weight fixes are free; the remaining copy-ready fixes and the markdown bundle become available after a free email confirmation. Each scan result also carries `catalogVersion` (the check-catalog version that produced it; results stored before versioning report 1) and `ladderLevel`, a sequential agent-readiness ladder from 0 to 5 that is independent of the score: 1 = at least two of robots.txt, sitemap and Link headers; 2 = plus AI-bot and content-signal rules in robots.txt; 3 = plus Markdown content negotiation; 4 = plus at least one agent interface (MCP server card, A2A agent card, agent-skills index or API catalog); 5 = plus any two of Web Bot Auth, three or more agent interfaces, and OIDC, OAuth protected-resource or auth.md discovery.
 
 AIPUSH reads your site (files, headers, markup); it does not sign up, buy or submit forms on it.
+
+Each result carries `access` (ok or blocked): when our request for the home page is refused, `access` is blocked, the score is null and every check is not_measured (https://aipush.app/methodology#scanner-refused).
 
 The catalog (version 2) has 43 checks in six categories; 32 are scored and the rest are informational. Check ids:
 
@@ -17,7 +19,7 @@ The catalog (version 2) has 43 checks in six categories; 32 are scored and the r
 - Structured Data: `jsonld_schema`, `faq_schema`, `opengraph`, `answer_units`, `org_entity`
 - Commerce (informational): `commerce_x402`, `commerce_mpp`, `commerce_ucp`, `commerce_acp`, `commerce_ap2`
 
-Crawler access has two layers (https://aipush.app/methodology#crawler-access): robots.txt rules are one fact; the answer of the site's firewall or CDN to our own request with an AI bot user-agent is another, reported and never scored.
+Crawler access has two layers (https://aipush.app/methodology#crawler-access): robots.txt rules are one fact; the answer of the site's firewall or CDN to our own request with an AI bot user-agent is another, reported and never scored; when the bot request is refused, one control request with the user-agent `AIPUSH-Probe/1.0 (+https://aipush.app/methodology)` tells a rule keyed to the bot name (ai_named) from general bot protection (generic_bot).
 
 ## Links
 

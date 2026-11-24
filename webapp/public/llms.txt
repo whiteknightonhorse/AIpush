@@ -8,6 +8,8 @@ AIPUSH is a free analyzer at https://aipush.app. Enter a website URL and AIPUSH 
 
 AIPUSH reads your site (files, headers, markup); it does not sign up, buy or submit forms on it.
 
+The score measures readiness. It does not measure citations, visits or revenue.
+
 Each result carries `access` (ok or blocked): when our request for the home page is refused, `access` is blocked, the score is null and every check is not_measured (https://aipush.app/methodology#scanner-refused).
 
 The catalog (version 2) has 43 checks in six categories; 32 are scored and the rest are informational. Check ids:

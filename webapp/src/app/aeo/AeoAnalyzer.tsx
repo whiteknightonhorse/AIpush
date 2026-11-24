@@ -718,6 +718,8 @@ function Results({ data, scanId, unlocked, lockedCount, sent, gate, onScanAnothe
           )}
         </div>
 
+        <p data-score-scope style={{ margin: 0, fontSize: 14, color: "var(--text-secondary)", textAlign: "center", textWrap: "pretty" }}>This score measures readiness, not visits or sales. How to measure those: <a href="/methodology#score-not-outcomes" style={{ color: "var(--text-primary)", fontWeight: 600, textDecoration: "underline", textUnderlineOffset: 3 }}>what the score does not tell you</a>.</p>
+
         {(data.catalogVersion < 2 || data.ladderLevel != null) && (
           <div style={{ display: "grid", gap: 4, fontSize: 13, color: "var(--text-tertiary)", textAlign: "center" }}>
             {data.catalogVersion < 2 && <span>Scored with an earlier catalog version — re-scan for the current catalog</span>}
